@@ -7,17 +7,23 @@
 //
 
 import Foundation
+import UIKit
 
 struct Caregiver {
+    var id: Int
+    var img: UIImage
     var name: String
-    var surname: String
-    var cellphone: String
+    var email: String
+    var username: String
+    var password: String
+    var phoneNumber: Int
+    var children: [Child]
     
-    init(name: String, surname: String, cellphone: String) {
+    /*init(name: String, surname: String, cellphone: String) {
         self.name = name
         self.surname = surname
         self.cellphone = cellphone
-    }
+    }*/
     
     
 }

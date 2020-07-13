@@ -26,6 +26,11 @@
 		7D8F423C24BCA8F800D62138 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D8F423B24BCA8F800D62138 /* Assets.xcassets */; };
 		7D8F423F24BCA8F800D62138 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D8F423E24BCA8F800D62138 /* Preview Assets.xcassets */; };
 		7D8F424224BCA8F800D62138 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D8F424024BCA8F800D62138 /* LaunchScreen.storyboard */; };
+		7D8F424A24BCB97D00D62138 /* Child.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8F424924BCB97D00D62138 /* Child.swift */; };
+		7D8F424C24BCB9BC00D62138 /* CaregiverFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8F424B24BCB9BC00D62138 /* CaregiverFactory.swift */; };
+		7D8F424E24BCBC7300D62138 /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8F424D24BCBC7300D62138 /* SettingView.swift */; };
+		7D8F425024BCBCC800D62138 /* AddRouteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8F424F24BCBCC800D62138 /* AddRouteView.swift */; };
+		7D8F425224BCBD4900D62138 /* ProfileDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8F425124BCBD4900D62138 /* ProfileDetail.swift */; };
 		B73F14C8EE8F5229E7E98737 /* Pods_TomThumb.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19E22DF13044CDA55DFA73BB /* Pods_TomThumb.framework */; };
 /* End PBXBuildFile section */
 
@@ -52,6 +57,11 @@
 		7D8F423E24BCA8F800D62138 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		7D8F424124BCA8F800D62138 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7D8F424324BCA8F800D62138 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7D8F424924BCB97D00D62138 /* Child.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Child.swift; sourceTree = "<group>"; };
+		7D8F424B24BCB9BC00D62138 /* CaregiverFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaregiverFactory.swift; sourceTree = "<group>"; };
+		7D8F424D24BCBC7300D62138 /* SettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
+		7D8F424F24BCBCC800D62138 /* AddRouteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRouteView.swift; sourceTree = "<group>"; };
+		7D8F425124BCBD4900D62138 /* ProfileDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileDetail.swift; sourceTree = "<group>"; };
 		BC0189FBC23F9B2DD3C5F30E /* Pods-TomThumb.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TomThumb.release.xcconfig"; path = "Target Support Files/Pods-TomThumb/Pods-TomThumb.release.xcconfig"; sourceTree = "<group>"; };
 		F56AE40CC0DF06494C930D41 /* Pods-TomThumb.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TomThumb.debug.xcconfig"; path = "Target Support Files/Pods-TomThumb/Pods-TomThumb.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -84,6 +94,8 @@
 				01EA2D8524BCABE7007CD896 /* Caregiver.swift */,
 				01EA2D8724BCAD38007CD896 /* RoutesFactory.swift */,
 				01EA2D8924BCAD60007CD896 /* MapRoutesFactory.swift */,
+				7D8F424924BCB97D00D62138 /* Child.swift */,
+				7D8F424B24BCB9BC00D62138 /* CaregiverFactory.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -114,6 +126,10 @@
 				01EA2D9A24BCB0F9007CD896 /* Utils */,
 				01EA2D9824BCB0D9007CD896 /* RoutesView.swift */,
 				01EA2D9F24BCB19E007CD896 /* RouteDetail.swift */,
+				7D8F423924BCA8F400D62138 /* ContentView.swift */,
+				7D8F424D24BCBC7300D62138 /* SettingView.swift */,
+				7D8F424F24BCBCC800D62138 /* AddRouteView.swift */,
+				7D8F425124BCBD4900D62138 /* ProfileDetail.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -156,12 +172,11 @@
 		7D8F423424BCA8F400D62138 /* TomThumb */ = {
 			isa = PBXGroup;
 			children = (
-				01EA2D9724BCB0B1007CD896 /* View */,
 				01EA2D9424BCAFA8007CD896 /* AR */,
 				01EA2D8B24BCADE2007CD896 /* Map */,
 				01EA2D8224BCABB6007CD896 /* Model */,
+				01EA2D9724BCB0B1007CD896 /* View */,
 				01EA2D8124BCABA3007CD896 /* Delegate */,
-				7D8F423924BCA8F400D62138 /* ContentView.swift */,
 				7D8F423B24BCA8F800D62138 /* Assets.xcassets */,
 				7D8F424024BCA8F800D62138 /* LaunchScreen.storyboard */,
 				7D8F424324BCA8F800D62138 /* Info.plist */,
@@ -305,18 +320,23 @@
 				7D8F423624BCA8F400D62138 /* AppDelegate.swift in Sources */,
 				01EA2D9324BCAF0D007CD896 /* RouteMap.swift in Sources */,
 				01EA2D9624BCAFD7007CD896 /* ARViewController.swift in Sources */,
+				7D8F425224BCBD4900D62138 /* ProfileDetail.swift in Sources */,
 				01EA2DA024BCB19E007CD896 /* RouteDetail.swift in Sources */,
 				01EA2DA224BCB1CB007CD896 /* ARView.swift in Sources */,
 				01EA2D8424BCABC3007CD896 /* Route.swift in Sources */,
 				7D8F423824BCA8F400D62138 /* SceneDelegate.swift in Sources */,
+				7D8F425024BCBCC800D62138 /* AddRouteView.swift in Sources */,
 				01EA2D8D24BCADFA007CD896 /* LocationManager.swift in Sources */,
 				01EA2D9C24BCB109007CD896 /* SearchBar.swift in Sources */,
+				7D8F424E24BCBC7300D62138 /* SettingView.swift in Sources */,
+				7D8F424A24BCB97D00D62138 /* Child.swift in Sources */,
 				01EA2D8824BCAD38007CD896 /* RoutesFactory.swift in Sources */,
 				01EA2D9924BCB0D9007CD896 /* RoutesView.swift in Sources */,
 				01EA2D9124BCAE46007CD896 /* MapPin.swift in Sources */,
 				01EA2D8A24BCAD60007CD896 /* MapRoutesFactory.swift in Sources */,
 				01EA2D8F24BCAE20007CD896 /* MapView.swift in Sources */,
 				7D8F423A24BCA8F400D62138 /* ContentView.swift in Sources */,
+				7D8F424C24BCB9BC00D62138 /* CaregiverFactory.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -455,14 +475,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"TomThumb/Preview Content\"";
-				DEVELOPMENT_TEAM = 2JR3RW89Z4;
+				DEVELOPMENT_TEAM = D4B3PY9A2P;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = TomThumb/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = it.andreare.TomThumb;
+				PRODUCT_BUNDLE_IDENTIFIER = it.sora.TomThumb;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -476,14 +496,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"TomThumb/Preview Content\"";
-				DEVELOPMENT_TEAM = 2JR3RW89Z4;
+				DEVELOPMENT_TEAM = D4B3PY9A2P;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = TomThumb/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = it.andreare.TomThumb;
+				PRODUCT_BUNDLE_IDENTIFIER = it.sora.TomThumb;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

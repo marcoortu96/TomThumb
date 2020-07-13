@@ -27,23 +27,24 @@ struct ContentView: View {
                         Text("Esecuzione")
                     }
             }.tag(1)
-            Text("Item 3")
-                .tabItem {
-                    VStack {
-                        Image(systemName: "plus.square.fill")
-                        Text("Aggiungi")
-                    }
-            }.tag(2)
-            Text("Item 4")
-                .tabItem {
-                    VStack {
-                        Image(systemName: "gear")
-                        Text("Impostazioni")
-                    }
-            }.tag(3)
+            addRouteView().tabItem {
+                VStack {
+                    Image(systemName: "plus.square")
+                    Text("Aggiungi")
+                }
+            }
+            .tag(2)
+            
+            SettingView().tabItem {
+                VStack {
+                    Image(systemName: "gear")
+                    Text("Impostazioni")
+                }
+            }
+            .tag(3)
         }.onAppear {
             UITabBar.appearance().backgroundColor = .gray
-        }.accentColor(.black)
+        }.accentColor(.green)
     }
 }
 

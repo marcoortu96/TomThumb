@@ -58,6 +58,6 @@ struct RouteDetail: View {
 
 struct RouteDetail_Previews: PreviewProvider {
     static var previews: some View {
-        RouteDetail(route: Route(routeName: "Prima", user: "Filippo", crumbs: 10, duration: TimeInterval(1000), caregiver: Caregiver(name: "Mario", surname: "Rossi", cellphone: "+393383838383"), mapRoute: MapRoutesFactory().mapRoutes[0]))
+        RouteDetail(route: Route(routeName: "Prima", user: "Filippo", crumbs: 10, duration: TimeInterval(1000), caregiver: CaregiverFactory().caregivers[0], mapRoute: MapRoutesFactory().mapRoutes[0]))
     }
 }
