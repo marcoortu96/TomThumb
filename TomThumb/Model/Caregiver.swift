@@ -16,7 +16,7 @@ struct Caregiver {
     var email: String
     var username: String
     var password: String
-    var phoneNumber: Int
+    var phoneNumber: String
     var children: [Child]
     
     /*init(name: String, surname: String, cellphone: String) {

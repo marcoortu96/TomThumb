@@ -26,7 +26,7 @@ struct RoutesView: View {
                     
                 }.navigationBarTitle("Percorsi")
             }
-        }.accentColor(.blue)
+        }.accentColor(.green)
     }
     
 }

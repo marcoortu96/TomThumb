@@ -13,7 +13,8 @@ struct CaregiverFactory {
     var caregivers: [Caregiver] = []
     
     init() {
-        caregivers.append(Caregiver(id: 1, img: UIImage(named: "sora1")!, name: "Marco", email: "Ortu", username: "sora", password: "sora", phoneNumber: 123, children: [Child(id: 1, name: "Enrico"), Child(id: 2, name: "Kilo")]))
+        caregivers.append(Caregiver(id: 1, img: UIImage(named: "sora1")!, name: "Marco", email: "Ortu", username: "sora", password: "sora", phoneNumber: "123", children: [ChildFactory().children[0], ChildFactory().children[1]]))
+        caregivers.append(Caregiver(id: 1, img: UIImage(named: "zoro")!, name: "Andrea", email: "andreare@mail.com", username: "Andrew", password: "1234", phoneNumber: "456", children: [ChildFactory().children[2], ChildFactory().children[6]]))
 
     }
     

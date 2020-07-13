@@ -8,8 +8,6 @@
 
 import SwiftUI
 
-import SwiftUI
-
 struct profileDetail: View {
     var caregiver: Caregiver
     var body: some View {
@@ -44,14 +42,14 @@ struct profileDetail: View {
                         }
                     }
                     Section(header: Text("Numero di telefono")) {
-                        NavigationLink(destination: ChangeNum(num: String(caregiver.phoneNumber))) {
+                        NavigationLink(destination: ChangeNum(num: caregiver.phoneNumber)) {
                             VStack {
-                                Text(String(caregiver.phoneNumber))
+                                Text(caregiver.phoneNumber)
                             }
                         }
                     }
                     Section(header: Text("Bambini")) {
-                        List(CaregiverFactory().caregivers[0].children) { child in
+                        List(CaregiverFactory().caregivers[1].children) { child in
                             ChildRow(child: child)
                         }
                     }

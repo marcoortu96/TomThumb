@@ -26,7 +26,7 @@
 		7D8F423C24BCA8F800D62138 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D8F423B24BCA8F800D62138 /* Assets.xcassets */; };
 		7D8F423F24BCA8F800D62138 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D8F423E24BCA8F800D62138 /* Preview Assets.xcassets */; };
 		7D8F424224BCA8F800D62138 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D8F424024BCA8F800D62138 /* LaunchScreen.storyboard */; };
-		7D8F424A24BCB97D00D62138 /* Child.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8F424924BCB97D00D62138 /* Child.swift */; };
+		7D8F424A24BCB97D00D62138 /* ChildFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8F424924BCB97D00D62138 /* ChildFactory.swift */; };
 		7D8F424C24BCB9BC00D62138 /* CaregiverFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8F424B24BCB9BC00D62138 /* CaregiverFactory.swift */; };
 		7D8F424E24BCBC7300D62138 /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8F424D24BCBC7300D62138 /* SettingView.swift */; };
 		7D8F425024BCBCC800D62138 /* AddRouteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8F424F24BCBCC800D62138 /* AddRouteView.swift */; };
@@ -57,7 +57,7 @@
 		7D8F423E24BCA8F800D62138 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		7D8F424124BCA8F800D62138 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7D8F424324BCA8F800D62138 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		7D8F424924BCB97D00D62138 /* Child.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Child.swift; sourceTree = "<group>"; };
+		7D8F424924BCB97D00D62138 /* ChildFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildFactory.swift; sourceTree = "<group>"; };
 		7D8F424B24BCB9BC00D62138 /* CaregiverFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaregiverFactory.swift; sourceTree = "<group>"; };
 		7D8F424D24BCBC7300D62138 /* SettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
 		7D8F424F24BCBCC800D62138 /* AddRouteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRouteView.swift; sourceTree = "<group>"; };
@@ -94,7 +94,7 @@
 				01EA2D8524BCABE7007CD896 /* Caregiver.swift */,
 				01EA2D8724BCAD38007CD896 /* RoutesFactory.swift */,
 				01EA2D8924BCAD60007CD896 /* MapRoutesFactory.swift */,
-				7D8F424924BCB97D00D62138 /* Child.swift */,
+				7D8F424924BCB97D00D62138 /* ChildFactory.swift */,
 				7D8F424B24BCB9BC00D62138 /* CaregiverFactory.swift */,
 			);
 			path = Model;
@@ -329,7 +329,7 @@
 				01EA2D8D24BCADFA007CD896 /* LocationManager.swift in Sources */,
 				01EA2D9C24BCB109007CD896 /* SearchBar.swift in Sources */,
 				7D8F424E24BCBC7300D62138 /* SettingView.swift in Sources */,
-				7D8F424A24BCB97D00D62138 /* Child.swift in Sources */,
+				7D8F424A24BCB97D00D62138 /* ChildFactory.swift in Sources */,
 				01EA2D8824BCAD38007CD896 /* RoutesFactory.swift in Sources */,
 				01EA2D9924BCB0D9007CD896 /* RoutesView.swift in Sources */,
 				01EA2D9124BCAE46007CD896 /* MapPin.swift in Sources */,
@@ -475,14 +475,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"TomThumb/Preview Content\"";
-				DEVELOPMENT_TEAM = D4B3PY9A2P;
+				DEVELOPMENT_TEAM = 2JR3RW89Z4;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = TomThumb/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = it.sora.TomThumb;
+				PRODUCT_BUNDLE_IDENTIFIER = it.andreare.TomThumb;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -496,14 +496,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"TomThumb/Preview Content\"";
-				DEVELOPMENT_TEAM = D4B3PY9A2P;
+				DEVELOPMENT_TEAM = 2JR3RW89Z4;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = TomThumb/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = it.sora.TomThumb;
+				PRODUCT_BUNDLE_IDENTIFIER = it.andreare.TomThumb;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

@@ -16,9 +16,9 @@ struct SettingView: View {
             VStack {
                 Form {
                     Section(header: Text("Profilo")) {
-                        NavigationLink(destination: profileDetail(caregiver: CaregiverFactory().caregivers[0])) {
+                        NavigationLink(destination: profileDetail(caregiver: CaregiverFactory().caregivers[1])) {
                             HStack {
-                                Image(uiImage: CaregiverFactory().caregivers[0].img)
+                                Image(uiImage: CaregiverFactory().caregivers[1].img)
                                     .resizable()
                                     .scaledToFill()
                                     .frame(width: 70, height: 70, alignment: .center)
@@ -27,8 +27,8 @@ struct SettingView: View {
                                     .shadow(radius: 1)
                                 
                                 VStack {
-                                    Text(CaregiverFactory().caregivers[0].username).font(.title)
-                                    Text(CaregiverFactory().caregivers[0].name).font(.caption)
+                                    Text(CaregiverFactory().caregivers[1].username).font(.title)
+                                    Text(CaregiverFactory().caregivers[1].name).font(.caption)
                                 }
                             }
                         }
