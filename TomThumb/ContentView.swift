@@ -10,28 +10,40 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var selection = 0
- 
+
     var body: some View {
-        TabView(selection: $selection){
-            Text("First View")
-                .font(.title)
+        TabView {
+            RoutesView()
                 .tabItem {
                     VStack {
-                        Image("first")
-                        Text("First")
+                        Image(systemName: "list.bullet")
+                        Text("Percorsi")
                     }
-                }
-                .tag(0)
-            Text("Second View")
-                .font(.title)
+            }.tag(0)
+            ARView()
                 .tabItem {
                     VStack {
-                        Image("second")
-                        Text("Second")
+                        Image(systemName: "goforward")
+                        Text("Esecuzione")
                     }
-                }
-                .tag(1)
-        }
+            }.tag(1)
+            Text("Item 3")
+                .tabItem {
+                    VStack {
+                        Image(systemName: "plus.square.fill")
+                        Text("Aggiungi")
+                    }
+            }.tag(2)
+            Text("Item 4")
+                .tabItem {
+                    VStack {
+                        Image(systemName: "gear")
+                        Text("Impostazioni")
+                    }
+            }.tag(3)
+        }.onAppear {
+            UITabBar.appearance().backgroundColor = .gray
+        }.accentColor(.black)
     }
 }
 

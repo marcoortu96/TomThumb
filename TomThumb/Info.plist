@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Questa app richiede la tua posizione </string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Questa app richiede sempre la tua posizione</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Questa app richiede l&apos;accesso alla fotocamera</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
