@@ -9,14 +9,14 @@
 import SwiftUI
 
 struct ARView: View {
-    @ObservedObject var locationViewModel = LocationManager()
+    @ObservedObject var locationManager = LocationManager()
     
     var body: some View {
         ZStack {
             ARViewController()
             HStack() {
-                Text("Latitude: \(self.locationViewModel.userLatitude)")
-                Text("Longitude: \(self.locationViewModel.userLongitude)")
+                Text("Latitude: \(self.locationManager.userLatitude)")
+                Text("Longitude: \(self.locationManager.userLongitude)")
             }.background(Color.black)
             .foregroundColor(.white)
             .padding(.top, (UIScreen.main.bounds.size.height/100) * 70)

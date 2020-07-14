@@ -14,6 +14,7 @@ import SwiftUI
 
 final class ARViewController: UIViewController, UIViewControllerRepresentable {
     var sceneLocationView = SceneLocationView()
+    @ObservedObject var locationManager = LocationManager()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,14 +25,15 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
         
         let coordinate2 = CLLocationCoordinate2D(latitude: 39.30269757899353, longitude: 8.522419064225488)
         let location2 = CLLocation(coordinate: coordinate2, altitude: 202)
-        let image = UIImage(systemName: "play.fill")!
+        let originalImage = UIImage(named: "mapPin")!
+        let image = originalImage.resized(to: CGSize(width: 20, height: 20))
 
         let annotationNode1 = LocationAnnotationNode(location: location1, image: image)
         let annotationNode2 = LocationAnnotationNode(location: location2, image: image)
-               
-        
+    
         sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: annotationNode1)
         sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: annotationNode2)
+    
         
         view.addSubview(sceneLocationView)
     }
@@ -49,7 +51,14 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: ARViewController.UIViewControllerType, context: UIViewControllerRepresentableContext<ARViewController>) {
         print("Update camera view")
     }
-    
+}
+
+extension UIImage {
+    func resized(to size: CGSize) -> UIImage {
+        return UIGraphicsImageRenderer(size: size).image { _ in
+            draw(in: CGRect(origin: .zero, size: size))
+        }
+    }
 }
 
 
