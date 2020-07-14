@@ -23,10 +23,9 @@ struct RoutesView: View {
                     NavigationLink(destination: RouteDetail(route: route)) {
                         Text(route.routeName)
                     }
-                    
                 }.navigationBarTitle("Percorsi")
             }
-        }.accentColor(.green)
+        }.accentColor(InterfaceConstants.genericlinkForegroundColor)
     }
     
 }

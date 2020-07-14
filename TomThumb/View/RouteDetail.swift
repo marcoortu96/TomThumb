@@ -18,23 +18,23 @@ struct RouteDetail: View {
                     HStack {
                         Text("Utente")
                         Spacer()
-                        Text(route.user).foregroundColor(Color.gray)
+                        Text(route.user).foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
                     }
                     HStack {
                         Text("#Molliche")
                         Spacer()
-                        Text("\(route.crumbs)").foregroundColor(Color.gray)
+                        Text("\(route.crumbs)").foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
                     }
                     HStack {
                         Text("Durata")
                         Spacer()
-                        Text("\(route.duration)").foregroundColor(Color.gray)
+                        Text("\(route.duration)").foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
                     }
                 }
                 Section(header: Text("Mappa")) {
                     NavigationLink(destination: RouteMap(mapRoute: route.mapRoute)) {
                         Text("Visualizza il percorso")
-                    }
+                    }.accentColor(InterfaceConstants.genericlinkForegroundColor)
                 }
                 Section(header: Text("Condivisione")) {
                     Button(action: {
@@ -46,7 +46,7 @@ struct RouteDetail: View {
                             
                         }
                         .frame(minWidth: 0, maxWidth: .infinity)
-                        .foregroundColor(.blue)
+                        .foregroundColor(InterfaceConstants.genericlinkForegroundColor)
                     }
                 }
             }.navigationBarTitle(Text(route.routeName), displayMode: .inline)

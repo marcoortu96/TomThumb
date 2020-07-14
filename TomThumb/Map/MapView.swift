@@ -23,7 +23,7 @@ struct MapView: UIViewRepresentable {
     func updateUIView(_ uiView: MapView.UIViewType, context: UIViewRepresentableContext<MapView>) {
         
         var pins: [MapPin] = []
-        pins.append(MapPin(coordinate: mapRoute.start, title: "Start", subtitle: ""))
+        pins.append(MapPin(coordinate: mapRoute.start, title: "Inizio", subtitle: ""))
         let span = MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
         let region = MKCoordinateRegion(center: mapRoute.start, span: span)
         
@@ -31,12 +31,11 @@ struct MapView: UIViewRepresentable {
             pins.append(MapPin(coordinate: crumb, title: "", subtitle: ""))
         }
         
-        pins.append(MapPin(coordinate: mapRoute.finish, title: "Finish", subtitle: ""))
+        pins.append(MapPin(coordinate: mapRoute.finish, title: "Fine", subtitle: ""))
         
         uiView.setRegion(region, animated: true)
         uiView.addAnnotations(pins)
-        uiView.showsCompass = true
-        uiView.showsUserLocation = true
+        uiView.reloadInputViews()
         
     }
     

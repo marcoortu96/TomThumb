@@ -13,28 +13,25 @@ struct ContentView: View {
 
     var body: some View {
         TabView {
-            RoutesView()
-                .tabItem {
+            RoutesView().tabItem {
                     VStack {
                         Image(systemName: "list.bullet")
                         Text("Percorsi")
                     }
             }.tag(0)
-            ARView()
-                .tabItem {
+            ARView().tabItem {
                     VStack {
                         Image(systemName: "goforward")
                         Text("Esecuzione")
                     }
             }.tag(1)
-            addRouteView().tabItem {
+            AddRouteView().tabItem {
                 VStack {
                     Image(systemName: "plus.square")
                     Text("Aggiungi")
                 }
             }
             .tag(2)
-            
             SettingView().tabItem {
                 VStack {
                     Image(systemName: "gear")
@@ -43,8 +40,8 @@ struct ContentView: View {
             }
             .tag(3)
         }.onAppear {
-            UITabBar.appearance().backgroundColor = .gray
-        }.accentColor(.green)
+            UITabBar.appearance().backgroundColor =  InterfaceConstants.tabBackgroundColor
+        }.accentColor(InterfaceConstants.tabForegroundColor)
     }
 }
 

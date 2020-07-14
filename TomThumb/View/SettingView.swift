@@ -16,7 +16,7 @@ struct SettingView: View {
             VStack {
                 Form {
                     Section(header: Text("Profilo")) {
-                        NavigationLink(destination: profileDetail(caregiver: CaregiverFactory().caregivers[1])) {
+                        NavigationLink(destination: ProfileDetail(caregiver: CaregiverFactory().caregivers[1])) {
                             HStack {
                                 Image(uiImage: CaregiverFactory().caregivers[1].img)
                                     .resizable()
@@ -28,6 +28,7 @@ struct SettingView: View {
                                 
                                 VStack {
                                     Text(CaregiverFactory().caregivers[1].username).font(.title)
+                                        
                                     Text(CaregiverFactory().caregivers[1].name).font(.caption)
                                 }
                             }
@@ -59,13 +60,12 @@ struct SettingView: View {
                         Button(action: {
                             print("Perform an action here...")
                         }) {
-                            Text("Logout").frame(minWidth: 0, maxWidth: .infinity).accentColor(.red)
+                            Text("Logout").frame(minWidth: 0, maxWidth: .infinity).accentColor(InterfaceConstants.negativeLnkForegroundColor)
                         }
                     }
                 }
-            }
-            .navigationBarTitle("Impostazioni")
-        }
+            }.navigationBarTitle("Impostazioni")
+        }.accentColor(InterfaceConstants.genericlinkForegroundColor)
     }
 }
 

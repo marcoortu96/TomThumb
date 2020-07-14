@@ -8,55 +8,55 @@
 
 import SwiftUI
 
-struct profileDetail: View {
+struct ProfileDetail: View {
     var caregiver: Caregiver
     var body: some View {
-            VStack {
-                Image(uiImage: caregiver.img)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 90, height: 90, alignment: .center)
-                    .clipped()
-                    .clipShape(Circle())
-                    .shadow(radius: 1)
-                Form {
-                    Section(header: Text("Nome")) {
-                        NavigationLink(destination: ChangeName(name: caregiver.name)) {
-                            VStack {
-                                Text(caregiver.name)
-                            }
-                        }
-                    }
-                    Section(header: Text("Username")) {
-                        NavigationLink(destination: ChangeUsername(username: caregiver.username)) {
-                            VStack {
-                                Text(caregiver.username)
-                            }
-                        }
-                    }
-                    Section(header: Text("Email")) {
-                        NavigationLink(destination: ChangeEmail(email: caregiver.email)) {
-                            VStack {
-                                Text(caregiver.email)
-                            }
-                        }
-                    }
-                    Section(header: Text("Numero di telefono")) {
-                        NavigationLink(destination: ChangeNum(num: caregiver.phoneNumber)) {
-                            VStack {
-                                Text(caregiver.phoneNumber)
-                            }
-                        }
-                    }
-                    Section(header: Text("Bambini")) {
-                        List(CaregiverFactory().caregivers[1].children) { child in
-                            ChildRow(child: child)
+        VStack {
+            Spacer(minLength: 20)
+            Image(uiImage: caregiver.img)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 90, height: 90, alignment: .center)
+                .clipped()
+                .clipShape(Circle())
+                .shadow(radius: 1)
+            Form {
+                Section(header: Text("Nome")) {
+                    NavigationLink(destination: ChangeName(name: caregiver.name)) {
+                        VStack {
+                            Text(caregiver.name)
                         }
                     }
                 }
-                .accentColor(.blue)
+                Section(header: Text("Username")) {
+                    NavigationLink(destination: ChangeUsername(username: caregiver.username)) {
+                        VStack {
+                            Text(caregiver.username)
+                        }
+                    }
+                }
+                Section(header: Text("Email")) {
+                    NavigationLink(destination: ChangeEmail(email: caregiver.email)) {
+                        VStack {
+                            Text(caregiver.email)
+                        }
+                    }
+                }
+                Section(header: Text("Numero di telefono")) {
+                    NavigationLink(destination: ChangeNum(num: caregiver.phoneNumber)) {
+                        VStack {
+                            Text(caregiver.phoneNumber)
+                        }
+                    }
+                }
+                Section(header: Text("Bambini")) {
+                    List(CaregiverFactory().caregivers[1].children) { child in
+                        ChildRow(child: child)
+                    }
+                }
             }
-            .navigationBarTitle("Profilo")
+        }
+        .navigationBarTitle("Profilo", displayMode: .inline)
     }
 }
 
@@ -69,7 +69,7 @@ struct ChangeName: View {
                     TextField("Name", text: $name)
                 }
             }
-        }
+        }.navigationBarTitle(Text("Nome"), displayMode: .inline)
     }
 }
 
@@ -82,7 +82,7 @@ struct ChangeUsername: View {
                     TextField("Username", text: $username)
                 }
             }
-        }
+        }.navigationBarTitle(Text("Username"), displayMode: .inline)
     }
 }
 
@@ -95,7 +95,7 @@ struct ChangeEmail: View {
                     TextField("Email", text: $email)
                 }
             }
-        }
+        }.navigationBarTitle(Text("Email"), displayMode: .inline)
     }
 }
 
@@ -108,7 +108,7 @@ struct ChangeNum: View {
                     TextField("Numero", text: $num).keyboardType(.numberPad)
                 }
             }
-        }
+        }.navigationBarTitle(Text("Telefono"), displayMode: .inline)
     }
 }
 
@@ -120,8 +120,8 @@ struct ChildRow: View {
 }
 
 
-struct profileDetail_Previews: PreviewProvider {
+struct ProfileDetail_Previews: PreviewProvider {
     static var previews: some View {
-        profileDetail(caregiver: CaregiverFactory().caregivers[0])
+        ProfileDetail(caregiver: CaregiverFactory().caregivers[0])
     }
 }

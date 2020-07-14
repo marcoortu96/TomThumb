@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct addRouteView: View {
+struct AddRouteView: View {
     var body: some View {
         NavigationView {
             VStack {
@@ -26,8 +26,8 @@ struct addRouteView: View {
     }
 }
 
-struct addRouteView_Previews: PreviewProvider {
+struct AddRouteView_Previews: PreviewProvider {
     static var previews: some View {
-        addRouteView()
+        AddRouteView()
     }
 }

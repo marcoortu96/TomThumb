@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0164C2E824BDA59C00C4CBF9 /* InterfaceConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0164C2E724BDA59C00C4CBF9 /* InterfaceConstants.swift */; };
 		01EA2D8424BCABC3007CD896 /* Route.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EA2D8324BCABC3007CD896 /* Route.swift */; };
 		01EA2D8624BCABE7007CD896 /* Caregiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EA2D8524BCABE7007CD896 /* Caregiver.swift */; };
 		01EA2D8824BCAD38007CD896 /* RoutesFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EA2D8724BCAD38007CD896 /* RoutesFactory.swift */; };
@@ -35,6 +36,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0164C2E724BDA59C00C4CBF9 /* InterfaceConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterfaceConstants.swift; sourceTree = "<group>"; };
 		01EA2D8324BCABC3007CD896 /* Route.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Route.swift; sourceTree = "<group>"; };
 		01EA2D8524BCABE7007CD896 /* Caregiver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Caregiver.swift; sourceTree = "<group>"; };
 		01EA2D8724BCAD38007CD896 /* RoutesFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutesFactory.swift; sourceTree = "<group>"; };
@@ -138,6 +140,7 @@
 			isa = PBXGroup;
 			children = (
 				01EA2D9B24BCB109007CD896 /* SearchBar.swift */,
+				0164C2E724BDA59C00C4CBF9 /* InterfaceConstants.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -335,6 +338,7 @@
 				01EA2D9124BCAE46007CD896 /* MapPin.swift in Sources */,
 				01EA2D8A24BCAD60007CD896 /* MapRoutesFactory.swift in Sources */,
 				01EA2D8F24BCAE20007CD896 /* MapView.swift in Sources */,
+				0164C2E824BDA59C00C4CBF9 /* InterfaceConstants.swift in Sources */,
 				7D8F423A24BCA8F400D62138 /* ContentView.swift in Sources */,
 				7D8F424C24BCB9BC00D62138 /* CaregiverFactory.swift in Sources */,
 			);
