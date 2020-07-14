@@ -10,7 +10,8 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var selection = 0
-
+    @State var showAddRouteView = false
+   
     var body: some View {
         TabView {
             RoutesView().tabItem {
@@ -25,20 +26,13 @@ struct ContentView: View {
                         Text("Esecuzione")
                     }
             }.tag(1)
-            AddRouteView().tabItem {
-                VStack {
-                    Image(systemName: "plus.square")
-                    Text("Aggiungi")
-                }
-            }
-            .tag(2)
             SettingView().tabItem {
                 VStack {
                     Image(systemName: "gear")
                     Text("Impostazioni")
                 }
             }
-            .tag(3)
+            .tag(2)
         }.onAppear {
             UITabBar.appearance().backgroundColor =  InterfaceConstants.tabBackgroundColor
         }.accentColor(InterfaceConstants.tabForegroundColor)

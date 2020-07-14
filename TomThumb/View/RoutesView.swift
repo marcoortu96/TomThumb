@@ -12,6 +12,7 @@ var routes = RoutesFactory().routes
 
 struct RoutesView: View {
     @State private var searchText = ""
+    @State var showAddRouteView = false
     var body: some View {
         NavigationView {
             VStack {
@@ -23,9 +24,23 @@ struct RoutesView: View {
                     NavigationLink(destination: RouteDetail(route: route)) {
                         Text(route.routeName)
                     }
-                }.navigationBarTitle("Percorsi")
-            }
-        }.accentColor(InterfaceConstants.genericlinkForegroundColor)
+                }
+                
+            }.navigationBarTitle("Percorsi")
+             .navigationBarItems(trailing:
+                 Button(action: {
+                    print("add icon pressed...")
+                    self.showAddRouteView.toggle()
+                    
+                 }) {
+                    Image(systemName: "plus.circle").imageScale(.large).font(.largeTitle)
+                 }
+             )
+        }
+        .accentColor(InterfaceConstants.genericlinkForegroundColor)
+        .sheet(isPresented: $showAddRouteView) {
+            AddRouteView(showSheetView: self.$showAddRouteView)
+        }
     }
     
 }

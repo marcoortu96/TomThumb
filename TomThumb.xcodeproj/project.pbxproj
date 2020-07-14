@@ -479,14 +479,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"TomThumb/Preview Content\"";
-				DEVELOPMENT_TEAM = 2JR3RW89Z4;
+				DEVELOPMENT_TEAM = D4B3PY9A2P;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = TomThumb/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = it.andreare.TomThumb;
+				PRODUCT_BUNDLE_IDENTIFIER = it.sora.TomThumb;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -500,14 +500,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"TomThumb/Preview Content\"";
-				DEVELOPMENT_TEAM = 2JR3RW89Z4;
+				DEVELOPMENT_TEAM = D4B3PY9A2P;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = TomThumb/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = it.andreare.TomThumb;
+				PRODUCT_BUNDLE_IDENTIFIER = it.sora.TomThumb;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

@@ -9,9 +9,11 @@
 import SwiftUI
 
 struct AddRouteView: View {
+    @Binding var showSheetView: Bool
+
     var body: some View {
         NavigationView {
-            VStack {
+                        VStack {
                 Text("Inizia a registrare il percorso").font(.headline).fontWeight(.medium).multilineTextAlignment(.center).padding(.bottom, 70.0)
                 Button(action: {
                     print("heyyyyy")
@@ -22,12 +24,19 @@ struct AddRouteView: View {
             }
             .padding(.bottom, 100.0)
             .navigationBarTitle("Aggiungi")
+            .navigationBarItems(trailing: Button(action: {
+                print("Dismissing sheet view...")
+                self.showSheetView = false
+            }) {
+                Text("Done").bold()
+            })
         }
     }
 }
 
+
 struct AddRouteView_Previews: PreviewProvider {
     static var previews: some View {
-        AddRouteView()
+        AddRouteView(showSheetView: .constant(false))
     }
 }
