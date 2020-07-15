@@ -32,6 +32,7 @@
 		7D8F424E24BCBC7300D62138 /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8F424D24BCBC7300D62138 /* SettingView.swift */; };
 		7D8F425024BCBCC800D62138 /* AddRouteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8F424F24BCBCC800D62138 /* AddRouteView.swift */; };
 		7D8F425224BCBD4900D62138 /* ProfileDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8F425124BCBD4900D62138 /* ProfileDetail.swift */; };
+		7D8F427424BF55D800D62138 /* MapViewAddRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8F427324BF55D800D62138 /* MapViewAddRoute.swift */; };
 		B73F14C8EE8F5229E7E98737 /* Pods_TomThumb.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19E22DF13044CDA55DFA73BB /* Pods_TomThumb.framework */; };
 /* End PBXBuildFile section */
 
@@ -64,6 +65,7 @@
 		7D8F424D24BCBC7300D62138 /* SettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
 		7D8F424F24BCBCC800D62138 /* AddRouteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRouteView.swift; sourceTree = "<group>"; };
 		7D8F425124BCBD4900D62138 /* ProfileDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileDetail.swift; sourceTree = "<group>"; };
+		7D8F427324BF55D800D62138 /* MapViewAddRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewAddRoute.swift; sourceTree = "<group>"; };
 		BC0189FBC23F9B2DD3C5F30E /* Pods-TomThumb.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TomThumb.release.xcconfig"; path = "Target Support Files/Pods-TomThumb/Pods-TomThumb.release.xcconfig"; sourceTree = "<group>"; };
 		F56AE40CC0DF06494C930D41 /* Pods-TomThumb.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TomThumb.debug.xcconfig"; path = "Target Support Files/Pods-TomThumb/Pods-TomThumb.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -109,6 +111,7 @@
 				01EA2D8E24BCAE20007CD896 /* MapView.swift */,
 				01EA2D9024BCAE46007CD896 /* MapPin.swift */,
 				01EA2D9224BCAF0D007CD896 /* RouteMap.swift */,
+				7D8F427324BF55D800D62138 /* MapViewAddRoute.swift */,
 			);
 			path = Map;
 			sourceTree = "<group>";
@@ -341,6 +344,7 @@
 				0164C2E824BDA59C00C4CBF9 /* InterfaceConstants.swift in Sources */,
 				7D8F423A24BCA8F400D62138 /* ContentView.swift in Sources */,
 				7D8F424C24BCB9BC00D62138 /* CaregiverFactory.swift in Sources */,
+				7D8F427424BF55D800D62138 /* MapViewAddRoute.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -479,14 +483,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"TomThumb/Preview Content\"";
-				DEVELOPMENT_TEAM = 2JR3RW89Z4;
+				DEVELOPMENT_TEAM = D4B3PY9A2P;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = TomThumb/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = it.andreare.TomThumb;
+				PRODUCT_BUNDLE_IDENTIFIER = it.sora.TomThumb;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -500,14 +504,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"TomThumb/Preview Content\"";
-				DEVELOPMENT_TEAM = 2JR3RW89Z4;
+				DEVELOPMENT_TEAM = D4B3PY9A2P;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = TomThumb/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = it.andreare.TomThumb;
+				PRODUCT_BUNDLE_IDENTIFIER = it.sora.TomThumb;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

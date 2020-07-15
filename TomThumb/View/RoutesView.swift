@@ -33,7 +33,7 @@ struct RoutesView: View {
                     self.showAddRouteView.toggle()
                     
                  }) {
-                    Image(systemName: "plus.circle").imageScale(.large).font(.largeTitle)
+                    Image(systemName: "plus.circle").font(.largeTitle)
                  }
              )
         }

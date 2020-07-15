@@ -7,33 +7,50 @@
 //
 
 import SwiftUI
+import MapKit
 
 struct AddRouteView: View {
     @Binding var showSheetView: Bool
+    @State private var searchText = ""
 
     var body: some View {
         NavigationView {
-                        VStack {
-                Text("Inizia a registrare il percorso").font(.headline).fontWeight(.medium).multilineTextAlignment(.center).padding(.bottom, 70.0)
-                Button(action: {
-                    print("heyyyyy")
-                }) {
-                    Image(systemName: "play.circle").font(.system(size: 250)).foregroundColor(.green)
+            VStack {
+                HStack {
+                    Text("  Inizio")
+                    SearchBar(searchText: $searchText)
                 }
-                
+                HStack {
+                    Text("  Fine")
+                    SearchBar(searchText: $searchText)
+                }
+                MapViewAddRoute()
+                Form {
+                    Section(header: Text("Dettagli")) {
+                        HStack {
+                            Text("Distanza")
+                            Spacer()
+                            Text("100.0")
+                        }
+                        HStack {
+                            Text("# Molliche")
+                            Spacer()
+                            Text("10")
+                        }
+                    }
+                }
+                .frame(height: 120.0)
             }
-            .padding(.bottom, 100.0)
             .navigationBarTitle("Aggiungi")
             .navigationBarItems(trailing: Button(action: {
                 print("Dismissing sheet view...")
                 self.showSheetView = false
             }) {
-                Text("Done").bold()
+                Text("Fatto").bold()
             })
         }
     }
 }
-
 
 struct AddRouteView_Previews: PreviewProvider {
     static var previews: some View {

@@ -15,14 +15,16 @@ struct Route : Hashable {
     var user: String
     var crumbs: Int
     var duration: TimeInterval
+    var distance: Double
     var caregiver: Caregiver
     var mapRoute: MapRoute
     
-    init(routeName: String, user: String, crumbs: Int, duration: TimeInterval, caregiver: Caregiver, mapRoute: MapRoute) {
+    init(routeName: String, user: String, crumbs: Int, duration: TimeInterval, distance: Double, caregiver: Caregiver, mapRoute: MapRoute) {
         self.routeName = routeName
         self.user = user
         self.crumbs = crumbs
         self.duration = duration
+        self.distance = distance
         self.caregiver = caregiver
         self.mapRoute = mapRoute
     }
