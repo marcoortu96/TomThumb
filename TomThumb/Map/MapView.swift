@@ -1,48 +1,108 @@
 //
-//  MapView.swift
+//  MapViewAddRoute.swift
 //  TomThumb
 //
-//  Created by Andrea Re on 13/07/2020.
+//  Created by Marco Ortu on 15/07/2020.
 //  Copyright © 2020 Sora. All rights reserved.
 //
 
 import SwiftUI
 import MapKit
 
+
 struct MapView: UIViewRepresentable {
+    let locationManager = CLLocationManager()
+    
     var mapRoute: MapRoute
     
     init(mapRoute: MapRoute) {
         self.mapRoute = mapRoute
     }
     
-    func makeUIView(context: UIViewRepresentableContext<MapView>) -> MKMapView {
-        MKMapView()
+    func makeCoordinator() -> MapView.Coordinator {
+        return MapView.Coordinator(parent: self)
     }
     
-    func updateUIView(_ uiView: MapView.UIViewType, context: UIViewRepresentableContext<MapView>) {
+    func makeUIView(context: Context) -> MKMapView {
+        let mapView = MKMapView(frame: .zero)
         
-        var pins: [MapPin] = []
-        pins.append(MapPin(coordinate: mapRoute.start, title: "Inizio", subtitle: ""))
-        let span = MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
-        let region = MKCoordinateRegion(center: mapRoute.start, span: span)
+        let status = CLLocationManager.authorizationStatus()
+        locationManager.requestAlwaysAuthorization()
+        locationManager.requestWhenInUseAuthorization()
         
-        for crumb in mapRoute.crumbs {
-            pins.append(MapPin(coordinate: crumb, title: "", subtitle: ""))
+        //Control if user authorized his position
+        if status == .authorizedAlways || status == .authorizedWhenInUse {
+            locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+            locationManager.startUpdatingLocation()
+            
+            let startAnnotation = MKPointAnnotation()
+            startAnnotation.coordinate = mapRoute.start
+            startAnnotation.title = "start"
+            mapView.addAnnotation(startAnnotation)
+            
+            let finishAnnotation = MKPointAnnotation()
+            finishAnnotation.coordinate = mapRoute.finish
+            finishAnnotation.title = "finish"
+            mapView.addAnnotation(finishAnnotation)
+            
+            for crumb in mapRoute.crumbs {
+                let crumbAnnotation = MKPointAnnotation()
+                crumbAnnotation.coordinate = crumb
+                mapView.addAnnotation(crumbAnnotation)
+            }
+            
+            let span = MKCoordinateSpan(latitudeDelta: 0.09, longitudeDelta: 0.09)
+            let region = MKCoordinateRegion(center: mapRoute.crumbs[mapRoute.crumbs.capacity/2], span: span)
+            mapView.setRegion(region, animated: true)
+            mapView.mapType = .hybrid
+            mapView.delegate = context.coordinator
         }
         
-        pins.append(MapPin(coordinate: mapRoute.finish, title: "Fine", subtitle: ""))
-        
-        uiView.setRegion(region, animated: true)
-        uiView.addAnnotations(pins)
-        uiView.reloadInputViews()
+        return mapView
+    }
+    
+    func updateUIView(_ view: MKMapView, context: Context) {
         
     }
     
-}
-
-struct MapView_Previews: PreviewProvider {
-    static var previews: some View {
-        MapView(mapRoute: MapRoute(start:CLLocationCoordinate2D(latitude: 39.306738158798424, longitude: 8.522636807002641), crumbs: [], finish: CLLocationCoordinate2D(latitude: 39.3124391731902, longitude:  8.532612347127468)))
+    class Coordinator: NSObject, MKMapViewDelegate {
+        var parent: MapView
+        
+        init(parent: MapView) {
+            self.parent = parent
+        }
+        
+        func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+            
+            if annotation is MKUserLocation {
+                return nil
+            }
+            
+            let annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: "pin")
+            
+            switch annotation.title! {
+            case "start":
+                annotationView.markerTintColor = InterfaceConstants.startPinColor
+                annotationView.titleVisibility = MKFeatureVisibility.visible;
+                annotationView.canShowCallout = true
+            case "finish":
+                annotationView.markerTintColor = InterfaceConstants.finishPinColor
+                annotationView.titleVisibility = MKFeatureVisibility.visible;
+                annotationView.canShowCallout = true
+            default:
+                annotationView.markerTintColor = InterfaceConstants.crumbPinColor
+            }
+            
+            annotationView.isEnabled = false
+            
+            return annotationView
+        }
+        
     }
 }
+
+/*struct MapViewAddRoute_Previews: PreviewProvider {
+ static var previews: some View {
+ MapViewAddRoute()
+ }
+ }*/

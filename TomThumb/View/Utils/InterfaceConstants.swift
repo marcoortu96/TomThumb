@@ -15,5 +15,9 @@ struct InterfaceConstants {
     static let tabBackgroundColor: UIColor = .gray
     static let tabForegroundColor: Color = .black
     
+    static let startPinColor: UIColor = .red
+    static let crumbPinColor: UIColor = .blue
+    static let finishPinColor: UIColor = .green
+    
     static let secondaryInfoForegroundColor: Color = .gray
 }

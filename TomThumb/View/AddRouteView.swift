@@ -17,20 +17,18 @@ struct AddRouteView: View {
     @State private var searchText = ""
     
     @State var pin = MapPin(coordinate: locationManager.location!.coordinate, title: "", subtitle: "")
-
+    
     var body: some View {
         NavigationView {
             VStack {
-                HStack {
-                    Text("  Inizio")
-                    SearchBar(searchText: $searchText)
-                }
-                HStack {
-                    Text("  Fine")
-                    SearchBar(searchText: $searchText)
-                }
-                ZStack(alignment: .bottom, content: {
+                Spacer()
+                
+                SearchBar(searchText: $searchText)
+                
+                ZStack(alignment: .bottom) {
+                    
                     MapViewAddRoute(pin: self.$pin)
+                    
                     HStack {
                         Image(systemName: "info.circle.fill").font(.largeTitle).foregroundColor(.black)
                         VStack {
@@ -41,25 +39,10 @@ struct AddRouteView: View {
                     .padding()
                     .background(Color(.lightGray))
                     .cornerRadius(15)
-                })
- 
-                Form {
-                    Section(header: Text("Dettagli")) {
-                        HStack {
-                            Text("Distanza")
-                            Spacer()
-                            Text("100.0")
-                        }
-                        HStack {
-                            Text("# Molliche")
-                            Spacer()
-                            Text("10")
-                        }
-                    }
+                    
                 }
-                .frame(height: 120.0)
             }
-            .navigationBarTitle("Aggiungi")
+            .navigationBarTitle("Aggiungi", displayMode: .inline)
             .navigationBarItems(trailing: Button(action: {
                 print("Dismissing sheet view...")
                 self.showSheetView = false

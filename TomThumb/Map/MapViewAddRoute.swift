@@ -35,7 +35,7 @@ struct MapViewAddRoute: UIViewRepresentable {
             let span = MKCoordinateSpan(latitudeDelta: 0.009, longitudeDelta: 0.009)
             let region = MKCoordinateRegion(center: location, span: span)
             mapView.setRegion(region, animated: true)
-            mapView.mapType = .satellite
+            mapView.mapType = .hybrid
             
             let annotation = MKPointAnnotation()
             annotation.coordinate = location
@@ -71,7 +71,10 @@ struct MapViewAddRoute: UIViewRepresentable {
             CLGeocoder().reverseGeocodeLocation(CLLocation(latitude: (view.annotation?.coordinate.latitude)!, longitude: (view.annotation?.coordinate.longitude)!)) { (places, err) in
                 self.parent.pin = MapPin(coordinate: CLLocationCoordinate2D(latitude: (view.annotation?.coordinate.latitude)!, longitude: (view.annotation?.coordinate.longitude)!), title: (places?.first?.name)!, subtitle: (places?.first?.locality)!)
             }
-            crumbs.append(CLLocationCoordinate2D(latitude: (view.annotation?.coordinate.latitude)!, longitude: (view.annotation?.coordinate.longitude)!))
+            if(newState.rawValue == 0) {
+                //insert a new crumb on releasing the map pin
+                crumbs.append(CLLocationCoordinate2D(latitude: (view.annotation?.coordinate.latitude)!, longitude: (view.annotation?.coordinate.longitude)!))
+            }
             print("-- CRUMBS --")
             print(crumbs)
             print("Size: \(crumbs.count)")
