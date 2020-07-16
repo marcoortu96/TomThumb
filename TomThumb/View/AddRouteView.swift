@@ -9,9 +9,14 @@
 import SwiftUI
 import MapKit
 
+var locationManager = CLLocationManager()
+
 struct AddRouteView: View {
+    
     @Binding var showSheetView: Bool
     @State private var searchText = ""
+    
+    @State var pin = MapPin(coordinate: locationManager.location!.coordinate, title: "", subtitle: "")
 
     var body: some View {
         NavigationView {
@@ -24,7 +29,20 @@ struct AddRouteView: View {
                     Text("  Fine")
                     SearchBar(searchText: $searchText)
                 }
-                MapViewAddRoute()
+                ZStack(alignment: .bottom, content: {
+                    MapViewAddRoute(pin: self.$pin)
+                    HStack {
+                        Image(systemName: "info.circle.fill").font(.largeTitle).foregroundColor(.black)
+                        VStack {
+                            Text(pin.title!).font(.body).foregroundColor(.black)
+                            Text(pin.subtitle!).font(.caption).foregroundColor(.gray)
+                        }
+                    }
+                    .padding()
+                    .background(Color(.lightGray))
+                    .cornerRadius(15)
+                })
+ 
                 Form {
                     Section(header: Text("Dettagli")) {
                         HStack {
