@@ -45,9 +45,11 @@ struct MapView: UIViewRepresentable {
             finishAnnotation.title = "finish"
             mapView.addAnnotation(finishAnnotation)
             
-            for crumb in mapRoute.crumbs {
+            for (index,crumb) in mapRoute.crumbs.enumerated() {
                 let crumbAnnotation = MKPointAnnotation()
                 crumbAnnotation.coordinate = crumb
+                crumbAnnotation.title = String(index + 1)
+                crumbAnnotation.subtitle = String("\(crumb.latitude), \(crumb.longitude)")
                 mapView.addAnnotation(crumbAnnotation)
             }
             
@@ -85,15 +87,21 @@ struct MapView: UIViewRepresentable {
                 annotationView.markerTintColor = InterfaceConstants.startPinColor
                 annotationView.titleVisibility = MKFeatureVisibility.visible;
                 annotationView.canShowCallout = true
+                annotationView.isEnabled = false
             case "finish":
                 annotationView.markerTintColor = InterfaceConstants.finishPinColor
                 annotationView.titleVisibility = MKFeatureVisibility.visible;
                 annotationView.canShowCallout = true
+                annotationView.isEnabled = false
             default:
                 annotationView.markerTintColor = InterfaceConstants.crumbPinColor
+                annotationView.titleVisibility = MKFeatureVisibility.visible;
+                annotationView.canShowCallout = true
+                annotationView.glyphImage = UIImage(systemName: "staroflife.fill")
+                annotationView.isEnabled = true
             }
             
-            annotationView.isEnabled = false
+            
             
             return annotationView
         }
