@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import MapKit
 
 struct Route : Hashable {
     
@@ -14,17 +15,31 @@ struct Route : Hashable {
     var routeName: String
     var user: String
     var crumbs: Int
-    var duration: TimeInterval
     var distance: Double
     var caregiver: Caregiver
     var mapRoute: MapRoute
     
-    init(routeName: String, user: String, crumbs: Int, duration: TimeInterval, distance: Double, caregiver: Caregiver, mapRoute: MapRoute) {
+    init(routeName: String, user: String, caregiver: Caregiver, mapRoute: MapRoute) {
         self.routeName = routeName
         self.user = user
-        self.crumbs = crumbs
-        self.duration = duration
-        self.distance = distance
+        self.crumbs = mapRoute.crumbs.count
+        
+        var totalDistance = 0.0
+        totalDistance = mapRoute.start.distanceTo(coordinate: mapRoute.crumbs[0])
+        if routeName == "Prima" {
+            print(totalDistance)
+        }
+        for i in stride(from: 0, to: mapRoute.crumbs.count - 1, by: 1) {
+            totalDistance = totalDistance + mapRoute.crumbs[i].distanceTo(coordinate: mapRoute.crumbs[i + 1])
+            if routeName == "Prima" {
+                print(totalDistance)
+            }
+        }
+        totalDistance = totalDistance + mapRoute.crumbs[mapRoute.crumbs.count - 1].distanceTo(coordinate: mapRoute.finish)
+        if routeName == "Prima" {
+            print(totalDistance)
+        }
+        self.distance = totalDistance
         self.caregiver = caregiver
         self.mapRoute = mapRoute
     }
