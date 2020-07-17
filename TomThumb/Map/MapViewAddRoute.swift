@@ -2,26 +2,18 @@
 //  MapViewAddRoute.swift
 //  TomThumb
 //
-//  Created by Marco Ortu on 15/07/2020.
+//  Created by Marco Ortu on 17/07/2020.
 //  Copyright © 2020 Sora. All rights reserved.
 //
 
 import SwiftUI
 import MapKit
-
-var crumbs: [CLLocationCoordinate2D] = []
-
+let mapView = MKMapView()
 struct MapViewAddRoute: UIViewRepresentable {
-    let locationManager = CLLocationManager()
-    
-    @Binding var pin: MapPin
-    
-    func makeCoordinator() -> MapViewAddRoute.Coordinator {
-        return MapViewAddRoute.Coordinator(parent: self)
-    }
+    @Binding var centerCoordinate: CLLocationCoordinate2D
+    var annotations: [MKPointAnnotation]
     
     func makeUIView(context: Context) -> MKMapView {
-        let mapView = MKMapView(frame: .zero)
         
         let status = CLLocationManager.authorizationStatus()
         locationManager.requestAlwaysAuthorization()
@@ -39,45 +31,49 @@ struct MapViewAddRoute: UIViewRepresentable {
             
             let annotation = MKPointAnnotation()
             annotation.coordinate = location
-            
             mapView.delegate = context.coordinator
             mapView.addAnnotation(annotation)
         }
-
         return mapView
     }
     
-    func updateUIView(_ view: MKMapView, context: Context) {
-
+    func updateUIView(_ uiView: MKMapView, context: Context) {
+        if annotations.count != uiView.annotations.count {
+            uiView.removeAnnotations(uiView.annotations)
+            uiView.addAnnotations(annotations)
+        }
+    }
+    
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
     }
     
     class Coordinator: NSObject, MKMapViewDelegate {
         var parent: MapViewAddRoute
         
-        init(parent: MapViewAddRoute) {
+        init(_ parent: MapViewAddRoute) {
             self.parent = parent
         }
         
-        func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-            let pin = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "pin")
-            pin.isDraggable = true
-            pin.pinTintColor = .blue
-            pin.animatesDrop = true
-            
-            return pin
+        func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
+            parent.centerCoordinate = mapView.centerCoordinate
         }
         
-        func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, didChange newState: MKAnnotationView.DragState, fromOldState oldState: MKAnnotationView.DragState) {
-            CLGeocoder().reverseGeocodeLocation(CLLocation(latitude: (view.annotation?.coordinate.latitude)!, longitude: (view.annotation?.coordinate.longitude)!)) { (places, err) in
-                self.parent.pin = MapPin(coordinate: CLLocationCoordinate2D(latitude: (view.annotation?.coordinate.latitude)!, longitude: (view.annotation?.coordinate.longitude)!), title: (places?.first?.name)!, subtitle: (places?.first?.locality)!)
+        func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+            
+            if annotation is MKUserLocation {
+                return nil
             }
-            if(newState.rawValue == 0) {
-                //insert a new crumb on releasing the map pin
-                crumbs.append(CLLocationCoordinate2D(latitude: (view.annotation?.coordinate.latitude)!, longitude: (view.annotation?.coordinate.longitude)!))
-            }
-            print("-- CRUMBS --")
-            print(crumbs)
-            print("Size: \(crumbs.count)")
+            
+            let annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: "pin")
+
+            annotationView.markerTintColor = InterfaceConstants.crumbPinColor
+            annotationView.titleVisibility = MKFeatureVisibility.visible;
+            annotationView.canShowCallout = true
+            annotationView.glyphImage = UIImage(systemName: "staroflife.fill")
+            annotationView.isEnabled = true
+        
+            return annotationView
         }
     }
 }

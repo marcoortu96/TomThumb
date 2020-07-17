@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import MapKit
 
 var routes = RoutesFactory().routes
 
@@ -39,7 +40,7 @@ struct RoutesView: View {
         }
         .accentColor(InterfaceConstants.genericlinkForegroundColor)
         .sheet(isPresented: $showAddRouteView) {
-            AddRouteView(showSheetView: self.$showAddRouteView)
+            AddRouteView(showSheetView: self.$showAddRouteView, centerCoordinate: locationManager.location!.coordinate)
         }
     }
     
