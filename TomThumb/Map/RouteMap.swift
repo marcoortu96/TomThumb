@@ -14,16 +14,7 @@ struct RouteMap: View {
     @ObservedObject var locationViewModel = LocationManager()
     
     var body: some View {
-        ZStack {
-            MapView(mapRoute: mapRoute)
-            HStack() {
-                Text("Latitude: \(self.locationViewModel.userLatitude)")
-                Text("Longitude: \(self.locationViewModel.userLongitude)")
-            }
-            .background(Color.black)
-            .foregroundColor(.white)
-            .padding(.top, (UIScreen.main.bounds.size.height/100) * 70)
-        }
+        MapView(mapRoute: mapRoute)
     }
 }
 

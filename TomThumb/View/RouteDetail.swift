@@ -26,9 +26,9 @@ struct RouteDetail: View {
                         Text("\(route.crumbs)").foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
                     }
                     HStack {
-                        Text("Durata")
+                        Text("Distanza")
                         Spacer()
-                        Text("\(route.duration)").foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
+                        Text("\(route.distance.short)m").foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
                     }
                 }
                 Section(header: Text("Mappa")) {
@@ -58,6 +58,6 @@ struct RouteDetail: View {
 
 struct RouteDetail_Previews: PreviewProvider {
     static var previews: some View {
-        RouteDetail(route: Route(routeName: "Prima", user: "Filippo", crumbs: 10, duration: TimeInterval(1000),  distance: 500.0, caregiver: CaregiverFactory().caregivers[0], mapRoute: MapRoutesFactory().mapRoutes[0]))
+        RouteDetail(route: Route(routeName: "Prima", user: "Filippo", caregiver: CaregiverFactory().caregivers[0], mapRoute: MapRoutesFactory().mapRoutes[0]))
     }
 }
