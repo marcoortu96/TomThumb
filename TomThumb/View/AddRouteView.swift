@@ -93,7 +93,9 @@ struct AddRouteView: View {
                         crumbs.removeFirst()
                         crumbs.removeLast()
                         print("crumbs after: \(crumbs.count)")
-                        /*RoutesFactory().routes.append(Route(routeName: "Percorso Cazzo", user: CaregiverFactory().caregivers[0].children[0].name, crumbs: self.locations.count, duration: TimeInterval(1000), distance: 500, caregiver: CaregiverFactory().caregivers[0], mapRoute: MapRoute(start: crumbs[0], crumbs: crumbs, finish: crumbs[crumbs.count-1])))*/
+                        let mapRoute = MapRoute(start: crumbStart, crumbs: crumbs, finish: crumbFinish)
+                     
+                        RoutesFactory().routes.append(Route(routeName: "Percorso Cazzo", user: CaregiverFactory().caregivers[0].children[0].name, caregiver: CaregiverFactory().caregivers[0], mapRoute: mapRoute))
                         
                     }) {
                         Text("Salva")
@@ -105,7 +107,7 @@ struct AddRouteView: View {
             }
             .navigationBarTitle("Aggiungi", displayMode: .inline)
             .navigationBarItems(trailing: Button(action: {
-                print("Dismissing sheet view...")
+                print("Routes \(RoutesFactory().routes.count)")
                 self.showSheetView = false
             }) {
                 Text("Indietro").bold()

@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct RoutesFactory {
+class RoutesFactory {
     
     var routes: [Route] = []
     
