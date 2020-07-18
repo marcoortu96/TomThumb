@@ -19,9 +19,8 @@ struct AddRouteView: View {
     @State private var searchText = ""
     @State var centerCoordinate: CLLocationCoordinate2D
     @State private var locations = [MKPointAnnotation]()
-    
-    //@State var pin = MapPin(coordinate: locationManager.location!.coordinate, title: "", subtitle: "")
-    
+    @ObservedObject var audioRecorder: AudioRecorder
+    @State var showingAudioAlert = false
     
     var body: some View {
         NavigationView {
@@ -43,6 +42,8 @@ struct AddRouteView: View {
                                 newLocation.title = self.locations.count == 0 ? "start" : String(self.locations.count)
                                 newLocation.coordinate = self.centerCoordinate
                                 self.locations.append(newLocation)
+                                self.showingAudioAlert = true
+                                
                             }) {
                                 Image(systemName: "plus")
                                     .foregroundColor(.white)
@@ -55,16 +56,20 @@ struct AddRouteView: View {
                             .padding(.bottom)
                         }
                     }
-                    /*HStack{
-                     Image(systemName: "info.circle.fill").font(.title).foregroundColor(.black)
-                     VStack {
-                     Text(pin.title!).font(.body).foregroundColor(.black)
-                     Text(pin.subtitle!).font(.caption).foregroundColor(.gray)
+                    // Show popup for add audio to a crumb (tapGesture to fix)
+                     if self.showingAudioAlert {
+                         GeometryReader {_ in
+                             popupAudio(audioRecorder: self.audioRecorder)
+                         }
+                         .background(Color.black.opacity(0.90))
+                         .cornerRadius(15)
+                         .frame(width: 300, height: 500)
+                         .onTapGesture {
+                             withAnimation {
+                                 self.showingAudioAlert.toggle()
+                             }
+                         }
                      }
-                     }
-                     .padding()
-                     .background(Color(.lightGray))
-                     .cornerRadius(15)*/
                 }
                 HStack {
                     //Remove last annotation
@@ -112,5 +117,37 @@ struct AddRouteView: View {
                 Text("Indietro").bold()
             })
         }
+    }
+}
+
+struct popupAudio: View {
+    @ObservedObject var audioRecorder: AudioRecorder
+    
+    var body: some View {
+        VStack(alignment: .center, spacing: 15) {
+            RecordingsList(audioRecorder: self.audioRecorder)
+            if self.audioRecorder.recording == false {
+                Button(action: {print(self.audioRecorder.startRecording())}) {
+                    Image(systemName: "circle.fill")
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 50, height: 50)
+                        .clipped()
+                        .foregroundColor(.red)
+                        .padding(.bottom, 40)
+                }
+            } else {
+                Button(action: {self.audioRecorder.stopRecording()}) {
+                    Image(systemName: "stop.fill")
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 50, height: 50)
+                        .clipped()
+                        .foregroundColor(.red)
+                        .padding(.bottom, 40)
+                }
+            }
+        }
+        .navigationBarTitle("Aggiungi audio", displayMode: .inline)
     }
 }

@@ -15,6 +15,7 @@ struct RoutesView: View {
     @State private var searchText = ""
     @State var showAddRouteView = false
     @ObservedObject var routesFactory = RoutesFactory.getInstance()
+    @State var audioRecorder = AudioRecorder()
     
     var body: some View {
         NavigationView {
@@ -41,7 +42,7 @@ struct RoutesView: View {
         .accentColor(InterfaceConstants.genericLinkForegroundColor)
         .sheet(isPresented: $showAddRouteView) {
             //add new route view (load sheet)
-            AddRouteView(showSheetView: self.$showAddRouteView, centerCoordinate: locationManager.location!.coordinate)
+            AddRouteView(showSheetView: self.$showAddRouteView, centerCoordinate: locationManager.location!.coordinate, audioRecorder: self.audioRecorder)
         }
     }
     
