@@ -57,19 +57,20 @@ struct AddRouteView: View {
                         }
                     }
                     // Show popup for add audio to a crumb (tapGesture to fix)
-                     if self.showingAudioAlert {
-                         GeometryReader {_ in
-                             popupAudio(audioRecorder: self.audioRecorder)
-                         }
-                         .background(Color.black.opacity(0.90))
-                         .cornerRadius(15)
-                         .frame(width: 300, height: 500)
-                         .onTapGesture {
-                             withAnimation {
-                                 self.showingAudioAlert.toggle()
-                             }
-                         }
-                     }
+                    if self.showingAudioAlert {
+                        GeometryReader {_ in
+                            PopupAudio(audioRecorder: self.audioRecorder)
+                        }
+                        .background(Color.black.opacity(0.90))
+                        .cornerRadius(15)
+                        .frame(width: (UIScreen.main.bounds.size.width/100) * 85, height: (UIScreen.main.bounds.size.height/100) * 55)
+                        .onTapGesture {
+                            withAnimation {
+                                print("TOGGLED")
+                                self.showingAudioAlert.toggle()
+                            }
+                        }
+                    }
                 }
                 HStack {
                     //Remove last annotation
@@ -120,11 +121,15 @@ struct AddRouteView: View {
     }
 }
 
-struct popupAudio: View {
+struct PopupAudio: View {
     @ObservedObject var audioRecorder: AudioRecorder
     
     var body: some View {
         VStack(alignment: .center, spacing: 15) {
+            Spacer()
+            Text("Seleziona audio")
+                .font(.system(size: 18))
+                .fontWeight(.bold)
             RecordingsList(audioRecorder: self.audioRecorder)
             if self.audioRecorder.recording == false {
                 Button(action: {print(self.audioRecorder.startRecording())}) {
@@ -134,7 +139,7 @@ struct popupAudio: View {
                         .frame(width: 50, height: 50)
                         .clipped()
                         .foregroundColor(.red)
-                        .padding(.bottom, 40)
+                        .padding(.bottom, 15)
                 }
             } else {
                 Button(action: {self.audioRecorder.stopRecording()}) {
@@ -144,10 +149,9 @@ struct popupAudio: View {
                         .frame(width: 50, height: 50)
                         .clipped()
                         .foregroundColor(.red)
-                        .padding(.bottom, 40)
+                        .padding(.bottom, 15)
                 }
             }
         }
-        .navigationBarTitle("Aggiungi audio", displayMode: .inline)
     }
 }

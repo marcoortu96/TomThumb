@@ -48,7 +48,7 @@ struct RecordingRow: View {
                 Button(action: {
                     self.audioPlayer.stopPlayback()
                 }) {
-                    Image(systemName: "stop.fill")
+                    Image(systemName: "stop.circle.fill")
                         .imageScale(.large)
                 }
             }
