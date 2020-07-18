@@ -66,12 +66,17 @@ struct MapViewAddRoute: UIViewRepresentable {
             }
             
             let annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: "pin")
-
-            annotationView.markerTintColor = InterfaceConstants.crumbPinColor
+            
+            if annotation.title == "start" {
+                annotationView.markerTintColor = InterfaceConstants.startPinColor
+            } else {
+                annotationView.markerTintColor = InterfaceConstants.crumbPinColor
+                annotationView.glyphImage = UIImage(systemName: "staroflife.fill")
+            }
+            
             annotationView.titleVisibility = MKFeatureVisibility.visible;
             annotationView.canShowCallout = true
-            annotationView.glyphImage = UIImage(systemName: "staroflife.fill")
-            annotationView.isEnabled = true
+            annotationView.isEnabled = false
         
             return annotationView
         }

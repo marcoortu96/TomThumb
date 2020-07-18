@@ -9,16 +9,19 @@
 import SwiftUI
 import MapKit
 
-var routes = RoutesFactory().routes
+
 
 struct RoutesView: View {
     @State private var searchText = ""
     @State var showAddRouteView = false
+    @ObservedObject var routesFactory = RoutesFactory.getInstance()
+    
     var body: some View {
         NavigationView {
             VStack {
                 SearchBar(searchText: $searchText)
-                List(routes.filter {
+                //print routes-list
+                List(routesFactory.getRoutes().filter {
                     self.searchText == "" ? true : $0.routeName.localizedCaseInsensitiveContains(searchText)
                     }, id: \.self)
                 { route in
@@ -26,20 +29,18 @@ struct RoutesView: View {
                         Text(route.routeName)
                     }
                 }
-                
             }.navigationBarTitle("Percorsi")
-             .navigationBarItems(trailing:
-                 Button(action: {
-                    print("add icon pressed...")
-                    self.showAddRouteView.toggle()
-                    
-                 }) {
-                    Image(systemName: "plus.circle").font(.largeTitle)
-                 }
-             )
+                .navigationBarItems(trailing:
+                    Button(action: {
+                        self.showAddRouteView.toggle()
+                    }) {
+                        Image(systemName: "plus.circle").font(.largeTitle)
+                    }
+            )
         }
-        .accentColor(InterfaceConstants.genericlinkForegroundColor)
+        .accentColor(InterfaceConstants.genericLinkForegroundColor)
         .sheet(isPresented: $showAddRouteView) {
+            //add new route view (load sheet)
             AddRouteView(showSheetView: self.$showAddRouteView, centerCoordinate: locationManager.location!.coordinate)
         }
     }

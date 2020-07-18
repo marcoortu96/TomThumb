@@ -30,7 +30,6 @@ struct MapView: UIViewRepresentable {
         locationManager.requestAlwaysAuthorization()
         locationManager.requestWhenInUseAuthorization()
         
-        //Control if user authorized his position
         if status == .authorizedAlways || status == .authorizedWhenInUse {
             locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
             locationManager.startUpdatingLocation()
@@ -54,7 +53,7 @@ struct MapView: UIViewRepresentable {
             }
             
             let span = MKCoordinateSpan(latitudeDelta: 0.09, longitudeDelta: 0.09)
-            let region = MKCoordinateRegion(center: mapRoute.crumbs[mapRoute.crumbs.capacity/2], span: span)
+            let region = MKCoordinateRegion(center: mapRoute.crumbs[mapRoute.crumbs.count/2], span: span)
             mapView.setRegion(region, animated: true)
             mapView.mapType = .hybrid
             mapView.delegate = context.coordinator
@@ -85,23 +84,18 @@ struct MapView: UIViewRepresentable {
             switch annotation.title! {
             case "start":
                 annotationView.markerTintColor = InterfaceConstants.startPinColor
-                annotationView.titleVisibility = MKFeatureVisibility.visible;
-                annotationView.canShowCallout = true
                 annotationView.isEnabled = false
             case "finish":
                 annotationView.markerTintColor = InterfaceConstants.finishPinColor
-                annotationView.titleVisibility = MKFeatureVisibility.visible;
-                annotationView.canShowCallout = true
                 annotationView.isEnabled = false
             default:
                 annotationView.markerTintColor = InterfaceConstants.crumbPinColor
-                annotationView.titleVisibility = MKFeatureVisibility.visible;
-                annotationView.canShowCallout = true
                 annotationView.glyphImage = UIImage(systemName: "staroflife.fill")
                 annotationView.isEnabled = true
             }
             
-            
+            annotationView.titleVisibility = MKFeatureVisibility.visible;
+            annotationView.canShowCallout = true
             
             return annotationView
         }

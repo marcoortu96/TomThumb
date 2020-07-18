@@ -60,12 +60,12 @@ struct SettingView: View {
                         Button(action: {
                             print("Perform an action here...")
                         }) {
-                            Text("Logout").frame(minWidth: 0, maxWidth: .infinity).accentColor(InterfaceConstants.negativeLnkForegroundColor)
+                            Text("Logout").frame(minWidth: 0, maxWidth: .infinity).accentColor(InterfaceConstants.negativeLinkForegroundColor)
                         }
                     }
                 }
             }.navigationBarTitle("Impostazioni")
-        }.accentColor(InterfaceConstants.genericlinkForegroundColor)
+        }.accentColor(InterfaceConstants.genericLinkForegroundColor)
     }
 }
 

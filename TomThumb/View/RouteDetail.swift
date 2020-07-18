@@ -10,46 +10,53 @@ import SwiftUI
 
 struct RouteDetail: View {
     var route: Route
-    @Environment(\.presentationMode) var presentationMode
+    //@Environment(\.presentationMode) var presentationMode
     
     var body: some View {
-            Form {
-                Section(header: Text("Dettagli")) {
-                    HStack {
-                        Text("Utente")
-                        Spacer()
-                        Text(route.user).foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
-                    }
-                    HStack {
-                        Text("#Molliche")
-                        Spacer()
-                        Text("\(route.crumbs)").foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
-                    }
-                    HStack {
-                        Text("Distanza")
-                        Spacer()
-                        Text("\(route.distance.short)m").foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
-                    }
+        Form {
+            Section(header: Text("Dettagli")) {
+                HStack {
+                    Text("Assistito")
+                    Spacer()
+                    Text(route.user).foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
                 }
-                Section(header: Text("Mappa")) {
-                    NavigationLink(destination: RouteMap(mapRoute: route.mapRoute)) {
-                        Text("Visualizza il percorso")
-                    }.accentColor(InterfaceConstants.genericlinkForegroundColor)
+                HStack {
+                    Text("#Molliche")
+                    Spacer()
+                    Text("\(route.crumbs)").foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
                 }
-                Section(header: Text("Condivisione")) {
-                    Button(action: {
-                        //Send route to user
-                        print("Share tapped!")
-                    }) {
-                        HStack {
-                            Text("Invia percorso")
-                            
-                        }
+                HStack {
+                    Text("Distanza")
+                    Spacer()
+                    Text("\(route.distance.short)m").foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
+                }
+            }
+            Section(header: Text("Mappa")) {
+                NavigationLink(destination: RouteMap(mapRoute: route.mapRoute)) {
+                    Text("Visualizza il percorso")
+                }.accentColor(InterfaceConstants.genericLinkForegroundColor)
+            }
+            Section(header: Text("Prova")) {
+                Button(action: {
+                    //Debug route view
+                    print("Debug route tapped!")
+                }) {
+                    Text("Avvia il test del percorso")
                         .frame(minWidth: 0, maxWidth: .infinity)
-                        .foregroundColor(InterfaceConstants.genericlinkForegroundColor)
-                    }
+                        .foregroundColor(InterfaceConstants.positiveLinkForegroundColor)
                 }
-            }.navigationBarTitle(Text(route.routeName), displayMode: .inline)
+            }
+            Section(header: Text("Condivisione")) {
+                Button(action: {
+                    //Send route to user
+                    print("Share tapped!")
+                }) {
+                    Text("Invia percorso")
+                        .frame(minWidth: 0, maxWidth: .infinity)
+                        .foregroundColor(InterfaceConstants.genericLinkForegroundColor)
+                }
+            }
+        }.navigationBarTitle(Text(route.routeName), displayMode: .inline)
     }
     
 }

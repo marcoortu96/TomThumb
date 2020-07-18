@@ -10,8 +10,9 @@ import Foundation
 import SwiftUI
 
 struct InterfaceConstants {
-    static let genericlinkForegroundColor: Color = .blue
-    static let negativeLnkForegroundColor: Color = .red
+    static let genericLinkForegroundColor: Color = .blue
+    static let positiveLinkForegroundColor: Color = .green
+    static let negativeLinkForegroundColor: Color = .red
     static let tabBackgroundColor: UIColor = .gray
     static let tabForegroundColor: Color = .black
     
