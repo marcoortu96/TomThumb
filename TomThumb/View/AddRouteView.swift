@@ -65,13 +65,6 @@ struct AddRouteView: View {
                         .background(Color.black.opacity(0.90))
                         .cornerRadius(15)
                         .frame(width: (UIScreen.main.bounds.size.width/100) * 85, height: (UIScreen.main.bounds.size.height/100) * 60)
-                        .onTapGesture {
-                            //TODO: audio selection & alert dismiss here
-                            withAnimation {
-                                print("TOGGLED")
-                                //self.showingAudioAlert.toggle()
-                            }
-                        }
                     }
                 }
                 HStack {
@@ -117,7 +110,7 @@ struct AddRouteView: View {
                 self.showSheetView = false
             }) {
                 Text("Indietro").bold()
-                }.disabled(!self.showingAudioAlert))
+                }.disabled(self.showingAudioAlert))
         }
     }
 }
