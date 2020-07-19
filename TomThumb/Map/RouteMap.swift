@@ -20,6 +20,8 @@ struct RouteMap: View {
 
 struct RouteMap_Previews: PreviewProvider {
     static var previews: some View {
-        RouteMap(mapRoute: MapRoute(start:CLLocationCoordinate2D(latitude: 39.306738158798424, longitude: 8.522636807002641), crumbs: [], finish: CLLocationCoordinate2D(latitude: 39.3124391731902, longitude:  8.532612347127468)))
+        RouteMap(mapRoute: MapRoute(start: Crumb(location: CLLocationCoordinate2D(latitude: 39.306738158798424, longitude: 8.522636807002641)),
+                                    crumbs: [],
+                                    finish: Crumb(location: CLLocationCoordinate2D(latitude: 39.3124391731902, longitude:  8.532612347127468))))
     }
 }

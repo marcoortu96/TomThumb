@@ -21,6 +21,7 @@ struct AddRouteView: View {
     @State private var locations = [MKPointAnnotation]()
     @ObservedObject var audioRecorder: AudioRecorder
     @State var showingAudioAlert = false
+    @State var crumbAudio = ""
     
     var body: some View {
         NavigationView {
@@ -59,15 +60,16 @@ struct AddRouteView: View {
                     // Show popup for add audio to a crumb (tapGesture to fix)
                     if self.showingAudioAlert {
                         GeometryReader {_ in
-                            PopupAudio(audioRecorder: self.audioRecorder)
+                            PopupAudio(showingAudioAlert: self.$showingAudioAlert, audioRecorder: self.audioRecorder, selectedAudio: self.crumbAudio)
                         }
                         .background(Color.black.opacity(0.90))
                         .cornerRadius(15)
-                        .frame(width: (UIScreen.main.bounds.size.width/100) * 85, height: (UIScreen.main.bounds.size.height/100) * 55)
+                        .frame(width: (UIScreen.main.bounds.size.width/100) * 85, height: (UIScreen.main.bounds.size.height/100) * 60)
                         .onTapGesture {
+                            //TODO: audio selection & alert dismiss here
                             withAnimation {
                                 print("TOGGLED")
-                                self.showingAudioAlert.toggle()
+                                //self.showingAudioAlert.toggle()
                             }
                         }
                     }
@@ -80,20 +82,19 @@ struct AddRouteView: View {
                         }
                     }) {
                         Text("Annulla")
-                            .foregroundColor(self.locations.count == 0 ? Color.red.opacity(0.3) : Color.red)
+                            .foregroundColor((self.showingAudioAlert || self.locations.count == 0) ? Color.red.opacity(0.3) : Color.red)
                     }
                     .padding()
-                    .disabled(self.locations.count == 0)
+                    .disabled(self.showingAudioAlert || self.locations.count == 0)
                     Spacer()
-                    
                     Button(action: {
                         //Save new route
-                        var crumbs: [CLLocationCoordinate2D] = []
-                        var start: CLLocationCoordinate2D
-                        var finish: CLLocationCoordinate2D
+                        var crumbs: [Crumb] = []
+                        var start: Crumb
+                        var finish: Crumb
                         
                         for loc in self.locations {
-                            crumbs.append(CLLocationCoordinate2D(latitude: loc.coordinate.latitude, longitude: loc.coordinate.longitude))
+                            crumbs.append(Crumb(location: CLLocationCoordinate2D(latitude: loc.coordinate.latitude, longitude: loc.coordinate.longitude)))
                         }
                         start = crumbs[0]
                         finish = crumbs[crumbs.count-1]
@@ -105,10 +106,10 @@ struct AddRouteView: View {
                         self.showSheetView = false
                     }) {
                         Text("Salva")
-                            .foregroundColor(self.locations.count <= 2 ? Color.blue.opacity(0.3) : Color.blue)
+                            .foregroundColor((self.showingAudioAlert || self.locations.count <= 2) ? Color.blue.opacity(0.3) : Color.blue)
                     }
                     .padding()
-                    .disabled(self.locations.count <= 2)
+                    .disabled(self.showingAudioAlert || self.locations.count <= 2)
                 }
             }
             .navigationBarTitle("Aggiungi", displayMode: .inline)
@@ -116,13 +117,16 @@ struct AddRouteView: View {
                 self.showSheetView = false
             }) {
                 Text("Indietro").bold()
-            })
+                }.disabled(!self.showingAudioAlert))
         }
     }
 }
 
 struct PopupAudio: View {
+    @Binding var showingAudioAlert: Bool
     @ObservedObject var audioRecorder: AudioRecorder
+    @State var selectedAudio: String
+    
     
     var body: some View {
         VStack(alignment: .center, spacing: 15) {
@@ -130,7 +134,7 @@ struct PopupAudio: View {
             Text("Seleziona audio")
                 .font(.system(size: 18))
                 .fontWeight(.bold)
-            RecordingsList(audioRecorder: self.audioRecorder)
+            RecordingsList(audioRecorder: self.audioRecorder, selectedAudio: self.$selectedAudio)
             if self.audioRecorder.recording == false {
                 Button(action: {print(self.audioRecorder.startRecording())}) {
                     Image(systemName: "circle.fill")
@@ -139,7 +143,6 @@ struct PopupAudio: View {
                         .frame(width: 50, height: 50)
                         .clipped()
                         .foregroundColor(.red)
-                        .padding(.bottom, 15)
                 }
             } else {
                 Button(action: {self.audioRecorder.stopRecording()}) {
@@ -149,9 +152,15 @@ struct PopupAudio: View {
                         .frame(width: 50, height: 50)
                         .clipped()
                         .foregroundColor(.red)
-                        .padding(.bottom, 15)
                 }
             }
+            Button(action: {
+                self.showingAudioAlert.toggle()
+            }) {
+                Text("Conferma inserimento")
+                    .foregroundColor(self.selectedAudio.count < 1 ? Color.gray : InterfaceConstants.genericLinkForegroundColor)
+            }.disabled(self.selectedAudio.count < 1)
+            Spacer()
         }
     }
 }

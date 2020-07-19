@@ -65,15 +65,15 @@ class AudioRecorder: NSObject, ObservableObject {
         recordings.removeAll()
         
         let fileManager = FileManager.default
-        let documnetDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        let directoryContents = try! fileManager.contentsOfDirectory(at: documnetDirectory, includingPropertiesForKeys: nil)
+        let documentDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let directoryContents = try! fileManager.contentsOfDirectory(at: documentDirectory, includingPropertiesForKeys: nil)
         
         for audio in directoryContents {
             let recording = Recording(fileURL: audio, createDate: getCreationDate(for: audio))
             recordings.append(recording)
         }
         
-        recordings.sort(by: {$0.createDate.compare($1.createDate) == .orderedAscending})
+        recordings.sort(by: {$0.createDate.compare($1.createDate) == .orderedDescending})
         objectWillChange.send(self)
     }
     
