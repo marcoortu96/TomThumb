@@ -10,7 +10,7 @@ import SwiftUI
 
 struct RecordingsList: View {
     @ObservedObject var audioRecorder: AudioRecorder
-    @Binding var selectedAudio: String
+    @Binding var selectedAudio: URL
     
     var body: some View {
         List {
@@ -33,16 +33,16 @@ struct RecordingsList: View {
 struct RecordingRow: View {
     var audioURL: URL
     @ObservedObject var audioPlayer = AudioPlayer()
-    @Binding var selectedAudio: String
+    @Binding var selectedAudio: URL
     
     var body: some View {
         HStack {
             GeometryReader { _ in
                 Text("\(self.audioURL.lastPathComponent)")
-                    .foregroundColor(self.selectedAudio == self.audioURL.lastPathComponent ? .green : .white)
+                    .foregroundColor(self.selectedAudio.lastPathComponent == self.audioURL.lastPathComponent ? .green : .white)
                 
             }.onTapGesture {
-                self.selectedAudio = self.audioURL.lastPathComponent
+                self.selectedAudio = self.audioURL
             }
             Spacer()
             if audioPlayer.isPlaying == false {

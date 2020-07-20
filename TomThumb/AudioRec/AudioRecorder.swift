@@ -63,7 +63,7 @@ class AudioRecorder: NSObject, ObservableObject {
     
     func fetchRecordings() {
         recordings.removeAll()
-        
+        recordings.append(Recording(fileURL: URL(fileURLWithPath: Bundle.main.path(forResource: "start.m4a", ofType: nil)!), createDate: Date(timeIntervalSince1970: TimeInterval(exactly: 1000)!)))
         let fileManager = FileManager.default
         let documentDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
         let directoryContents = try! fileManager.contentsOfDirectory(at: documentDirectory, includingPropertiesForKeys: nil)
@@ -73,7 +73,7 @@ class AudioRecorder: NSObject, ObservableObject {
             recordings.append(recording)
         }
         
-        recordings.sort(by: {$0.createDate.compare($1.createDate) == .orderedDescending})
+        recordings.sort(by: {$0.createDate.compare($1.createDate) == .orderedAscending})
         objectWillChange.send(self)
     }
     

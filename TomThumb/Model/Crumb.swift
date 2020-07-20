@@ -13,6 +13,7 @@ struct Crumb {
     var location: CLLocationCoordinate2D
     var audio: URL?
     
+    
     init(location: CLLocationCoordinate2D) {
         self.location = location
     }

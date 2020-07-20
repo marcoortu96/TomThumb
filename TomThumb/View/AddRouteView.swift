@@ -21,7 +21,10 @@ struct AddRouteView: View {
     @State private var locations = [MKPointAnnotation]()
     @ObservedObject var audioRecorder: AudioRecorder
     @State var showingAudioAlert = false
-    @State var crumbAudio = ""
+    @State var crumbAudio: URL
+    @State var currentCrumb: Crumb
+    @State var crumbs: [Crumb]
+    
     
     var body: some View {
         NavigationView {
@@ -44,6 +47,7 @@ struct AddRouteView: View {
                                 newLocation.coordinate = self.centerCoordinate
                                 self.locations.append(newLocation)
                                 self.showingAudioAlert = true
+                                self.currentCrumb = Crumb(location: CLLocationCoordinate2D(latitude: newLocation.coordinate.latitude, longitude: newLocation.coordinate.longitude))
                                 
                             }) {
                                 Image(systemName: "plus")
@@ -57,10 +61,10 @@ struct AddRouteView: View {
                             .padding(.bottom)
                         }
                     }
-                    // Show popup for add audio to a crumb (tapGesture to fix)
+                    // Show popup for add audio to a crumb
                     if self.showingAudioAlert {
                         GeometryReader {_ in
-                            PopupAudio(showingAudioAlert: self.$showingAudioAlert, audioRecorder: self.audioRecorder, selectedAudio: self.crumbAudio)
+                            PopupAudio(showingAudioAlert: self.$showingAudioAlert, audioRecorder: self.audioRecorder, selectedAudio: self.crumbAudio, currentCrumb: self.$currentCrumb, crumbs: self.$crumbs)
                         }
                         .background(Color.black.opacity(0.90))
                         .cornerRadius(15)
@@ -82,20 +86,17 @@ struct AddRouteView: View {
                     Spacer()
                     Button(action: {
                         //Save new route
-                        var crumbs: [Crumb] = []
                         var start: Crumb
                         var finish: Crumb
-                        
-                        for loc in self.locations {
-                            crumbs.append(Crumb(location: CLLocationCoordinate2D(latitude: loc.coordinate.latitude, longitude: loc.coordinate.longitude)))
-                        }
-                        start = crumbs[0]
-                        finish = crumbs[crumbs.count-1]
-                        crumbs.removeFirst()
-                        crumbs.removeLast()
-                        let mapRoute = MapRoute(start: start, crumbs: crumbs, finish: finish)
+
+                        start = self.crumbs[0]
+                        finish = self.crumbs[self.crumbs.count-1]
+                        self.crumbs.removeFirst()
+                        self.crumbs.removeLast()
+                        let mapRoute = MapRoute(start: start, crumbs: self.crumbs, finish: finish)
                         let newRoute = Route(routeName: "New", user: ChildFactory().children[0].name, caregiver: CaregiverFactory().caregivers[0], mapRoute: mapRoute)
                         RoutesFactory.insertRoute(route: newRoute)
+                        print(RoutesFactory.getInstance().getRoutes())
                         self.showSheetView = false
                     }) {
                         Text("Salva")
@@ -118,7 +119,9 @@ struct AddRouteView: View {
 struct PopupAudio: View {
     @Binding var showingAudioAlert: Bool
     @ObservedObject var audioRecorder: AudioRecorder
-    @State var selectedAudio: String
+    @State var selectedAudio: URL
+    @Binding var currentCrumb: Crumb
+    @Binding var crumbs: [Crumb]
     
     
     var body: some View {
@@ -129,7 +132,7 @@ struct PopupAudio: View {
                 .fontWeight(.bold)
             RecordingsList(audioRecorder: self.audioRecorder, selectedAudio: self.$selectedAudio)
             if self.audioRecorder.recording == false {
-                Button(action: {print(self.audioRecorder.startRecording())}) {
+                Button(action: {self.audioRecorder.startRecording()}) {
                     Image(systemName: "circle.fill")
                         .resizable()
                         .aspectRatio(contentMode: .fill)
@@ -149,10 +152,12 @@ struct PopupAudio: View {
             }
             Button(action: {
                 self.showingAudioAlert.toggle()
+                self.crumbs.append(Crumb(location: self.currentCrumb.location, audio: self.selectedAudio))
+                
             }) {
                 Text("Conferma inserimento")
-                    .foregroundColor(self.selectedAudio.count < 1 ? Color.gray : InterfaceConstants.genericLinkForegroundColor)
-            }.disabled(self.selectedAudio.count < 1)
+                    .foregroundColor(self.selectedAudio.lastPathComponent.count < 2 ? Color.gray : InterfaceConstants.genericLinkForegroundColor)
+            }.disabled(self.selectedAudio.lastPathComponent.count < 2)
             Spacer()
         }
     }

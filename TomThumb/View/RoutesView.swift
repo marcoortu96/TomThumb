@@ -16,7 +16,9 @@ struct RoutesView: View {
     @State var showAddRouteView = false
     @ObservedObject var routesFactory = RoutesFactory.getInstance()
     @State var audioRecorder = AudioRecorder()
-    @State var crumbAudio = ""
+    @State var crumbAudio = URL(fileURLWithPath: "")
+    @State var currentCrumb = Crumb(location:  CLLocationCoordinate2D())
+    @State var crumbs = [Crumb]()
     
     var body: some View {
         NavigationView {
@@ -43,16 +45,16 @@ struct RoutesView: View {
         .accentColor(InterfaceConstants.genericLinkForegroundColor)
         .sheet(isPresented: $showAddRouteView) {
             //add new route view (load sheet)
-            AddRouteView(showSheetView: self.$showAddRouteView, centerCoordinate: locationManager.location!.coordinate, audioRecorder: self.audioRecorder, crumbAudio: self.crumbAudio)
+            AddRouteView(showSheetView: self.$showAddRouteView, centerCoordinate: locationManager.location!.coordinate, audioRecorder: self.audioRecorder, crumbAudio: self.crumbAudio, currentCrumb: self.currentCrumb, crumbs: self.crumbs)
         }
     }
     
 }
 
 
-struct RoutesView_Previews: PreviewProvider {
+/*struct RoutesView_Previews: PreviewProvider {
     static var previews: some View {
         RoutesView()
     }
-}
+}*/
 
