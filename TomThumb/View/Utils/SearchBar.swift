@@ -7,14 +7,17 @@
 //
 
 import SwiftUI
+import MapKit
 
 struct SearchBar: View {
     
     @Binding var searchText: String
     @State private var showCancelButton: Bool = false
     
-    var onCommit: () ->Void = {print("onCommit")}
-    
+    var onCommit: () ->Void = {
+
+    }
+        
     var body: some View {
         HStack {
             HStack {
@@ -27,6 +30,16 @@ struct SearchBar: View {
                     }
                     TextField("", text: $searchText, onEditingChanged: { isEditing in
                         self.showCancelButton = true
+                        // Convert address in a coordinate for search in the map
+                        let geocoder = CLGeocoder()
+                        geocoder.geocodeAddressString(self.searchText) { (placemarks, error) in
+
+                            if let center = (placemarks?.first?.region as? CLCircularRegion)?.center {
+
+                                let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.009, longitudeDelta: 0.009))
+                                mapView.setRegion(region, animated: true)
+                            }
+                        }
                     }, onCommit: onCommit).foregroundColor(.primary)
                 }
                 // Clear button
@@ -56,6 +69,7 @@ struct SearchBar: View {
         //uncomment the next line to hide the navigationBar title while entering text
         //.navigationBarHidden(showCancelButton)
     }
+    
 }
 
 struct SearchBar_Previews: PreviewProvider {

@@ -25,7 +25,6 @@ struct AddRouteView: View {
     @State var currentCrumb: Crumb
     @State var crumbs: [Crumb]
     
-    
     var body: some View {
         NavigationView {
             VStack {
