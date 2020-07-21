@@ -93,10 +93,10 @@ struct AddRouteView: View {
                         finish = self.crumbs[self.crumbs.count-1]
                         self.crumbs.removeFirst()
                         self.crumbs.removeLast()
+                        
                         let mapRoute = MapRoute(start: start, crumbs: self.crumbs, finish: finish)
                         let newRoute = Route(routeName: "New", user: ChildFactory().children[0].name, caregiver: CaregiverFactory().caregivers[0], mapRoute: mapRoute)
                         RoutesFactory.insertRoute(route: newRoute)
-                        print(RoutesFactory.getInstance().getRoutes())
                         self.showSheetView = false
                     }) {
                         Text("Salva")

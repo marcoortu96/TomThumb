@@ -25,7 +25,7 @@ struct MapView: UIViewRepresentable {
     
     func makeUIView(context: Context) -> MKMapView {
         let mapView = MKMapView(frame: .zero)
-        
+        var annotations = [MKPointAnnotation]()
         let status = CLLocationManager.authorizationStatus()
         locationManager.requestAlwaysAuthorization()
         locationManager.requestWhenInUseAuthorization()
@@ -37,26 +37,24 @@ struct MapView: UIViewRepresentable {
             let startAnnotation = MKPointAnnotation()
             startAnnotation.coordinate = mapRoute.start.location
             startAnnotation.title = "start"
-            mapView.addAnnotation(startAnnotation)
+            annotations.append(startAnnotation)
             
             let finishAnnotation = MKPointAnnotation()
             finishAnnotation.coordinate = mapRoute.finish.location
             finishAnnotation.title = "finish"
-            mapView.addAnnotation(finishAnnotation)
-            
+            annotations.append(finishAnnotation)
+           
             for (index,crumb) in mapRoute.crumbs.enumerated() {
                 let crumbAnnotation = MKPointAnnotation()
                 crumbAnnotation.coordinate = crumb.location
                 crumbAnnotation.title = String(index + 1)
                 crumbAnnotation.subtitle = String("\(crumb.location.latitude), \(crumb.location.longitude)")
-                mapView.addAnnotation(crumbAnnotation)
+                annotations.append(crumbAnnotation)
             }
             
-            let span = MKCoordinateSpan(latitudeDelta: 0.09, longitudeDelta: 0.09)
-            let region = MKCoordinateRegion(center: mapRoute.crumbs[mapRoute.crumbs.count/2].location, span: span)
-            mapView.setRegion(region, animated: true)
             mapView.mapType = .hybrid
             mapView.delegate = context.coordinator
+            mapView.showAnnotations(annotations, animated: true)
         }
         
         return mapView

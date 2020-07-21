@@ -16,6 +16,9 @@ class AudioRecorder: NSObject, ObservableObject {
     let objectWillChange = PassthroughSubject<AudioRecorder, Never>()
     var audioRecorder: AVAudioRecorder!
     var recordings = [Recording]()
+    let defaultRecordings = [Recording(fileURL: URL(fileURLWithPath: Bundle.main.path(forResource: "start.m4a", ofType: nil)!), createDate: Date(timeIntervalSince1970: TimeInterval(exactly: 0)!)),
+                             Recording(fileURL: URL(fileURLWithPath: Bundle.main.path(forResource: "crumb.m4a", ofType: nil)!), createDate: Date(timeIntervalSince1970: TimeInterval(exactly: 1)!)),
+                             Recording(fileURL: URL(fileURLWithPath: Bundle.main.path(forResource: "finish.m4a", ofType: nil)!), createDate: Date(timeIntervalSince1970: TimeInterval(exactly: 2)!))]
     var recording = false {
         didSet {
             objectWillChange.send(self)
@@ -38,7 +41,7 @@ class AudioRecorder: NSObject, ObservableObject {
         }
         
         let documentPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        let audioFilename = documentPath.appendingPathComponent("\(Date().toString(dateFormat: "dd-MM-YY'at'_HH:mm")).m4a")
+        let audioFilename = documentPath.appendingPathComponent("\(Date().toString(dateFormat: "dd-MM-YY'at'_HH:mm:ss")).m4a")
         let settings = [
             AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
             AVSampleRateKey: 12000,
@@ -47,7 +50,7 @@ class AudioRecorder: NSObject, ObservableObject {
         ]
         
         do {
-           audioRecorder = try AVAudioRecorder(url: audioFilename, settings: settings)
+            audioRecorder = try AVAudioRecorder(url: audioFilename, settings: settings)
             audioRecorder.record()
             recording = true
         } catch {
@@ -63,7 +66,7 @@ class AudioRecorder: NSObject, ObservableObject {
     
     func fetchRecordings() {
         recordings.removeAll()
-        recordings.append(Recording(fileURL: URL(fileURLWithPath: Bundle.main.path(forResource: "start.m4a", ofType: nil)!), createDate: Date(timeIntervalSince1970: TimeInterval(exactly: 1000)!)))
+        
         let fileManager = FileManager.default
         let documentDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
         let directoryContents = try! fileManager.contentsOfDirectory(at: documentDirectory, includingPropertiesForKeys: nil)
@@ -73,7 +76,8 @@ class AudioRecorder: NSObject, ObservableObject {
             recordings.append(recording)
         }
         
-        recordings.sort(by: {$0.createDate.compare($1.createDate) == .orderedAscending})
+        recordings.sort(by: {$0.createDate.compare($1.createDate) == .orderedDescending})
+        recordings = defaultRecordings + recordings
         objectWillChange.send(self)
     }
     

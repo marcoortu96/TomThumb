@@ -23,6 +23,7 @@ struct RecordingsList: View {
     
     func delete(at offsets: IndexSet) {
         var urlsToDelete = [URL]()
+        self.selectedAudio = URL(fileURLWithPath: "")
         for index in offsets {
             urlsToDelete.append(audioRecorder.recordings[index].fileURL)
         }
@@ -37,11 +38,13 @@ struct RecordingRow: View {
     
     var body: some View {
         HStack {
+            Image(systemName: "mic.fill")
             GeometryReader { _ in
                 Text("\(self.audioURL.lastPathComponent)")
                     .foregroundColor(self.selectedAudio.lastPathComponent == self.audioURL.lastPathComponent ? .green : .white)
-                
-            }.onTapGesture {
+                    .frame(width: (UIScreen.main.bounds.size.width/100) * 60, height: 30, alignment: .leading)
+            }.frame(width: (UIScreen.main.bounds.size.width/100) * 60, height: 30, alignment: .leading)
+            .onTapGesture {
                 self.selectedAudio = self.audioURL
             }
             Spacer()
@@ -64,3 +67,10 @@ struct RecordingRow: View {
     }
 }
 
+
+struct RecordingsList_Previews: PreviewProvider {
+    @State static var url = URL(fileURLWithPath: "start.m4a")
+    static var previews: some View {
+        RecordingsList(audioRecorder: AudioRecorder(), selectedAudio: $url)
+    }
+}
