@@ -20,7 +20,7 @@ struct ContentView: View {
                         Text("Percorsi")
                     }
             }.tag(0)
-            ARView().tabItem {
+            ARView(route: MapRoutesFactory().mapRoutes[0]).tabItem {
                     VStack {
                         Image(systemName: "goforward")
                         Text("Esecuzione")

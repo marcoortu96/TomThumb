@@ -74,7 +74,8 @@ struct AddRouteView: View {
                     //Remove last annotation
                     Button(action: {
                         if self.locations.count != 0 {
-                            self.locations.remove(at: (self.locations.count-1))
+                            self.locations.remove(at: self.locations.count - 1)
+                            self.crumbs.remove(at: self.crumbs.count - 1)
                         }
                     }) {
                         Text("Annulla")

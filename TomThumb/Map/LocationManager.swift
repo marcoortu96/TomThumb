@@ -26,7 +26,7 @@ class LocationManager: NSObject, ObservableObject{
     self.locationManager.allowsBackgroundLocationUpdates = false
     self.locationManager.pausesLocationUpdatesAutomatically = false
     self.locationManager.activityType = .fitness
-    self.locationManager.distanceFilter = 500.0; //updates map every 500 meters
+    self.locationManager.distanceFilter = 5.0; //updates map every 500 meters
   }
 }
 

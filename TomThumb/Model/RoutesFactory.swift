@@ -51,11 +51,18 @@ class RoutesFactory: ObservableObject {
     @Published var routes: [Route]! = []
     
     init() {
-        routes.append(Route(routeName: "Prima", user: "Filippo", caregiver: CaregiverFactory().caregivers[0], mapRoute: MapRoutesFactory().mapRoutes[0]))
-        routes.append(Route(routeName: "Terza", user: "Andrea", caregiver: CaregiverFactory().caregivers[0], mapRoute: MapRoutesFactory().mapRoutes[0]))
-        routes.append(Route(routeName: "Quinta", user: "Matteo", caregiver: CaregiverFactory().caregivers[0],
+        routes.append(Route(routeName: "Prima", user: "Filippo",
+                            caregiver: CaregiverFactory().caregivers[0],
                             mapRoute: MapRoutesFactory().mapRoutes[0]))
-        routes.append(Route(routeName: "Settima", user: "Alberto",  caregiver: CaregiverFactory().caregivers[0], mapRoute: MapRoutesFactory().mapRoutes[0]))
+        routes.append(Route(routeName: "Seconda", user: "Andrea",
+                            caregiver: CaregiverFactory().caregivers[0],
+                            mapRoute: MapRoutesFactory().mapRoutes[1]))
+        routes.append(Route(routeName: "Terza", user: "Matteo",
+                            caregiver: CaregiverFactory().caregivers[0],
+                            mapRoute: MapRoutesFactory().mapRoutes[0]))
+        routes.append(Route(routeName: "Quarta", user: "Alberto",
+                            caregiver: CaregiverFactory().caregivers[0],
+                            mapRoute: MapRoutesFactory().mapRoutes[1]))
     }
     
     public static func getInstance() -> RoutesFactory {

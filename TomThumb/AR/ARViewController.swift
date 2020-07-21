@@ -15,26 +15,12 @@ import SwiftUI
 final class ARViewController: UIViewController, UIViewControllerRepresentable {
     var sceneLocationView = SceneLocationView()
     @ObservedObject var locationManager = LocationManager()
+    var route = MapRoutesFactory().mapRoutes[1]
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         sceneLocationView.run()
-        
-        let coordinate1 = CLLocationCoordinate2D(latitude: 39.30359922336609, longitude: 8.525136433515627)
-        let location1 = CLLocation(coordinate: coordinate1, altitude: 202)
-        
-        let coordinate2 = CLLocationCoordinate2D(latitude: 39.30269757899353, longitude: 8.522419064225488)
-        let location2 = CLLocation(coordinate: coordinate2, altitude: 202)
-        let originalImage = UIImage(named: "mapPin")!
-        let image = originalImage.resized(to: CGSize(width: 20, height: 20))
-
-        let annotationNode1 = LocationAnnotationNode(location: location1, image: image)
-        let annotationNode2 = LocationAnnotationNode(location: location2, image: image)
-    
-        sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: annotationNode1)
-        sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: annotationNode2)
-    
-        
         view.addSubview(sceneLocationView)
     }
     
@@ -44,12 +30,28 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
         sceneLocationView.frame = view.bounds
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        for crumb in route.crumbs {
+            let location = CLLocation(coordinate: crumb.location, altitude: 190)
+            print("\(location.coordinate.latitude) \(location.coordinate.longitude)")
+            let originalImage = UIImage(named: "mapPin")!
+            let image = originalImage.resized(to: CGSize(width: 30, height: 30))
+            
+            let annotation = LocationAnnotationNode(location: location, image: image)
+
+            sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: annotation)
+        }
+    }
+    
+    
+    
     func makeUIViewController(context: UIViewControllerRepresentableContext<ARViewController>) -> ARViewController {
         return ARViewController()
     }
     
     func updateUIViewController(_ uiViewController: ARViewController.UIViewControllerType, context: UIViewControllerRepresentableContext<ARViewController>) {
         print("Update camera view")
+    
     }
 }
 

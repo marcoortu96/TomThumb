@@ -37,15 +37,13 @@ struct RouteDetail: View {
                 }.accentColor(InterfaceConstants.genericLinkForegroundColor)
             }
             Section(header: Text("Prova")) {
-                Button(action: {
-                    //Debug route view
-                    print("Debug route tapped!")
-                }) {
+                NavigationLink(destination: ARView(route: route.mapRoute)) {
                     Text("Avvia il test del percorso")
                         .frame(minWidth: 0, maxWidth: .infinity)
                         .foregroundColor(InterfaceConstants.positiveLinkForegroundColor)
                 }
             }
+            
             Section(header: Text("Condivisione")) {
                 Button(action: {
                     //Send route to user
@@ -58,6 +56,7 @@ struct RouteDetail: View {
             }
         }.navigationBarTitle(Text(route.routeName), displayMode: .inline)
     }
+    
     
 }
 

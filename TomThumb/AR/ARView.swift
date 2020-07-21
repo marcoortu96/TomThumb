@@ -10,6 +10,7 @@ import SwiftUI
 
 struct ARView: View {
     @ObservedObject var locationManager = LocationManager()
+    var route: MapRoute
     
     var body: some View {
         ZStack {
@@ -23,9 +24,10 @@ struct ARView: View {
         }
     }
 }
-
+/*
 struct ARView_Previews: PreviewProvider {
     static var previews: some View {
         ARView()
     }
 }
+*/
