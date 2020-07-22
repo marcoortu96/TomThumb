@@ -23,7 +23,7 @@ struct RouteDetail: View {
                 HStack {
                     Text("#Molliche")
                     Spacer()
-                    Text("\(route.crumbs)").foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
+                    Text("\(route.crumbs + 2)").foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
                 }
                 HStack {
                     Text("Distanza")

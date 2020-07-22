@@ -58,6 +58,7 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
         
         //Finish crumb
         location = CLLocation(coordinate: route.finish.location, altitude: locationManager.userAltitude)
+        annotation = LocationAnnotationNode(location: location, image: image)
         sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: annotation)
         self.reloadInputViews()
     }
