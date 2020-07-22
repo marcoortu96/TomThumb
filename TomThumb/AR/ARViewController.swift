@@ -11,11 +11,20 @@ import CoreLocation
 import ARCL
 import UIKit
 import SwiftUI
-
+ 
 final class ARViewController: UIViewController, UIViewControllerRepresentable {
     var sceneLocationView = SceneLocationView()
     @ObservedObject var locationManager = LocationManager()
-    var route = MapRoutesFactory().mapRoutes[1]
+    var route: MapRoute
+    
+    init(route: MapRoute) {
+        self.route = route
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,22 +40,33 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        //Start crumb
+        var location = CLLocation(coordinate: route.start.location, altitude: 190)
+        let originalImage = UIImage(named: "mapPin")!
+        let image = originalImage.resized(to: CGSize(width: 30, height: 30))
+        var annotation = LocationAnnotationNode(location: location, image: image)
+        sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: annotation)
+        
+        //Load crumbs
         for crumb in route.crumbs {
-            let location = CLLocation(coordinate: crumb.location, altitude: 190)
-            print("\(location.coordinate.latitude) \(location.coordinate.longitude)")
-            let originalImage = UIImage(named: "mapPin")!
-            let image = originalImage.resized(to: CGSize(width: 30, height: 30))
+            location = CLLocation(coordinate: crumb.location, altitude: 190)
             
-            let annotation = LocationAnnotationNode(location: location, image: image)
-
+            annotation = LocationAnnotationNode(location: location, image: image)
+            
             sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: annotation)
         }
+        
+        //Finish crumb
+        location = CLLocation(coordinate: route.finish.location, altitude: 190)
+        sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: annotation)
+        
     }
     
     
     
     func makeUIViewController(context: UIViewControllerRepresentableContext<ARViewController>) -> ARViewController {
-        return ARViewController()
+        
+        return ARViewController(route: self.route)
     }
     
     func updateUIViewController(_ uiViewController: ARViewController.UIViewControllerType, context: UIViewControllerRepresentableContext<ARViewController>) {
