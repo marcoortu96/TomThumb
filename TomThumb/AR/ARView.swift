@@ -15,9 +15,10 @@ struct ARView: View {
     var body: some View {
         ZStack {
             ARViewController(route: route)
-            HStack() {
+            VStack() {
                 Text("Latitude: \(self.locationManager.userLatitude)")
                 Text("Longitude: \(self.locationManager.userLongitude)")
+                Text("Altitude: \(self.locationManager.userAltitude)")
             }.background(Color.black)
             .foregroundColor(.white)
             .padding(.top, (UIScreen.main.bounds.size.height/100) * 70)

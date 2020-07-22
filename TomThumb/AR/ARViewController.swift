@@ -11,7 +11,7 @@ import CoreLocation
 import ARCL
 import UIKit
 import SwiftUI
- 
+
 final class ARViewController: UIViewController, UIViewControllerRepresentable {
     var sceneLocationView = SceneLocationView()
     @ObservedObject var locationManager = LocationManager()
@@ -41,7 +41,7 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     
     override func viewWillAppear(_ animated: Bool) {
         //Start crumb
-        var location = CLLocation(coordinate: route.start.location, altitude: 190)
+        var location = CLLocation(coordinate: route.start.location, altitude: locationManager.userAltitude)
         let originalImage = UIImage(named: "mapPin")!
         let image = originalImage.resized(to: CGSize(width: 30, height: 30))
         var annotation = LocationAnnotationNode(location: location, image: image)
@@ -49,7 +49,7 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
         
         //Load crumbs
         for crumb in route.crumbs {
-            location = CLLocation(coordinate: crumb.location, altitude: 190)
+            location = CLLocation(coordinate: crumb.location, altitude: locationManager.userAltitude)
             
             annotation = LocationAnnotationNode(location: location, image: image)
             
@@ -57,9 +57,9 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
         }
         
         //Finish crumb
-        location = CLLocation(coordinate: route.finish.location, altitude: 190)
+        location = CLLocation(coordinate: route.finish.location, altitude: locationManager.userAltitude)
         sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: annotation)
-        
+        self.reloadInputViews()
     }
     
     
@@ -71,7 +71,7 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     
     func updateUIViewController(_ uiViewController: ARViewController.UIViewControllerType, context: UIViewControllerRepresentableContext<ARViewController>) {
         print("Update camera view")
-    
+        
     }
 }
 
