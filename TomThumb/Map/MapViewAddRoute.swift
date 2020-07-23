@@ -34,6 +34,7 @@ struct MapViewAddRoute: UIViewRepresentable {
             let annotation = MKPointAnnotation()
             annotation.coordinate = location
             mapView.delegate = context.coordinator
+            mapView.subviews[1].isHidden = true //hide 'legal' label from right-lower corner
             mapView.addAnnotation(annotation)
         }
         return mapView

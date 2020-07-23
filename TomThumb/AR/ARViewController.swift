@@ -31,6 +31,8 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
         
         sceneLocationView.run()
         view.addSubview(sceneLocationView)
+        
+        setupScene()
     }
     
     override func viewDidLayoutSubviews() {
@@ -39,28 +41,43 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
         sceneLocationView.frame = view.bounds
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        //Start crumb
-        var location = CLLocation(coordinate: route.start.location, altitude: locationManager.userAltitude)
-        let originalImage = UIImage(named: "mapPin")!
-        let image = originalImage.resized(to: CGSize(width: 30, height: 30))
-        var annotation = LocationAnnotationNode(location: location, image: image)
-        sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: annotation)
+    func setupScene() {
+        let startImage = UIImage(named: "startPin")!.resized(to: CGSize(width: 30, height: 30))
+        let crumbImage = UIImage(named: "crumbPin")!.resized(to: CGSize(width: 30, height: 30))
+        let finishImage = UIImage(named: "finishPin")!.resized(to: CGSize(width: 30, height: 30))
+    
+        var location = CLLocation(coordinate: route.start.location, altitude: locationManager.currentLocation?.altitude ?? 200)
+        var annotationNode = LocationAnnotationNode(location: location, image: startImage)
+        annotationNode.annotationNode.name = "Start"
+        sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: annotationNode)
         
         //Load crumbs
-        for crumb in route.crumbs {
-            location = CLLocation(coordinate: crumb.location, altitude: locationManager.userAltitude)
+        for (index,crumb) in route.crumbs.enumerated() {
+            location = CLLocation(coordinate: crumb.location, altitude: locationManager.currentLocation?.altitude ?? 200 )
             
-            annotation = LocationAnnotationNode(location: location, image: image)
             
-            sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: annotation)
+            annotationNode = LocationAnnotationNode(location: location, image: crumbImage)
+            annotationNode.annotationNode.name = "Crumb\(index + 1)"
+            
+            sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: annotationNode)
         }
         
         //Finish crumb
-        location = CLLocation(coordinate: route.finish.location, altitude: locationManager.userAltitude)
-        annotation = LocationAnnotationNode(location: location, image: image)
-        sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: annotation)
-        self.reloadInputViews()
+        location = CLLocation(coordinate: route.finish.location, altitude: locationManager.currentLocation?.altitude ?? 200)
+        annotationNode = LocationAnnotationNode(location: location, image: finishImage)
+        annotationNode.annotationNode.name = "Finish"
+        sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: annotationNode)
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if let touch = touches.first {
+            let touchLocation = touch.location(in: sceneLocationView)
+            
+            let hitResults = sceneLocationView.hitTest(touchLocation, options: [.boundingBoxOnly : true])
+            for result in hitResults {
+                print("HIT:-> Name: \(result.node.description)")
+            }
+        }
     }
     
     
@@ -71,7 +88,7 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     }
     
     func updateUIViewController(_ uiViewController: ARViewController.UIViewControllerType, context: UIViewControllerRepresentableContext<ARViewController>) {
-        print("Update camera view")
+        //print("Update camera view")
         
     }
 }
@@ -84,9 +101,10 @@ extension UIImage {
     }
 }
 
-
+/*
 struct ViewController_Previews: PreviewProvider {
     static var previews: some View {
         /*@START_MENU_TOKEN@*/Text("Hello, World!")/*@END_MENU_TOKEN@*/
     }
 }
+*/

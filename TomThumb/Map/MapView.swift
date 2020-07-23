@@ -11,8 +11,6 @@ import MapKit
 
 
 struct MapView: UIViewRepresentable {
-    let locationManager = CLLocationManager()
-    
     var mapRoute: MapRoute
     
     init(mapRoute: MapRoute) {
@@ -24,38 +22,30 @@ struct MapView: UIViewRepresentable {
     }
     
     func makeUIView(context: Context) -> MKMapView {
-        let mapView = MKMapView(frame: .zero)
+        let mapView = MKMapView()
         var annotations = [MKPointAnnotation]()
-        let status = CLLocationManager.authorizationStatus()
-        locationManager.requestAlwaysAuthorization()
-        locationManager.requestWhenInUseAuthorization()
         
-        if status == .authorizedAlways || status == .authorizedWhenInUse {
-            locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
-            locationManager.startUpdatingLocation()
-            
-            let startAnnotation = MKPointAnnotation()
-            startAnnotation.coordinate = mapRoute.start.location
-            startAnnotation.title = "start"
-            annotations.append(startAnnotation)
-            
-            let finishAnnotation = MKPointAnnotation()
-            finishAnnotation.coordinate = mapRoute.finish.location
-            finishAnnotation.title = "finish"
-            annotations.append(finishAnnotation)
-           
-            for (index,crumb) in mapRoute.crumbs.enumerated() {
-                let crumbAnnotation = MKPointAnnotation()
-                crumbAnnotation.coordinate = crumb.location
-                crumbAnnotation.title = String(index + 1)
-                crumbAnnotation.subtitle = String("\(crumb.location.latitude), \(crumb.location.longitude)")
-                annotations.append(crumbAnnotation)
-            }
-            
-            mapView.mapType = .hybrid
-            mapView.delegate = context.coordinator
-            mapView.showAnnotations(annotations, animated: true)
+        let startAnnotation = MKPointAnnotation()
+        startAnnotation.coordinate = mapRoute.start.location
+        startAnnotation.title = "start"
+        annotations.append(startAnnotation)
+        
+        let finishAnnotation = MKPointAnnotation()
+        finishAnnotation.coordinate = mapRoute.finish.location
+        finishAnnotation.title = "finish"
+        annotations.append(finishAnnotation)
+        
+        for (index,crumb) in mapRoute.crumbs.enumerated() {
+            let crumbAnnotation = MKPointAnnotation()
+            crumbAnnotation.coordinate = crumb.location
+            crumbAnnotation.title = String(index + 1)
+            crumbAnnotation.subtitle = String("\(crumb.location.latitude), \(crumb.location.longitude)")
+            annotations.append(crumbAnnotation)
         }
+        mapView.subviews[1].isHidden = true //hide 'legal' label from right-lower corner
+        mapView.mapType = .hybrid
+        mapView.delegate = context.coordinator
+        mapView.showAnnotations(annotations, animated: true)
         
         return mapView
     }
@@ -101,8 +91,9 @@ struct MapView: UIViewRepresentable {
     }
 }
 
-/*struct MapViewAddRoute_Previews: PreviewProvider {
- static var previews: some View {
- MapViewAddRoute()
- }
- }*/
+struct MapViewAddRoute_Previews: PreviewProvider {
+    static var previews: some View {
+        MapView(mapRoute: MapRoutesFactory().mapRoutes[0])
+    }
+}
+

@@ -32,7 +32,7 @@ struct RouteDetail: View {
                 }
             }
             Section(header: Text("Mappa")) {
-                NavigationLink(destination: RouteMap(mapRoute: route.mapRoute)) {
+                NavigationLink(destination: MapView(mapRoute: route.mapRoute)) {
                     Text("Visualizza il percorso")
                 }.accentColor(InterfaceConstants.genericLinkForegroundColor)
             }
