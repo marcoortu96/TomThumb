@@ -12,10 +12,6 @@ import CoreLocation
 
 class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObject{
     
-    @Published var userLatitude: Double = 0
-    @Published var userLongitude: Double = 0
-    @Published var userAltitude: Double = 200
-    
     var locationManager: CLLocationManager?
     var lastLocation: CLLocation?
     var delegate: LocationServiceDelegate?
@@ -67,11 +63,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObject{
     }
     
     public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let location = locations.last else { return }
-        
-        userLatitude = location.coordinate.latitude
-        userLongitude = location.coordinate.longitude
-        userAltitude = location.altitude
+        guard locations.last != nil else { return }
         
         for location in locations {
             delegate?.trackingLocation(for: location)

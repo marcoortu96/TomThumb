@@ -45,28 +45,31 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
         let startImage = UIImage(named: "startPin")!.resized(to: CGSize(width: 30, height: 30))
         let crumbImage = UIImage(named: "crumbPin")!.resized(to: CGSize(width: 30, height: 30))
         let finishImage = UIImage(named: "finishPin")!.resized(to: CGSize(width: 30, height: 30))
-    
-        var location = CLLocation(coordinate: route.start.location, altitude: locationManager.currentLocation?.altitude ?? 200)
-        var annotationNode = LocationAnnotationNode(location: location, image: startImage)
-        annotationNode.annotationNode.name = "Start"
-        sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: annotationNode)
         
-        //Load crumbs
-        for (index,crumb) in route.crumbs.enumerated() {
-            location = CLLocation(coordinate: crumb.location, altitude: locationManager.currentLocation?.altitude ?? 200 )
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            print("Altitude \(self.locationManager.currentLocation!.altitude)")
+            var location = CLLocation(coordinate: self.route.start.location, altitude: self.locationManager.currentLocation!.altitude - 10)
+            var annotationNode = LocationAnnotationNode(location: location, image: startImage)
+            annotationNode.annotationNode.name = "Start"
+            self.sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: annotationNode)
             
+            //Load crumbs
+            for (index,crumb) in self.route.crumbs.enumerated() {
+                location = CLLocation(coordinate: crumb.location, altitude: self.locationManager.currentLocation!.altitude - 10)
+                
+                
+                annotationNode = LocationAnnotationNode(location: location, image: crumbImage)
+                annotationNode.annotationNode.name = "Crumb\(index + 1)"
+                
+                self.sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: annotationNode)
+            }
             
-            annotationNode = LocationAnnotationNode(location: location, image: crumbImage)
-            annotationNode.annotationNode.name = "Crumb\(index + 1)"
-            
-            sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: annotationNode)
+            //Finish crumb
+            location = CLLocation(coordinate: self.route.finish.location, altitude: self.locationManager.currentLocation!.altitude - 10)
+            annotationNode = LocationAnnotationNode(location: location, image: finishImage)
+            annotationNode.annotationNode.name = "Finish"
+            self.sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: annotationNode)
         }
-        
-        //Finish crumb
-        location = CLLocation(coordinate: route.finish.location, altitude: locationManager.currentLocation?.altitude ?? 200)
-        annotationNode = LocationAnnotationNode(location: location, image: finishImage)
-        annotationNode.annotationNode.name = "Finish"
-        sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: annotationNode)
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -102,9 +105,9 @@ extension UIImage {
 }
 
 /*
-struct ViewController_Previews: PreviewProvider {
-    static var previews: some View {
-        /*@START_MENU_TOKEN@*/Text("Hello, World!")/*@END_MENU_TOKEN@*/
-    }
-}
-*/
+ struct ViewController_Previews: PreviewProvider {
+ static var previews: some View {
+ /*@START_MENU_TOKEN@*/Text("Hello, World!")/*@END_MENU_TOKEN@*/
+ }
+ }
+ */
