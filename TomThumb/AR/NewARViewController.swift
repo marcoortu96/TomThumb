@@ -426,7 +426,7 @@ extension NewARViewController: ARSCNViewDelegate {
 
 }
 
-extension UIView {
+/*extension UIView {
     /// Create a colored view with label, border, and rounded corners.
     class func prettyLabeledView(text: String,
                                  backgroundColor: UIColor = .systemBackground,
@@ -454,4 +454,4 @@ extension UIView {
         return cview
     }
 
-}
+}*/
