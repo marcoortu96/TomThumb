@@ -14,8 +14,8 @@ struct ARView: View {
     
     var body: some View {
         ZStack {
-            //ARViewController(route: route)
-            NewNewARViewController(route: route)
+            ARViewController(route: route)
+            //NewNewARViewController(route: route)
             HStack() {
                 Text("lat: \(Double((self.locationManager.currentLocation?.coordinate.latitude)!))")
                 Text("lon: \(Double((self.locationManager.currentLocation?.coordinate.longitude)!))")

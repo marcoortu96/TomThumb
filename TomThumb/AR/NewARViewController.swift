@@ -14,6 +14,7 @@ import SceneKit
 import UIKit
 import SwiftUI
 
+//CLASSE INUTILIZZATA, USARE ARViewController
 enum Demonstration {
     case justOneNode
     case stackOfNodes
@@ -426,7 +427,7 @@ extension NewARViewController: ARSCNViewDelegate {
 
 }
 
-/*extension UIView {
+extension UIView {
     /// Create a colored view with label, border, and rounded corners.
     class func prettyLabeledView(text: String,
                                  backgroundColor: UIColor = .systemBackground,
@@ -454,4 +455,4 @@ extension NewARViewController: ARSCNViewDelegate {
         return cview
     }
 
-}*/
+}

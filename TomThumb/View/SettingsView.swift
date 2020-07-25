@@ -1,5 +1,5 @@
 //
-//  SettingView.swift
+//  SettingsView.swift
 //  TomThumb
 //
 //  Created by Marco Ortu on 13/07/2020.
@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct SettingView: View {
+struct SettingsView: View {
     @State private var previewIndex = 0
     var previewOptions = ["Default"]
     var body: some View {
@@ -69,8 +69,8 @@ struct SettingView: View {
     }
 }
 
-struct SettingView_Previews: PreviewProvider {
+struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
-        SettingView()
+        SettingsView()
     }
 }

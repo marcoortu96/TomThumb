@@ -9,10 +9,9 @@
 import Foundation
 import MapKit
 
-struct Crumb {
+class Crumb {
     var location: CLLocationCoordinate2D
     var audio: URL?
-    
     
     init(location: CLLocationCoordinate2D) {
         self.location = location
@@ -22,5 +21,4 @@ struct Crumb {
         self.location = location
         self.audio = audio
     }
-
 }

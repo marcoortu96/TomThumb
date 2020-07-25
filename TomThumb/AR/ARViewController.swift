@@ -7,18 +7,34 @@
 //
 
 import Foundation
-import CoreLocation
 import ARCL
+import ARKit
+import MapKit
+import SceneKit
 import UIKit
 import SwiftUI
 
 final class ARViewController: UIViewController, UIViewControllerRepresentable {
-    var sceneLocationView = SceneLocationView()
-    @ObservedObject var locationManager = LocationManager()
+    var sceneLocationView: SceneLocationView?
+    /// This is for the `SceneLocationView`. There's no way to set a node's `locationEstimateMethod`, which is hardcoded to
+    /// `mostRelevantEstimate`.
+    public var locationEstimateMethod = LocationEstimateMethod.mostRelevantEstimate
+    
+    public var arTrackingType = SceneLocationView.ARTrackingType.orientationTracking
+    public var scalingScheme = ScalingScheme.normal
+    
+    // These three properties are properties of individual nodes. We'll set them the same way for each node added.
+    public var continuallyAdjustNodePositionWhenWithinRange = true
+    public var continuallyUpdatePositionAndScale = true
+    public var annotationHeightAdjustmentFactor = 1.1
+    
     var route: MapRoute
+    var actualCrumb: Int?
+    @ObservedObject var locationManager = LocationManager()
     
     init(route: MapRoute) {
         self.route = route
+        self.actualCrumb = 0
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -26,67 +42,112 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Lifecycle and actions
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        sceneLocationView.run()
-        view.addSubview(sceneLocationView)
+        sceneLocationView = SceneLocationView()
+        view.addSubview(sceneLocationView!)
         
-        setupScene()
+    }
+    
+    func rebuildSceneLocationView() {
+        sceneLocationView?.removeFromSuperview()
+        let newSceneLocationView = SceneLocationView.init(trackingType: arTrackingType, frame: view.frame, options: nil)
+        newSceneLocationView.translatesAutoresizingMaskIntoConstraints = false
+        newSceneLocationView.arViewDelegate = self
+        newSceneLocationView.locationEstimateMethod = locationEstimateMethod
+        
+        newSceneLocationView.debugOptions = [.showWorldOrigin]
+        newSceneLocationView.showsStatistics = true
+        newSceneLocationView.showAxesNode = false // don't need ARCL's axesNode because we're showing SceneKit's
+        newSceneLocationView.autoenablesDefaultLighting = true
+        view.addSubview(newSceneLocationView)
+        sceneLocationView = newSceneLocationView
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        rebuildSceneLocationView()
+        addJustOneNode()
+        //addStackOfNodes()
+        sceneLocationView?.run()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        sceneLocationView?.removeAllNodes()
+        sceneLocationView?.pause()
+        super.viewWillDisappear(animated)
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        
-        sceneLocationView.frame = view.bounds
+        sceneLocationView?.frame = view.bounds
     }
     
-    func setupScene() {
-        let startImage = UIImage(named: "startPin")!.resized(to: CGSize(width: 30, height: 30))
-        let crumbImage = UIImage(named: "crumbPin")!.resized(to: CGSize(width: 30, height: 30))
-        let finishImage = UIImage(named: "finishPin")!.resized(to: CGSize(width: 30, height: 30))
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            print("Altitude \(self.locationManager.currentLocation!.altitude)")
-            var location = CLLocation(coordinate: self.route.start.location, altitude: self.locationManager.currentLocation!.altitude - 10)
-            var annotationNode = LocationAnnotationNode(location: location, image: startImage)
-            annotationNode.annotationNode.name = "Start"
-            self.sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: annotationNode)
-            
-            //Load crumbs
-            for (index,crumb) in self.route.crumbs.enumerated() {
-                location = CLLocation(coordinate: crumb.location, altitude: self.locationManager.currentLocation!.altitude - 10)
-                
-                
-                annotationNode = LocationAnnotationNode(location: location, image: crumbImage)
-                annotationNode.annotationNode.name = "Crumb\(index + 1)"
-                
-                self.sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: annotationNode)
-            }
-            
-            //Finish crumb
-            location = CLLocation(coordinate: self.route.finish.location, altitude: self.locationManager.currentLocation!.altitude - 10)
-            annotationNode = LocationAnnotationNode(location: location, image: finishImage)
-            annotationNode.annotationNode.name = "Finish"
-            self.sceneLocationView.addLocationNodeWithConfirmedLocation(locationNode: annotationNode)
+    // MARK: - Some canned demos
+    
+    /// Perform these actions on every node after it's added.
+    func addScenewideNodeSettings(_ node: LocationNode) {
+        if let annoNode = node as? LocationAnnotationNode {
+            annoNode.annotationHeightAdjustmentFactor = annotationHeightAdjustmentFactor
         }
+        node.scalingScheme = scalingScheme
+        node.continuallyAdjustNodePositionWhenWithinRange = continuallyAdjustNodePositionWhenWithinRange
+        node.continuallyUpdatePositionAndScale = continuallyUpdatePositionAndScale
     }
     
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if let touch = touches.first {
-            let touchLocation = touch.location(in: sceneLocationView)
-            
-            let hitResults = sceneLocationView.hitTest(touchLocation, options: [.boundingBoxOnly : true])
-            for result in hitResults {
-                print("HIT:-> Name: \(result.node.description)")
+    // Add a single crumb at actual user altitude (- 5)
+    func addJustOneNode() {
+        guard (sceneLocationView?.sceneLocationManager.currentLocation) != nil else {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                self?.addJustOneNode()
             }
+            return
         }
+        
+        sceneLocationView?.removeAllNodes()
+        print("Crumb index: \(actualCrumb!), actual user altitude: \(self.locationManager.currentLocation!.altitude)")
+        let location = CLLocation(coordinate: self.route.crumbs[actualCrumb!].location, altitude: self.locationManager.currentLocation!.altitude - 5)
+        let cubeNode = LocationNode(location: location)
+        let cubeSide = CGFloat(2)
+        let cube = SCNBox(width: cubeSide, height: cubeSide, length: cubeSide, chamferRadius: 0)
+        
+        cube.firstMaterial?.diffuse.contents = UIColor.random
+        cubeNode.addChildNode(SCNNode(geometry: cube))
+        self.addScenewideNodeSettings(cubeNode)
+        self.sceneLocationView?.addLocationNodeWithConfirmedLocation(locationNode: cubeNode)
     }
     
-    
+    // Add all crumbs at actual user altitude (- 5)
+    func addStackOfNodes() {
+        
+        guard (self.locationManager.currentLocation) != nil else {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                self?.addStackOfNodes()
+            }
+            return
+        }
+        print("Reloading")
+        
+        let cubeSide = CGFloat(2)
+        
+        //Load crumbs
+        for (index,crumb) in self.route.crumbs.enumerated() {
+            let location = CLLocation(coordinate: crumb.location, altitude: self.locationManager.currentLocation!.altitude - 5)
+            let cubeNode = LocationNode(location: location)
+            let cube = SCNBox(width: cubeSide, height: cubeSide, length: cubeSide, chamferRadius: 0)
+            
+            cube.firstMaterial?.diffuse.contents = index == route.crumbs.count - 1 ? InterfaceConstants.finishPinColor : InterfaceConstants.crumbPinColor
+            cubeNode.addChildNode(SCNNode(geometry: cube))
+            self.addScenewideNodeSettings(cubeNode)
+            self.sceneLocationView?.addLocationNodeWithConfirmedLocation(locationNode: cubeNode)
+        }
+        
+    }
     
     func makeUIViewController(context: UIViewControllerRepresentableContext<ARViewController>) -> ARViewController {
-        
         return ARViewController(route: self.route)
     }
     
@@ -96,18 +157,63 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     }
 }
 
-extension UIImage {
-    func resized(to size: CGSize) -> UIImage {
-        return UIGraphicsImageRenderer(size: size).image { _ in
-            draw(in: CGRect(origin: .zero, size: size))
+// MARK: - ARSCNViewDelegate
+extension ARViewController: ARSCNViewDelegate {
+    
+    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
+        // print(#file, #function)
+    }
+    
+    func renderer(_ renderer: SCNSceneRenderer, willUpdate node: SCNNode, for anchor: ARAnchor) {
+        // print(#file, #function)
+    }
+    
+    func session(_ session: ARSession, cameraDidChangeTrackingState camera: ARCamera) {
+        // print(#file, #function)
+    }
+    
+    // MARK: - SCNSceneRendererDelegate
+    // These functions defined in SCNSceneRendererDelegate are invoked on the arViewDelegate within ARCL's
+    // internal SCNSceneRendererDelegate (akak ARSCNViewDelegate). They're forwarded versions of the
+    // SCNSceneRendererDelegate calls.
+    
+    public func renderer(_ renderer: SCNSceneRenderer, didRenderScene scene: SCNScene, atTime time: TimeInterval) {
+        //print(Double((self.locationManager.currentLocation?.distance(from: CLLocation(coordinate: self.route.crumbs[actualCrumb!].location, altitude: self.locationManager.currentLocation!.altitude)))!))
+        if Double((self.locationManager.currentLocation?.distance(from: CLLocation(coordinate: self.route.crumbs[actualCrumb!].location, altitude: self.locationManager.currentLocation!.altitude)))!) < 10 {
+            self.actualCrumb = self.actualCrumb! + 1
+            if self.actualCrumb! < self.route.crumbs.count  {
+                self.addJustOneNode()
+            }
+            else {
+                print("Route completed! Good Job!")
+            }
         }
     }
+    
+    
+    public func renderer(_ renderer: SCNSceneRenderer, didApplyAnimationsAtTime time: TimeInterval) {
+        
+    }
+    
+    public func renderer(_ renderer: SCNSceneRenderer, didSimulatePhysicsAtTime time: TimeInterval) {
+        
+    }
+    
+    public func renderer(_ renderer: SCNSceneRenderer, didApplyConstraintsAtTime time: TimeInterval) {
+        
+    }
+    
+    public func renderer(_ renderer: SCNSceneRenderer, willRenderScene scene: SCNScene, atTime time: TimeInterval) {
+        
+    }
+    
 }
 
-/*
- struct ViewController_Previews: PreviewProvider {
- static var previews: some View {
- /*@START_MENU_TOKEN@*/Text("Hello, World!")/*@END_MENU_TOKEN@*/
- }
- }
- */
+extension UIColor {
+    static var random: UIColor {
+        return UIColor(red: .random(in: 0...1),
+                       green: .random(in: 0...1),
+                       blue: .random(in: 0...1),
+                       alpha: 1.0)
+    }
+}

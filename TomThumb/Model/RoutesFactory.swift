@@ -25,11 +25,10 @@ struct Route : Hashable {
         self.crumbs = mapRoute.crumbs.count
         
         var totalDistance = 0.0
-        totalDistance = mapRoute.start.location.distanceTo(coordinate: mapRoute.crumbs[0].location)
         for i in stride(from: 0, to: mapRoute.crumbs.count - 1, by: 1) {
             totalDistance = totalDistance + mapRoute.crumbs[i].location.distanceTo(coordinate: mapRoute.crumbs[i + 1].location)
         }
-        totalDistance = totalDistance + mapRoute.crumbs[mapRoute.crumbs.count - 1].location.distanceTo(coordinate: mapRoute.finish.location)
+        
         self.distance = totalDistance
         self.caregiver = caregiver
         self.mapRoute = mapRoute

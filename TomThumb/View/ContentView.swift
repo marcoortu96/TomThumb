@@ -26,7 +26,7 @@ struct ContentView: View {
                         Text("Esecuzione")
                     }
             }.tag(1)
-            SettingView().tabItem {
+            SettingsView().tabItem {
                 VStack {
                     Image(systemName: "gear")
                     Text("Impostazioni")

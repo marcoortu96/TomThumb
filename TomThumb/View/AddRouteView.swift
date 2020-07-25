@@ -86,15 +86,7 @@ struct AddRouteView: View {
                     Spacer()
                     Button(action: {
                         //Save new route
-                        var start: Crumb
-                        var finish: Crumb
-
-                        start = self.crumbs[0]
-                        finish = self.crumbs[self.crumbs.count-1]
-                        self.crumbs.removeFirst()
-                        self.crumbs.removeLast()
-                        
-                        let mapRoute = MapRoute(start: start, crumbs: self.crumbs, finish: finish)
+                        let mapRoute = MapRoute(crumbs: self.crumbs)
                         let newRoute = Route(routeName: "New", user: ChildFactory().children[0].name, caregiver: CaregiverFactory().caregivers[0], mapRoute: mapRoute)
                         RoutesFactory.insertRoute(route: newRoute)
                         self.showSheetView = false

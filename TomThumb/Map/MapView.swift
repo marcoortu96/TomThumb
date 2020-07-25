@@ -26,16 +26,16 @@ struct MapView: UIViewRepresentable {
         var annotations = [MKPointAnnotation]()
         
         let startAnnotation = MKPointAnnotation()
-        startAnnotation.coordinate = mapRoute.start.location
+        startAnnotation.coordinate = mapRoute.crumbs[0].location
         startAnnotation.title = "start"
         annotations.append(startAnnotation)
         
         let finishAnnotation = MKPointAnnotation()
-        finishAnnotation.coordinate = mapRoute.finish.location
+        finishAnnotation.coordinate = mapRoute.crumbs[mapRoute.crumbs.count - 1].location
         finishAnnotation.title = "finish"
         annotations.append(finishAnnotation)
         
-        for (index,crumb) in mapRoute.crumbs.enumerated() {
+        for (index,crumb) in mapRoute.crumbs[1..<(mapRoute.crumbs.count - 1)].enumerated() {
             let crumbAnnotation = MKPointAnnotation()
             crumbAnnotation.coordinate = crumb.location
             crumbAnnotation.title = String(index + 1)
