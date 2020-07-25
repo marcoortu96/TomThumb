@@ -100,16 +100,19 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     
     // Add a single crumb at actual user altitude (- 5)
     func addJustOneNode() {
-        guard (sceneLocationView?.sceneLocationManager.currentLocation) != nil else {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+        guard (self.locationManager.currentLocation) != nil else {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
                 self?.addJustOneNode()
             }
             return
         }
-        
-        sceneLocationView?.removeAllNodes()
-        print("Crumb index: \(actualCrumb!), actual user altitude: \(self.locationManager.currentLocation!.altitude)")
-        let location = CLLocation(coordinate: self.route.crumbs[actualCrumb!].location, altitude: self.locationManager.currentLocation!.altitude - 5)
+        guard (self.actualCrumb! < self.route.crumbs.count) else {
+            print("DEBUG - Crumb index out of bounds, you might have finished the route!")
+            return
+        }
+        self.sceneLocationView?.removeAllNodes()
+        print("DEBUG - Crumb index: \(self.actualCrumb!), actual user altitude: \(self.locationManager.currentLocation!.altitude)")
+        let location = CLLocation(coordinate: self.route.crumbs[self.actualCrumb!].location, altitude: self.locationManager.currentLocation!.altitude - 5)
         let cubeNode = LocationNode(location: location)
         let cubeSide = CGFloat(2)
         let cube = SCNBox(width: cubeSide, height: cubeSide, length: cubeSide, chamferRadius: 0)
@@ -118,6 +121,8 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
         cubeNode.addChildNode(SCNNode(geometry: cube))
         self.addScenewideNodeSettings(cubeNode)
         self.sceneLocationView?.addLocationNodeWithConfirmedLocation(locationNode: cubeNode)
+        
+        
     }
     
     // Add all crumbs at actual user altitude (- 5)
@@ -129,7 +134,7 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
             }
             return
         }
-        print("Reloading")
+        print("DEBUG - Reloading")
         
         let cubeSide = CGFloat(2)
         
@@ -178,16 +183,20 @@ extension ARViewController: ARSCNViewDelegate {
     // SCNSceneRendererDelegate calls.
     
     public func renderer(_ renderer: SCNSceneRenderer, didRenderScene scene: SCNScene, atTime time: TimeInterval) {
-        //print(Double((self.locationManager.currentLocation?.distance(from: CLLocation(coordinate: self.route.crumbs[actualCrumb!].location, altitude: self.locationManager.currentLocation!.altitude)))!))
-        if Double((self.locationManager.currentLocation?.distance(from: CLLocation(coordinate: self.route.crumbs[actualCrumb!].location, altitude: self.locationManager.currentLocation!.altitude)))!) < 10 {
-            self.actualCrumb = self.actualCrumb! + 1
-            if self.actualCrumb! < self.route.crumbs.count  {
+        if self.actualCrumb! < self.route.crumbs.count {
+            print("DEBUG - Crumb at index \(self.actualCrumb!) is \(Double((self.locationManager.currentLocation?.distance(from: CLLocation(coordinate: self.route.crumbs[actualCrumb!].location, altitude: self.locationManager.currentLocation!.altitude)))!)) meters far away")
+            if Double((self.locationManager.currentLocation?.distance(from: CLLocation(coordinate: self.route.crumbs[actualCrumb!].location, altitude: self.locationManager.currentLocation!.altitude)))!) < 10 {
+                self.actualCrumb = self.actualCrumb! + 1
                 self.addJustOneNode()
-            }
-            else {
-                print("Route completed! Good Job!")
+                /*let arAlertView = ARAlertView(alertText: "GG", buttonText: "OK", buttonColor: .blue)
+                arAlertView.add(to : self.sceneLocationView!)*/
             }
         }
+        else {
+            sceneLocationView?.pause()
+            print("DEBUG - Route completed! Good Job!")
+        }
+        
     }
     
     
