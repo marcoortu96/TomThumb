@@ -16,8 +16,7 @@ import SwiftUI
 
 final class ARViewController: UIViewController, UIViewControllerRepresentable {
     var sceneLocationView: SceneLocationView?
-    /// This is for the `SceneLocationView`. There's no way to set a node's `locationEstimateMethod`, which is hardcoded to
-    /// `mostRelevantEstimate`.
+    //This is for the `SceneLocationView`. There's no way to set a node's `locationEstimateMethod`, which is hardcoded to `mostRelevantEstimate`.
     public var locationEstimateMethod = LocationEstimateMethod.mostRelevantEstimate
     
     public var arTrackingType = SceneLocationView.ARTrackingType.orientationTracking
@@ -28,13 +27,15 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     public var continuallyUpdatePositionAndScale = true
     public var annotationHeightAdjustmentFactor = 1.1
     
-    var route: MapRoute
-    var actualCrumb: Int?
-    @ObservedObject var locationManager = LocationManager()
+    public var renderTime: TimeInterval = 0
     
-    init(route: MapRoute) {
+    var route: MapRoute
+    @Binding var actualCrumb: Int
+    var locationManager = LocationManager()
+    
+    init(route: MapRoute, actualCrumb: Binding<Int>) {
         self.route = route
-        self.actualCrumb = 0
+        self._actualCrumb = actualCrumb
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -48,6 +49,8 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
         super.viewDidLoad()
         
         sceneLocationView = SceneLocationView()
+        guard let locationService = locationManager.locationManager else { return }
+        locationService.startUpdatingLocation()
         view.addSubview(sceneLocationView!)
         
     }
@@ -60,7 +63,7 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
         newSceneLocationView.locationEstimateMethod = locationEstimateMethod
         
         newSceneLocationView.debugOptions = [.showWorldOrigin]
-        newSceneLocationView.showsStatistics = true
+        newSceneLocationView.showsStatistics = false
         newSceneLocationView.showAxesNode = false // don't need ARCL's axesNode because we're showing SceneKit's
         newSceneLocationView.autoenablesDefaultLighting = true
         view.addSubview(newSceneLocationView)
@@ -106,13 +109,13 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
             }
             return
         }
-        guard (self.actualCrumb! < self.route.crumbs.count) else {
+        guard (self.actualCrumb < self.route.crumbs.count) else {
             print("DEBUG - Crumb index out of bounds, you might have finished the route!")
             return
         }
         self.sceneLocationView?.removeAllNodes()
-        print("DEBUG - Crumb index: \(self.actualCrumb!), actual user altitude: \(self.locationManager.currentLocation!.altitude)")
-        let location = CLLocation(coordinate: self.route.crumbs[self.actualCrumb!].location, altitude: self.locationManager.currentLocation!.altitude - 5)
+        print("DEBUG - Crumb index: \(self.actualCrumb), actual user altitude: \(self.locationManager.currentLocation!.altitude)")
+        let location = CLLocation(coordinate: self.route.crumbs[self.actualCrumb].location, altitude: self.locationManager.currentLocation!.altitude - 5)
         let cubeNode = LocationNode(location: location)
         let cubeSide = CGFloat(2)
         let cube = SCNBox(width: cubeSide, height: cubeSide, length: cubeSide, chamferRadius: 0)
@@ -121,8 +124,6 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
         cubeNode.addChildNode(SCNNode(geometry: cube))
         self.addScenewideNodeSettings(cubeNode)
         self.sceneLocationView?.addLocationNodeWithConfirmedLocation(locationNode: cubeNode)
-        
-        
     }
     
     // Add all crumbs at actual user altitude (- 5)
@@ -149,16 +150,14 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
             self.addScenewideNodeSettings(cubeNode)
             self.sceneLocationView?.addLocationNodeWithConfirmedLocation(locationNode: cubeNode)
         }
-        
     }
     
     func makeUIViewController(context: UIViewControllerRepresentableContext<ARViewController>) -> ARViewController {
-        return ARViewController(route: self.route)
+        return ARViewController(route: self.route, actualCrumb: self.$actualCrumb)
     }
     
     func updateUIViewController(_ uiViewController: ARViewController.UIViewControllerType, context: UIViewControllerRepresentableContext<ARViewController>) {
         //print("Update camera view")
-        
     }
 }
 
@@ -183,20 +182,22 @@ extension ARViewController: ARSCNViewDelegate {
     // SCNSceneRendererDelegate calls.
     
     public func renderer(_ renderer: SCNSceneRenderer, didRenderScene scene: SCNScene, atTime time: TimeInterval) {
-        if self.actualCrumb! < self.route.crumbs.count {
-            print("DEBUG - Crumb at index \(self.actualCrumb!) is \(Double((self.locationManager.currentLocation?.distance(from: CLLocation(coordinate: self.route.crumbs[actualCrumb!].location, altitude: self.locationManager.currentLocation!.altitude)))!)) meters far away")
-            if Double((self.locationManager.currentLocation?.distance(from: CLLocation(coordinate: self.route.crumbs[actualCrumb!].location, altitude: self.locationManager.currentLocation!.altitude)))!) < 10 {
-                self.actualCrumb = self.actualCrumb! + 1
-                self.addJustOneNode()
-                /*let arAlertView = ARAlertView(alertText: "GG", buttonText: "OK", buttonColor: .blue)
-                arAlertView.add(to : self.sceneLocationView!)*/
+        if time > renderTime {
+            if self.actualCrumb < self.route.crumbs.count {
+                print("DEBUG - Crumb at index \(self.actualCrumb) is \(Double((self.locationManager.currentLocation?.distance(from: CLLocation(coordinate: self.route.crumbs[actualCrumb].location, altitude: self.locationManager.currentLocation!.altitude)))!).short) meters far away")
+                if Double((self.locationManager.currentLocation?.distance(from: CLLocation(coordinate: self.route.crumbs[actualCrumb].location, altitude: self.locationManager.currentLocation!.altitude)))!) < 10 {
+                    self.actualCrumb = self.actualCrumb + 1
+                    self.addJustOneNode()
+                    /*let arAlertView = ARAlertView(alertText: "GG", buttonText: "OK", buttonColor: .blue)
+                     arAlertView.add(to : self.sceneLocationView!)*/
+                }
             }
+            else {
+                sceneLocationView?.pause()
+                print("DEBUG - Route completed! Good Job!")
+            }
+            renderTime = time + TimeInterval(0.7)
         }
-        else {
-            sceneLocationView?.pause()
-            print("DEBUG - Route completed! Good Job!")
-        }
-        
     }
     
     
