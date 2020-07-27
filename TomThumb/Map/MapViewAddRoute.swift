@@ -26,7 +26,7 @@ struct MapViewAddRoute: UIViewRepresentable {
             locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
             locationManager.startUpdatingLocation()
             let location: CLLocationCoordinate2D = locationManager.location!.coordinate
-            let span = MKCoordinateSpan(latitudeDelta: 0.009, longitudeDelta: 0.009)
+            let span = MKCoordinateSpan(latitudeDelta: 0.001, longitudeDelta: 0.001)
             let region = MKCoordinateRegion(center: location, span: span)
             mapView.setRegion(region, animated: true)
             mapView.mapType = .hybrid

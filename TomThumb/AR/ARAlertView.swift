@@ -9,6 +9,7 @@
 import ARKit
 
 class ARAlertView : SCNNode {
+    
     var alertText : String
     var buttonText : String
     var buttonColor : UIColor

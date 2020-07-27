@@ -10,6 +10,7 @@ import Foundation
 import CoreLocation
 
 protocol LocationServiceDelegate: class {
+    
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus)
     func trackingLocation(for currentLocation: CLLocation)
     func trackingLocationDidFail(with error: Error)

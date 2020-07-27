@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct RecordingsList: View {
+    
     @ObservedObject var audioRecorder: AudioRecorder
     @Binding var selectedAudio: URL
     

@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct SettingsView: View {
+    
     @State private var previewIndex = 0
     var previewOptions = ["Default"]
     var body: some View {

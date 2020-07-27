@@ -10,6 +10,7 @@ import Foundation
 import Combine
 import CoreLocation
 
+
 class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObject{
     
     var locationManager: CLLocationManager?

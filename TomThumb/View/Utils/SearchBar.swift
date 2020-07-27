@@ -36,7 +36,7 @@ struct SearchBar: View {
 
                             if let center = (placemarks?.first?.region as? CLCircularRegion)?.center {
 
-                                let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.009, longitudeDelta: 0.009))
+                                let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.001, longitudeDelta: 0.001))
                                 mapView.setRegion(region, animated: true)
                             }
                         }

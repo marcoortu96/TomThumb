@@ -8,19 +8,29 @@
 
 /* Begin PBXBuildFile section */
 		0164C2E824BDA59C00C4CBF9 /* InterfaceConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0164C2E724BDA59C00C4CBF9 /* InterfaceConstants.swift */; };
-		01EA2D8424BCABC3007CD896 /* Route.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EA2D8324BCABC3007CD896 /* Route.swift */; };
-		01EA2D8624BCABE7007CD896 /* Caregiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EA2D8524BCABE7007CD896 /* Caregiver.swift */; };
 		01EA2D8824BCAD38007CD896 /* RoutesFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EA2D8724BCAD38007CD896 /* RoutesFactory.swift */; };
 		01EA2D8A24BCAD60007CD896 /* MapRoutesFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EA2D8924BCAD60007CD896 /* MapRoutesFactory.swift */; };
-		01EA2D8D24BCADFA007CD896 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EA2D8C24BCADFA007CD896 /* LocationManager.swift */; };
 		01EA2D8F24BCAE20007CD896 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EA2D8E24BCAE20007CD896 /* MapView.swift */; };
-		01EA2D9124BCAE46007CD896 /* MapPin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EA2D9024BCAE46007CD896 /* MapPin.swift */; };
-		01EA2D9324BCAF0D007CD896 /* RouteMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EA2D9224BCAF0D007CD896 /* RouteMap.swift */; };
 		01EA2D9624BCAFD7007CD896 /* ARViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EA2D9524BCAFD7007CD896 /* ARViewController.swift */; };
 		01EA2D9924BCB0D9007CD896 /* RoutesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EA2D9824BCB0D9007CD896 /* RoutesView.swift */; };
 		01EA2D9C24BCB109007CD896 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EA2D9B24BCB109007CD896 /* SearchBar.swift */; };
 		01EA2DA024BCB19E007CD896 /* RouteDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EA2D9F24BCB19E007CD896 /* RouteDetail.swift */; };
 		01EA2DA224BCB1CB007CD896 /* ARView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EA2DA124BCB1CB007CD896 /* ARView.swift */; };
+		7D26415124CEEFBF008104D4 /* finish1.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 7D26414A24CEEFBF008104D4 /* finish1.m4a */; };
+		7D26415224CEEFBF008104D4 /* crumb1.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 7D26414B24CEEFBF008104D4 /* crumb1.m4a */; };
+		7D26415324CEEFBF008104D4 /* start1.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 7D26414C24CEEFBF008104D4 /* start1.m4a */; };
+		7D26415424CEEFBF008104D4 /* AudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D26414E24CEEFBF008104D4 /* AudioPlayer.swift */; };
+		7D26415524CEEFBF008104D4 /* RecordingsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D26414F24CEEFBF008104D4 /* RecordingsList.swift */; };
+		7D26415624CEEFBF008104D4 /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D26415024CEEFBF008104D4 /* AudioRecorder.swift */; };
+		7D26415A24CEF003008104D4 /* LocationServiceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D26415824CEF003008104D4 /* LocationServiceDelegate.swift */; };
+		7D26415B24CEF003008104D4 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D26415924CEF003008104D4 /* LocationManager.swift */; };
+		7D26415D24CEF02C008104D4 /* Crumb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D26415C24CEF02C008104D4 /* Crumb.swift */; };
+		7D26415F24CEF041008104D4 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D26415E24CEF041008104D4 /* SettingsView.swift */; };
+		7D26416224CEF0C7008104D4 /* arrow.dae in Resources */ = {isa = PBXBuildFile; fileRef = 7D26416024CEF0C7008104D4 /* arrow.dae */; };
+		7D26416324CEF0C7008104D4 /* crumb.dae in Resources */ = {isa = PBXBuildFile; fileRef = 7D26416124CEF0C7008104D4 /* crumb.dae */; };
+		7D26416724CEF157008104D4 /* ARAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D26416424CEF157008104D4 /* ARAlertView.swift */; };
+		7D26416824CEF157008104D4 /* NewARViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D26416524CEF157008104D4 /* NewARViewController.swift */; };
+		7D26416924CEF157008104D4 /* NewNewARViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D26416624CEF157008104D4 /* NewNewARViewController.swift */; };
 		7D8F423624BCA8F400D62138 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8F423524BCA8F400D62138 /* AppDelegate.swift */; };
 		7D8F423824BCA8F400D62138 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8F423724BCA8F400D62138 /* SceneDelegate.swift */; };
 		7D8F423A24BCA8F400D62138 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8F423924BCA8F400D62138 /* ContentView.swift */; };
@@ -29,7 +39,6 @@
 		7D8F424224BCA8F800D62138 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D8F424024BCA8F800D62138 /* LaunchScreen.storyboard */; };
 		7D8F424A24BCB97D00D62138 /* ChildFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8F424924BCB97D00D62138 /* ChildFactory.swift */; };
 		7D8F424C24BCB9BC00D62138 /* CaregiverFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8F424B24BCB9BC00D62138 /* CaregiverFactory.swift */; };
-		7D8F424E24BCBC7300D62138 /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8F424D24BCBC7300D62138 /* SettingView.swift */; };
 		7D8F425024BCBCC800D62138 /* AddRouteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8F424F24BCBCC800D62138 /* AddRouteView.swift */; };
 		7D8F425224BCBD4900D62138 /* ProfileDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8F425124BCBD4900D62138 /* ProfileDetail.swift */; };
 		7D8F427424BF55D800D62138 /* MapViewAddRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8F427324BF55D800D62138 /* MapViewAddRoute.swift */; };
@@ -38,20 +47,30 @@
 
 /* Begin PBXFileReference section */
 		0164C2E724BDA59C00C4CBF9 /* InterfaceConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterfaceConstants.swift; sourceTree = "<group>"; };
-		01EA2D8324BCABC3007CD896 /* Route.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Route.swift; sourceTree = "<group>"; };
-		01EA2D8524BCABE7007CD896 /* Caregiver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Caregiver.swift; sourceTree = "<group>"; };
 		01EA2D8724BCAD38007CD896 /* RoutesFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutesFactory.swift; sourceTree = "<group>"; };
 		01EA2D8924BCAD60007CD896 /* MapRoutesFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapRoutesFactory.swift; sourceTree = "<group>"; };
-		01EA2D8C24BCADFA007CD896 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		01EA2D8E24BCAE20007CD896 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
-		01EA2D9024BCAE46007CD896 /* MapPin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapPin.swift; sourceTree = "<group>"; };
-		01EA2D9224BCAF0D007CD896 /* RouteMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteMap.swift; sourceTree = "<group>"; };
 		01EA2D9524BCAFD7007CD896 /* ARViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARViewController.swift; sourceTree = "<group>"; };
 		01EA2D9824BCB0D9007CD896 /* RoutesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutesView.swift; sourceTree = "<group>"; };
 		01EA2D9B24BCB109007CD896 /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		01EA2D9F24BCB19E007CD896 /* RouteDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteDetail.swift; sourceTree = "<group>"; };
 		01EA2DA124BCB1CB007CD896 /* ARView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARView.swift; sourceTree = "<group>"; };
 		19E22DF13044CDA55DFA73BB /* Pods_TomThumb.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TomThumb.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7D26414A24CEEFBF008104D4 /* finish1.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = finish1.m4a; sourceTree = "<group>"; };
+		7D26414B24CEEFBF008104D4 /* crumb1.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = crumb1.m4a; sourceTree = "<group>"; };
+		7D26414C24CEEFBF008104D4 /* start1.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = start1.m4a; sourceTree = "<group>"; };
+		7D26414E24CEEFBF008104D4 /* AudioPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioPlayer.swift; sourceTree = "<group>"; };
+		7D26414F24CEEFBF008104D4 /* RecordingsList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordingsList.swift; sourceTree = "<group>"; };
+		7D26415024CEEFBF008104D4 /* AudioRecorder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioRecorder.swift; sourceTree = "<group>"; };
+		7D26415824CEF003008104D4 /* LocationServiceDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationServiceDelegate.swift; sourceTree = "<group>"; };
+		7D26415924CEF003008104D4 /* LocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		7D26415C24CEF02C008104D4 /* Crumb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Crumb.swift; sourceTree = "<group>"; };
+		7D26415E24CEF041008104D4 /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		7D26416024CEF0C7008104D4 /* arrow.dae */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml.dae; path = arrow.dae; sourceTree = "<group>"; };
+		7D26416124CEF0C7008104D4 /* crumb.dae */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml.dae; path = crumb.dae; sourceTree = "<group>"; };
+		7D26416424CEF157008104D4 /* ARAlertView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARAlertView.swift; sourceTree = "<group>"; };
+		7D26416524CEF157008104D4 /* NewARViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewARViewController.swift; sourceTree = "<group>"; };
+		7D26416624CEF157008104D4 /* NewNewARViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewNewARViewController.swift; sourceTree = "<group>"; };
 		7D8F423224BCA8F400D62138 /* TomThumb.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TomThumb.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D8F423524BCA8F400D62138 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7D8F423724BCA8F400D62138 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -62,7 +81,6 @@
 		7D8F424324BCA8F800D62138 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7D8F424924BCB97D00D62138 /* ChildFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChildFactory.swift; sourceTree = "<group>"; };
 		7D8F424B24BCB9BC00D62138 /* CaregiverFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaregiverFactory.swift; sourceTree = "<group>"; };
-		7D8F424D24BCBC7300D62138 /* SettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
 		7D8F424F24BCBCC800D62138 /* AddRouteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRouteView.swift; sourceTree = "<group>"; };
 		7D8F425124BCBD4900D62138 /* ProfileDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileDetail.swift; sourceTree = "<group>"; };
 		7D8F427324BF55D800D62138 /* MapViewAddRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewAddRoute.swift; sourceTree = "<group>"; };
@@ -94,8 +112,7 @@
 		01EA2D8224BCABB6007CD896 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				01EA2D8324BCABC3007CD896 /* Route.swift */,
-				01EA2D8524BCABE7007CD896 /* Caregiver.swift */,
+				7D26415C24CEF02C008104D4 /* Crumb.swift */,
 				01EA2D8724BCAD38007CD896 /* RoutesFactory.swift */,
 				01EA2D8924BCAD60007CD896 /* MapRoutesFactory.swift */,
 				7D8F424924BCB97D00D62138 /* ChildFactory.swift */,
@@ -107,10 +124,8 @@
 		01EA2D8B24BCADE2007CD896 /* Map */ = {
 			isa = PBXGroup;
 			children = (
-				01EA2D8C24BCADFA007CD896 /* LocationManager.swift */,
+				7D26415724CEF003008104D4 /* LocationService */,
 				01EA2D8E24BCAE20007CD896 /* MapView.swift */,
-				01EA2D9024BCAE46007CD896 /* MapPin.swift */,
-				01EA2D9224BCAF0D007CD896 /* RouteMap.swift */,
 				7D8F427324BF55D800D62138 /* MapViewAddRoute.swift */,
 			);
 			path = Map;
@@ -121,6 +136,9 @@
 			children = (
 				01EA2D9524BCAFD7007CD896 /* ARViewController.swift */,
 				01EA2DA124BCB1CB007CD896 /* ARView.swift */,
+				7D26416424CEF157008104D4 /* ARAlertView.swift */,
+				7D26416524CEF157008104D4 /* NewARViewController.swift */,
+				7D26416624CEF157008104D4 /* NewNewARViewController.swift */,
 			);
 			path = AR;
 			sourceTree = "<group>";
@@ -130,9 +148,9 @@
 			children = (
 				01EA2D9A24BCB0F9007CD896 /* Utils */,
 				01EA2D9824BCB0D9007CD896 /* RoutesView.swift */,
+				7D26415E24CEF041008104D4 /* SettingsView.swift */,
 				01EA2D9F24BCB19E007CD896 /* RouteDetail.swift */,
 				7D8F423924BCA8F400D62138 /* ContentView.swift */,
-				7D8F424D24BCBC7300D62138 /* SettingView.swift */,
 				7D8F424F24BCBCC800D62138 /* AddRouteView.swift */,
 				7D8F425124BCBD4900D62138 /* ProfileDetail.swift */,
 			);
@@ -157,6 +175,35 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		7D26414924CEEFBF008104D4 /* AudioDefault */ = {
+			isa = PBXGroup;
+			children = (
+				7D26414A24CEEFBF008104D4 /* finish1.m4a */,
+				7D26414B24CEEFBF008104D4 /* crumb1.m4a */,
+				7D26414C24CEEFBF008104D4 /* start1.m4a */,
+			);
+			path = AudioDefault;
+			sourceTree = "<group>";
+		};
+		7D26414D24CEEFBF008104D4 /* AudioRec */ = {
+			isa = PBXGroup;
+			children = (
+				7D26414E24CEEFBF008104D4 /* AudioPlayer.swift */,
+				7D26414F24CEEFBF008104D4 /* RecordingsList.swift */,
+				7D26415024CEEFBF008104D4 /* AudioRecorder.swift */,
+			);
+			path = AudioRec;
+			sourceTree = "<group>";
+		};
+		7D26415724CEF003008104D4 /* LocationService */ = {
+			isa = PBXGroup;
+			children = (
+				7D26415824CEF003008104D4 /* LocationServiceDelegate.swift */,
+				7D26415924CEF003008104D4 /* LocationManager.swift */,
+			);
+			path = LocationService;
+			sourceTree = "<group>";
+		};
 		7D8F422924BCA8F400D62138 = {
 			isa = PBXGroup;
 			children = (
@@ -178,10 +225,14 @@
 		7D8F423424BCA8F400D62138 /* TomThumb */ = {
 			isa = PBXGroup;
 			children = (
+				7D26414924CEEFBF008104D4 /* AudioDefault */,
+				7D26414D24CEEFBF008104D4 /* AudioRec */,
 				01EA2D9424BCAFA8007CD896 /* AR */,
 				01EA2D8B24BCADE2007CD896 /* Map */,
 				01EA2D8224BCABB6007CD896 /* Model */,
 				01EA2D9724BCB0B1007CD896 /* View */,
+				7D26416024CEF0C7008104D4 /* arrow.dae */,
+				7D26416124CEF0C7008104D4 /* crumb.dae */,
 				01EA2D8124BCABA3007CD896 /* Delegate */,
 				7D8F423B24BCA8F800D62138 /* Assets.xcassets */,
 				7D8F424024BCA8F800D62138 /* LaunchScreen.storyboard */,
@@ -268,8 +319,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				7D8F424224BCA8F800D62138 /* LaunchScreen.storyboard in Resources */,
+				7D26415324CEEFBF008104D4 /* start1.m4a in Resources */,
+				7D26416324CEF0C7008104D4 /* crumb.dae in Resources */,
 				7D8F423F24BCA8F800D62138 /* Preview Assets.xcassets in Resources */,
+				7D26415224CEEFBF008104D4 /* crumb1.m4a in Resources */,
 				7D8F423C24BCA8F800D62138 /* Assets.xcassets in Resources */,
+				7D26415124CEEFBF008104D4 /* finish1.m4a in Resources */,
+				7D26416224CEF0C7008104D4 /* arrow.dae in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -322,28 +378,32 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				01EA2D8624BCABE7007CD896 /* Caregiver.swift in Sources */,
 				7D8F423624BCA8F400D62138 /* AppDelegate.swift in Sources */,
-				01EA2D9324BCAF0D007CD896 /* RouteMap.swift in Sources */,
 				01EA2D9624BCAFD7007CD896 /* ARViewController.swift in Sources */,
 				7D8F425224BCBD4900D62138 /* ProfileDetail.swift in Sources */,
 				01EA2DA024BCB19E007CD896 /* RouteDetail.swift in Sources */,
 				01EA2DA224BCB1CB007CD896 /* ARView.swift in Sources */,
-				01EA2D8424BCABC3007CD896 /* Route.swift in Sources */,
 				7D8F423824BCA8F400D62138 /* SceneDelegate.swift in Sources */,
 				7D8F425024BCBCC800D62138 /* AddRouteView.swift in Sources */,
-				01EA2D8D24BCADFA007CD896 /* LocationManager.swift in Sources */,
+				7D26415A24CEF003008104D4 /* LocationServiceDelegate.swift in Sources */,
 				01EA2D9C24BCB109007CD896 /* SearchBar.swift in Sources */,
-				7D8F424E24BCBC7300D62138 /* SettingView.swift in Sources */,
+				7D26415F24CEF041008104D4 /* SettingsView.swift in Sources */,
 				7D8F424A24BCB97D00D62138 /* ChildFactory.swift in Sources */,
+				7D26415524CEEFBF008104D4 /* RecordingsList.swift in Sources */,
+				7D26416824CEF157008104D4 /* NewARViewController.swift in Sources */,
 				01EA2D8824BCAD38007CD896 /* RoutesFactory.swift in Sources */,
 				01EA2D9924BCB0D9007CD896 /* RoutesView.swift in Sources */,
-				01EA2D9124BCAE46007CD896 /* MapPin.swift in Sources */,
+				7D26416924CEF157008104D4 /* NewNewARViewController.swift in Sources */,
+				7D26415424CEEFBF008104D4 /* AudioPlayer.swift in Sources */,
+				7D26415B24CEF003008104D4 /* LocationManager.swift in Sources */,
 				01EA2D8A24BCAD60007CD896 /* MapRoutesFactory.swift in Sources */,
+				7D26415624CEEFBF008104D4 /* AudioRecorder.swift in Sources */,
 				01EA2D8F24BCAE20007CD896 /* MapView.swift in Sources */,
 				0164C2E824BDA59C00C4CBF9 /* InterfaceConstants.swift in Sources */,
 				7D8F423A24BCA8F400D62138 /* ContentView.swift in Sources */,
+				7D26415D24CEF02C008104D4 /* Crumb.swift in Sources */,
 				7D8F424C24BCB9BC00D62138 /* CaregiverFactory.swift in Sources */,
+				7D26416724CEF157008104D4 /* ARAlertView.swift in Sources */,
 				7D8F427424BF55D800D62138 /* MapViewAddRoute.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

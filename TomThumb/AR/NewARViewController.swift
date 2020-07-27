@@ -26,6 +26,7 @@ enum Demonstration {
 
 // swiftlint:disable:next type_body_length
 final class NewARViewController: UIViewController, UIViewControllerRepresentable {
+    
     weak var sceneXYZLabel: UILabel!
     weak var estLatLonLabel: UILabel!
     weak var estXYZLabel: UILabel!

@@ -101,6 +101,18 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
         node.continuallyUpdatePositionAndScale = continuallyUpdatePositionAndScale
     }
     
+    // Add arrow 3D
+    func addOrientationArrow() {
+        let arrowLoc = LocationNode(location: self.locationManager.currentLocation)
+        let arrowScene = SCNScene(named: "arrow.dae")
+        guard let arrowNode: SCNNode = arrowScene?.rootNode.childNode(withName: "Body1_Material_0", recursively: true) else {
+            fatalError("arrowModel is not found")
+        }
+        arrowLoc.addChildNode(arrowNode)
+        self.addScenewideNodeSettings(arrowLoc)
+        self.sceneLocationView?.addLocationNodeWithConfirmedLocation(locationNode: arrowLoc)
+    }
+    
     // Add a single crumb at actual user altitude (- 5)
     func addJustOneNode() {
         guard (self.locationManager.currentLocation != nil && self.locationManager.userHeading != nil) else {
@@ -116,14 +128,32 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
         self.sceneLocationView?.removeAllNodes()
         print("DEBUG - Crumb index: \(self.actualCrumb), actual user altitude: \(self.locationManager.currentLocation!.altitude)")
         let location = CLLocation(coordinate: self.route.crumbs[self.actualCrumb].location, altitude: self.locationManager.currentLocation!.altitude - 5)
-        let cubeNode = LocationNode(location: location)
+        
+        // Test add crumb
+        let crumbNode = LocationNode(location: location)
+        let crumbScene = SCNScene(named: "crumb.dae")
+        guard let crumb: SCNNode = crumbScene?.rootNode.childNode(withName: "crumbModel", recursively: true) else {
+            fatalError("arrowModel is not found")
+        }
+        
+        if actualCrumb == 0 {
+            crumb.geometry?.firstMaterial?.diffuse.contents = UIColor.systemRed
+        } else if actualCrumb == (self.route.crumbs.count - 1) {
+            crumb.geometry?.firstMaterial?.diffuse.contents = UIColor.systemGreen
+        }
+        
+        crumbNode.addChildNode(crumb)
+        self.addScenewideNodeSettings(crumbNode)
+        self.sceneLocationView?.addLocationNodeWithConfirmedLocation(locationNode: crumbNode)
+        
+        /*let cubeNode = LocationNode(location: location)
         let cubeSide = CGFloat(2)
         let cube = SCNBox(width: cubeSide, height: cubeSide, length: cubeSide, chamferRadius: 0)
         
         cube.firstMaterial?.diffuse.contents = UIColor.random
         cubeNode.addChildNode(SCNNode(geometry: cube))
         self.addScenewideNodeSettings(cubeNode)
-        self.sceneLocationView?.addLocationNodeWithConfirmedLocation(locationNode: cubeNode)
+        self.sceneLocationView?.addLocationNodeWithConfirmedLocation(locationNode: cubeNode)*/
     }
     
     // Add all crumbs at actual user altitude (- 5)
