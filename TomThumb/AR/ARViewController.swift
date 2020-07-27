@@ -29,6 +29,7 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     
     public var renderTime: TimeInterval = 0
     private let distanceThreshold: Double = 10.0
+    private var isColliding = false
     
     var route: MapRoute
     @Binding var actualCrumb: Int
@@ -74,6 +75,7 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         rebuildSceneLocationView()
+        //addOrientationArrow()
         addJustOneNode()
         sceneLocationView?.run()
     }
@@ -89,7 +91,7 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
         sceneLocationView?.frame = view.bounds
     }
     
-    // MARK: - Some canned demos
+    // MARK: - Some canned demo
     
     /// Perform these actions on every node after it's added.
     func addScenewideNodeSettings(_ node: LocationNode) {
@@ -129,7 +131,6 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
         print("DEBUG - Crumb index: \(self.actualCrumb), actual user altitude: \(self.locationManager.currentLocation!.altitude)")
         let location = CLLocation(coordinate: self.route.crumbs[self.actualCrumb].location, altitude: self.locationManager.currentLocation!.altitude - 5)
         
-        // Test add crumb
         let crumbNode = LocationNode(location: location)
         let crumbScene = SCNScene(named: "crumb.dae")
         guard let crumb: SCNNode = crumbScene?.rootNode.childNode(withName: "crumbModel", recursively: true) else {
@@ -145,15 +146,6 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
         crumbNode.addChildNode(crumb)
         self.addScenewideNodeSettings(crumbNode)
         self.sceneLocationView?.addLocationNodeWithConfirmedLocation(locationNode: crumbNode)
-        
-        /*let cubeNode = LocationNode(location: location)
-        let cubeSide = CGFloat(2)
-        let cube = SCNBox(width: cubeSide, height: cubeSide, length: cubeSide, chamferRadius: 0)
-        
-        cube.firstMaterial?.diffuse.contents = UIColor.random
-        cubeNode.addChildNode(SCNNode(geometry: cube))
-        self.addScenewideNodeSettings(cubeNode)
-        self.sceneLocationView?.addLocationNodeWithConfirmedLocation(locationNode: cubeNode)*/
     }
     
     // Add all crumbs at actual user altitude (- 5)
@@ -215,11 +207,23 @@ extension ARViewController: ARSCNViewDelegate {
         if time > renderTime {
             if self.actualCrumb < self.route.crumbs.count {
                 print("DEBUG - Crumb at index \(self.actualCrumb) is \(Double((self.locationManager.currentLocation?.distance(from: CLLocation(coordinate: self.route.crumbs[actualCrumb].location, altitude: self.locationManager.currentLocation!.altitude)))!).short) meters far away")
-                if Double((self.locationManager.currentLocation?.distance(from: CLLocation(coordinate: self.route.crumbs[actualCrumb].location, altitude: self.locationManager.currentLocation!.altitude)))!) < distanceThreshold {
-                    self.actualCrumb = self.actualCrumb + 1
-                    self.addJustOneNode()
-                    /*let arAlertView = ARAlertView(alertText: "GG", buttonText: "OK", buttonColor: .blue)
-                     arAlertView.add(to : self.sceneLocationView!)*/
+                
+                if !isColliding && Double((self.locationManager.currentLocation?.distance(from: CLLocation(coordinate: self.route.crumbs[actualCrumb].location, altitude: self.locationManager.currentLocation!.altitude)))!) < distanceThreshold {
+                    self.isColliding = true
+                    
+                    if let audioSource = SCNAudioSource(fileNamed: (self.route.crumbs[actualCrumb].audio!.lastPathComponent)) {
+                        let audioPlayer = SCNAudioPlayer(source: audioSource)
+                        
+                        self.sceneLocationView?.locationNodes[0].addAudioPlayer(audioPlayer)
+                        audioPlayer.didFinishPlayback = {
+                            self.sceneLocationView?.locationNodes[0].removeAudioPlayer(audioPlayer)
+                            if self.actualCrumb < self.route.crumbs.count {
+                                self.actualCrumb = self.actualCrumb + 1
+                                self.isColliding = false
+                                self.addJustOneNode()
+                            }
+                        }
+                    }
                 }
             }
             else {
@@ -229,7 +233,7 @@ extension ARViewController: ARSCNViewDelegate {
             renderTime = time + TimeInterval(0.75)
         }
     }
-        
+    
     public func renderer(_ renderer: SCNSceneRenderer, didApplyAnimationsAtTime time: TimeInterval) {
         
     }
@@ -246,13 +250,4 @@ extension ARViewController: ARSCNViewDelegate {
         
     }
     
-}
-
-extension UIColor {
-    static var random: UIColor {
-        return UIColor(red: .random(in: 0...1),
-                       green: .random(in: 0...1),
-                       blue: .random(in: 0...1),
-                       alpha: 1.0)
-    }
 }
