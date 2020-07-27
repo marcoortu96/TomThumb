@@ -19,7 +19,7 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     //This is for the `SceneLocationView`. There's no way to set a node's `locationEstimateMethod`, which is hardcoded to `mostRelevantEstimate`.
     public var locationEstimateMethod = LocationEstimateMethod.mostRelevantEstimate
     
-    public var arTrackingType = SceneLocationView.ARTrackingType.orientationTracking
+    public var arTrackingType = SceneLocationView.ARTrackingType.worldTracking
     public var scalingScheme = ScalingScheme.normal
     
     // These three properties are properties of individual nodes. We'll set them the same way for each node added.
@@ -28,6 +28,7 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     public var annotationHeightAdjustmentFactor = 1.1
     
     public var renderTime: TimeInterval = 0
+    private let distanceThreshold: Double = 10.0
     
     var route: MapRoute
     @Binding var actualCrumb: Int
@@ -62,7 +63,7 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
         newSceneLocationView.arViewDelegate = self
         newSceneLocationView.locationEstimateMethod = locationEstimateMethod
         
-        newSceneLocationView.debugOptions = [.showWorldOrigin]
+        newSceneLocationView.debugOptions = []
         newSceneLocationView.showsStatistics = false
         newSceneLocationView.showAxesNode = false // don't need ARCL's axesNode because we're showing SceneKit's
         newSceneLocationView.autoenablesDefaultLighting = true
@@ -74,7 +75,6 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
         super.viewDidAppear(animated)
         rebuildSceneLocationView()
         addJustOneNode()
-        //addStackOfNodes()
         sceneLocationView?.run()
     }
     
@@ -103,7 +103,7 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     
     // Add a single crumb at actual user altitude (- 5)
     func addJustOneNode() {
-        guard (self.locationManager.currentLocation) != nil else {
+        guard (self.locationManager.currentLocation != nil && self.locationManager.userHeading != nil) else {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
                 self?.addJustOneNode()
             }
@@ -185,7 +185,7 @@ extension ARViewController: ARSCNViewDelegate {
         if time > renderTime {
             if self.actualCrumb < self.route.crumbs.count {
                 print("DEBUG - Crumb at index \(self.actualCrumb) is \(Double((self.locationManager.currentLocation?.distance(from: CLLocation(coordinate: self.route.crumbs[actualCrumb].location, altitude: self.locationManager.currentLocation!.altitude)))!).short) meters far away")
-                if Double((self.locationManager.currentLocation?.distance(from: CLLocation(coordinate: self.route.crumbs[actualCrumb].location, altitude: self.locationManager.currentLocation!.altitude)))!) < 10 {
+                if Double((self.locationManager.currentLocation?.distance(from: CLLocation(coordinate: self.route.crumbs[actualCrumb].location, altitude: self.locationManager.currentLocation!.altitude)))!) < distanceThreshold {
                     self.actualCrumb = self.actualCrumb + 1
                     self.addJustOneNode()
                     /*let arAlertView = ARAlertView(alertText: "GG", buttonText: "OK", buttonColor: .blue)
@@ -196,11 +196,10 @@ extension ARViewController: ARSCNViewDelegate {
                 sceneLocationView?.pause()
                 print("DEBUG - Route completed! Good Job!")
             }
-            renderTime = time + TimeInterval(0.7)
+            renderTime = time + TimeInterval(0.75)
         }
     }
-    
-    
+        
     public func renderer(_ renderer: SCNSceneRenderer, didApplyAnimationsAtTime time: TimeInterval) {
         
     }
