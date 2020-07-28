@@ -16,6 +16,7 @@ import SwiftUI
 
 final class ARViewController: UIViewController, UIViewControllerRepresentable {
     var sceneLocationView: SceneLocationView?
+    
     //This is for the `SceneLocationView`. There's no way to set a node's `locationEstimateMethod`, which is hardcoded to `mostRelevantEstimate`.
     public var locationEstimateMethod = LocationEstimateMethod.mostRelevantEstimate
     
@@ -34,6 +35,10 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     var route: MapRoute
     @Binding var actualCrumb: Int
     var locationManager = LocationManager()
+    
+    // TEST ARROW
+    let arrowScene = SCNScene(named: "arrow.dae")
+    var arrowNode = SCNNode()
     
     init(route: MapRoute, actualCrumb: Binding<Int>) {
         self.route = route
@@ -75,6 +80,7 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         rebuildSceneLocationView()
+        // TEST
         //addOrientationArrow()
         addJustOneNode()
         sceneLocationView?.run()
@@ -103,16 +109,10 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
         node.continuallyUpdatePositionAndScale = continuallyUpdatePositionAndScale
     }
     
-    // Add arrow 3D
+    // Add arrow 3D TEST
     func addOrientationArrow() {
-        let arrowLoc = LocationNode(location: self.locationManager.currentLocation)
-        let arrowScene = SCNScene(named: "arrow.dae")
-        guard let arrowNode: SCNNode = arrowScene?.rootNode.childNode(withName: "Body1_Material_0", recursively: true) else {
-            fatalError("arrowModel is not found")
-        }
-        arrowLoc.addChildNode(arrowNode)
-        self.addScenewideNodeSettings(arrowLoc)
-        self.sceneLocationView?.addLocationNodeWithConfirmedLocation(locationNode: arrowLoc)
+        self.arrowNode = (arrowScene?.rootNode.childNode(withName: "Body1_Material_0", recursively: true)!)! as SCNNode
+        self.sceneLocationView?.scene.rootNode.addChildNode(arrowNode)
     }
     
     // Add a single crumb at actual user altitude (- 5)
@@ -134,7 +134,7 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
         let crumbNode = LocationNode(location: location)
         let crumbScene = SCNScene(named: "crumb.dae")
         guard let crumb: SCNNode = crumbScene?.rootNode.childNode(withName: "crumbModel", recursively: true) else {
-            fatalError("arrowModel is not found")
+            fatalError("crumbModel is not found")
         }
         
         if actualCrumb == 0 {
@@ -144,6 +144,8 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
         }
         
         crumbNode.addChildNode(crumb)
+        crumbNode.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 120, z: 0, duration: 100)))
+        //arrowNode.look(at: crumbNode.position)
         self.addScenewideNodeSettings(crumbNode)
         self.sceneLocationView?.addLocationNodeWithConfirmedLocation(locationNode: crumbNode)
     }
