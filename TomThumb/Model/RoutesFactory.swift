@@ -9,8 +9,7 @@
 import Foundation
 import MapKit
 
-struct Route : Hashable {
-    
+class Route : Hashable, ObservableObject {
     let id = UUID()
     var routeName: String
     var user: String
@@ -18,6 +17,15 @@ struct Route : Hashable {
     var distance: Double
     var caregiver: Caregiver
     var mapRoute: MapRoute
+    
+    init() {
+        self.routeName = ""
+        self.user = ""
+        self.crumbs = 0
+        self.distance = 0.0
+        self.caregiver = CaregiverFactory().caregivers[0]
+        self.mapRoute = MapRoutesFactory().mapRoutes[0]
+    }
     
     init(routeName: String, user: String, caregiver: Caregiver, mapRoute: MapRoute) {
         self.routeName = routeName
