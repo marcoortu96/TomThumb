@@ -21,9 +21,16 @@ struct AddRouteView: View {
     @State private var locations = [MKPointAnnotation]()
     @ObservedObject var audioRecorder: AudioRecorder
     @State var showingAudioAlert = false
+    @State var showingConfirmRoute = false
     @State var crumbAudio: URL
     @State var currentCrumb: Crumb
     @State var crumbs: [Crumb]
+    @State var canSave = false
+    @State var routeName = "" {
+        didSet {
+            canSave = true
+        }
+    }
     
     var body: some View {
         NavigationView {
@@ -87,15 +94,29 @@ struct AddRouteView: View {
                     Button(action: {
                         //Save new route
                         let mapRoute = MapRoute(crumbs: self.crumbs)
-                        let newRoute = Route(routeName: "New", user: ChildFactory().children[0].name, caregiver: CaregiverFactory().caregivers[0], mapRoute: mapRoute)
-                        RoutesFactory.insertRoute(route: newRoute)
-                        self.showSheetView = false
+                        self.getRouteName(route: mapRoute)
+                        self.showingConfirmRoute = true
                     }) {
                         Text("Salva")
                             .foregroundColor((self.showingAudioAlert || self.locations.count <= 2) ? Color.blue.opacity(0.3) : Color.blue)
+                    }.alert(isPresented: self.$showingConfirmRoute) {
+                        Alert(title: Text("Conferma il salvataggio"), message: Text("Vuoi salvare questo percorso?"), primaryButton: Alert.Button.default(Text("Salva"), action: {
+                            let mapRoute = MapRoute(crumbs: self.crumbs)
+                            self.getRouteName(route: mapRoute)
+                            self.showingConfirmRoute = true
+                            if self.canSave {
+                                let newRoute = Route(routeName: self.routeName, user: ChildFactory().children[0].name, caregiver: CaregiverFactory().caregivers[0], mapRoute: mapRoute)
+                                RoutesFactory.insertRoute(route: newRoute)
+                                self.showSheetView = false
+                            }
+                        }),
+                              secondaryButton: Alert.Button.cancel(Text("Annulla"), action: {
+                            
+                        }))
                     }
                     .padding()
                     .disabled(self.showingAudioAlert || self.locations.count <= 2)
+                    
                 }
             }
             .navigationBarTitle("Aggiungi", displayMode: .inline)
@@ -103,9 +124,40 @@ struct AddRouteView: View {
                 self.showSheetView = false
             }) {
                 Text("Indietro").bold()
-                }.disabled(self.showingAudioAlert))
+            }.disabled(self.showingAudioAlert))
         }
     }
+    func getRouteName(route: MapRoute) {
+        let geocoder = CLGeocoder()
+        var partial = ""
+        
+        geocoder.reverseGeocodeLocation(CLLocation(latitude: route.crumbs[0].location.latitude, longitude: route.crumbs[0].location.longitude), completionHandler: {(placemarks, error) -> Void in
+            // Place details
+            var placeMark: CLPlacemark!
+            placeMark = placemarks?[0]
+            
+            // Street address
+            if let street = placeMark.thoroughfare {
+                print("start \(street)")
+                partial = "da \(street) a "
+            }
+            
+            geocoder.reverseGeocodeLocation(CLLocation(latitude: route.crumbs[route.crumbs.count - 1].location.latitude, longitude: route.crumbs[route.crumbs.count - 1].location.longitude), completionHandler: {(placemarks, error) -> Void in
+                // Place details
+                var placeMark: CLPlacemark!
+                placeMark = placemarks?[0]
+                
+                // Street address
+                if let street = placeMark.thoroughfare {
+                    print("finish \(street)")
+                    self.routeName = partial + "\(street)"
+                    self.canSave = true
+                }
+            })
+        })
+        
+    }
+    
 }
 
 struct PopupAudio: View {
