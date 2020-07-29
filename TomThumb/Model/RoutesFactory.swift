@@ -93,4 +93,10 @@ class RoutesFactory: ObservableObject {
         RoutesFactory.getInstance().setRoutes(routes: routes)
     }
     
+    public static func remove(index: IndexSet) {
+        var routes = RoutesFactory.getInstance().getRoutes()
+        routes.remove(atOffsets: index)
+        RoutesFactory.getInstance().setRoutes(routes: routes)
+    }
+    
 }

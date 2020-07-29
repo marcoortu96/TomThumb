@@ -24,22 +24,24 @@ struct RoutesView: View {
         NavigationView {
             VStack {
                 SearchBar(searchText: $searchText)
-                //print routes-list
-                List(routesFactory.getRoutes().filter {
+                List {
+                    ForEach(routesFactory.getRoutes().filter {
                     self.searchText == "" ? true : $0.routeName.localizedCaseInsensitiveContains(searchText)
-                    }, id: \.self)
-                { route in
-                    NavigationLink(destination: RouteDetail(route: route)) {
-                        Text(route.routeName)
+                    }, id: \.self) { route in
+                        NavigationLink(destination: RouteDetail(route: route)) {
+                              Text(route.routeName)
+                        }
                     }
+                    .onDelete(perform: deleteRoute)
                 }
-            }.navigationBarTitle("Percorsi")
-                .navigationBarItems(trailing:
-                    Button(action: {
-                        self.showAddRouteView.toggle()
-                    }) {
-                        Image(systemName: "plus.circle").font(.largeTitle)
-                    }
+            }
+            .navigationBarTitle("Percorsi")
+            .navigationBarItems(leading: EditButton(), trailing:
+                Button(action: {
+                    self.showAddRouteView.toggle()
+                }) {
+                    Image(systemName: "plus.circle").font(.largeTitle)
+                }
             )
         }
         .accentColor(InterfaceConstants.genericLinkForegroundColor)
@@ -47,6 +49,10 @@ struct RoutesView: View {
             //add new route view (load sheet)
             AddRouteView(showSheetView: self.$showAddRouteView, centerCoordinate: locationManager.location!.coordinate, audioRecorder: self.audioRecorder, crumbAudio: self.crumbAudio, currentCrumb: self.currentCrumb, crumbs: self.crumbs)
         }
+    }
+    
+    func deleteRoute(at offsets: IndexSet) {
+        RoutesFactory.remove(index: offsets)
     }
     
 }

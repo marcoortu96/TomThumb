@@ -11,6 +11,8 @@ import SwiftUI
 struct ARView: View {
     @ObservedObject var locationManager = LocationManager()
     @State var actualCrumb = 0
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    @State var showingEndARAlert = false
     var route: MapRoute
     var debug: Bool
     
@@ -35,11 +37,17 @@ struct ARView: View {
             //Stop ARView section
             ZStack {
                 Button(action: {
-                    print("Stop AR View")
-                    
+                    self.showingEndARAlert = true
                 }) {
                     Image(systemName: "stop.fill")
                         .foregroundColor(.white)
+                }
+                .alert(isPresented: self.$showingEndARAlert) {
+                    Alert(title: Text("Termina"), message: Text("Vuoi terminare questo test?"), primaryButton: Alert.Button.default(Text("OK"), action: {
+                            self.presentationMode.wrappedValue.dismiss() //back to previous page
+                    }),
+                          secondaryButton: Alert.Button.cancel(Text("Annulla"), action: {
+                    }))
                 }
                 .padding()
                 .background(Color.red.opacity(0.85))

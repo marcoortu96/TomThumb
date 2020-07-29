@@ -111,7 +111,6 @@ struct AddRouteView: View {
                             }
                         }),
                               secondaryButton: Alert.Button.cancel(Text("Annulla"), action: {
-                            
                         }))
                     }
                     .padding()
@@ -127,6 +126,7 @@ struct AddRouteView: View {
             }.disabled(self.showingAudioAlert))
         }
     }
+    
     func getRouteName(route: MapRoute) {
         let geocoder = CLGeocoder()
         var partial = ""

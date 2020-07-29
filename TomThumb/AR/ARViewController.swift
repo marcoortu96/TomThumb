@@ -36,9 +36,7 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     @Binding var actualCrumb: Int
     var locationManager = LocationManager()
     
-    // TEST ARROW
-    let arrowScene = SCNScene(named: "arrow.dae")
-    var arrowNode = SCNNode()
+    let arrowImageView = UIImageView(image: UIImage(systemName: "shift.fill")!)
     
     init(route: MapRoute, actualCrumb: Binding<Int>) {
         self.route = route
@@ -55,11 +53,15 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        //init orientationArrow
+        arrowImageView.tintColor = .systemGreen
+        arrowImageView.frame = CGRect(x: UIScreen.main.bounds.size.width/2.7, y: UIScreen.main.bounds.size.height/1.5, width: 100, height: 100)
+        
         sceneLocationView = SceneLocationView()
         guard let locationService = locationManager.locationManager else { return }
+        
         locationService.startUpdatingLocation()
         view.addSubview(sceneLocationView!)
-        
     }
     
     func rebuildSceneLocationView() {
@@ -80,8 +82,8 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         rebuildSceneLocationView()
-        // TEST
-        //addOrientationArrow()
+        sceneLocationView?.addSubview(arrowImageView) // Show arrow on the scene
+        sceneLocationView?.bringSubviewToFront(arrowImageView)
         addJustOneNode()
         sceneLocationView?.run()
     }
@@ -106,12 +108,6 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
         node.scalingScheme = scalingScheme
         node.continuallyAdjustNodePositionWhenWithinRange = continuallyAdjustNodePositionWhenWithinRange
         node.continuallyUpdatePositionAndScale = continuallyUpdatePositionAndScale
-    }
-    
-    // Add arrow 3D TEST
-    func addOrientationArrow() {
-        self.arrowNode = (arrowScene?.rootNode.childNode(withName: "Body1_Material_0", recursively: true)!)! as SCNNode
-        self.sceneLocationView?.scene.rootNode.addChildNode(arrowNode)
     }
     
     // Add a single crumb
