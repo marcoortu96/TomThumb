@@ -26,10 +26,10 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     // These three properties are properties of individual nodes. We'll set them the same way for each node added.
     public var continuallyAdjustNodePositionWhenWithinRange = true
     public var continuallyUpdatePositionAndScale = true
-    public var annotationHeightAdjustmentFactor = 1.1
+    public var annotationHeightAdjustmentFactor = -0.5
     
     public var renderTime: TimeInterval = 0
-    private let distanceThreshold: Double = 10.0
+    private let distanceThreshold: Double = 5.0
     private var isColliding = false
     
     var route: MapRoute
@@ -97,13 +97,12 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
         sceneLocationView?.frame = view.bounds
     }
     
-    // MARK: - Some canned demo
-    
     /// Perform these actions on every node after it's added.
     func addScenewideNodeSettings(_ node: LocationNode) {
         if let annoNode = node as? LocationAnnotationNode {
             annoNode.annotationHeightAdjustmentFactor = annotationHeightAdjustmentFactor
         }
+        node.ignoreAltitude = true
         node.scalingScheme = scalingScheme
         node.continuallyAdjustNodePositionWhenWithinRange = continuallyAdjustNodePositionWhenWithinRange
         node.continuallyUpdatePositionAndScale = continuallyUpdatePositionAndScale
@@ -115,23 +114,23 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
         self.sceneLocationView?.scene.rootNode.addChildNode(arrowNode)
     }
     
-    // Add a single crumb at actual user altitude (- 5)
+    // Add a single crumb
     func addJustOneNode() {
-        guard (self.locationManager.currentLocation != nil && self.locationManager.userHeading != nil) else {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+        guard (self.sceneLocationView?.sceneLocationManager.currentLocation) != nil else {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
                 self?.addJustOneNode()
             }
             return
         }
         guard (self.actualCrumb < self.route.crumbs.count) else {
             print("DEBUG - Crumb index out of bounds, you might have finished the route!")
+            viewWillDisappear(false)
             return
         }
-        self.sceneLocationView?.removeAllNodes()
-        print("DEBUG - Crumb index: \(self.actualCrumb), actual user altitude: \(self.locationManager.currentLocation!.altitude)")
-        let location = CLLocation(coordinate: self.route.crumbs[self.actualCrumb].location, altitude: self.locationManager.currentLocation!.altitude - 5)
         
-        let crumbNode = LocationNode(location: location)
+        self.sceneLocationView?.removeAllNodes()
+        
+        let crumbNode = LocationNode(location: self.route.crumbs[self.actualCrumb].location)
         let crumbScene = SCNScene(named: "crumb.dae")
         guard let crumb: SCNNode = crumbScene?.rootNode.childNode(withName: "crumbModel", recursively: true) else {
             fatalError("crumbModel is not found")
@@ -165,8 +164,7 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
         
         //Load crumbs
         for (index,crumb) in self.route.crumbs.enumerated() {
-            let location = CLLocation(coordinate: crumb.location, altitude: self.locationManager.currentLocation!.altitude - 5)
-            let cubeNode = LocationNode(location: location)
+            let cubeNode = LocationNode(location: crumb.location)
             let cube = SCNBox(width: cubeSide, height: cubeSide, length: cubeSide, chamferRadius: 0)
             
             cube.firstMaterial?.diffuse.contents = index == route.crumbs.count - 1 ? InterfaceConstants.finishPinColor : InterfaceConstants.crumbPinColor
@@ -205,32 +203,36 @@ extension ARViewController: ARSCNViewDelegate {
     // internal SCNSceneRendererDelegate (akak ARSCNViewDelegate). They're forwarded versions of the
     // SCNSceneRendererDelegate calls.
     
-    public func renderer(_ renderer: SCNSceneRenderer, didRenderScene scene: SCNScene, atTime time: TimeInterval) {
+    public func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
+        
+        guard actualCrumb < route.crumbs.count else { return }
+        
+        guard let currentLocation = self.sceneLocationView?.sceneLocationManager.currentLocation else { return }
+        
+        guard let locationNodes = sceneLocationView?.locationNodes else { return }
+        
+        guard locationNodes.count > 0 else { return }
+        
+        let userLocation = CLLocation(coordinate: currentLocation.coordinate,
+                                      altitude: currentLocation.altitude)
+        
         if time > renderTime {
-            if self.actualCrumb < self.route.crumbs.count {
-                print("DEBUG - Crumb at index \(self.actualCrumb) is \(Double((self.locationManager.currentLocation?.distance(from: CLLocation(coordinate: self.route.crumbs[actualCrumb].location, altitude: self.locationManager.currentLocation!.altitude)))!).short) meters far away")
+            print("DEBUG - Crumb at index \(self.actualCrumb) is \(Double(userLocation.distance(from: (locationNodes[0].location)!)).short) meters far away")
+            
+            if !isColliding && Double(userLocation.distance(from: (locationNodes[0].location)!)) < distanceThreshold {
+                self.isColliding = true
                 
-                if !isColliding && Double((self.locationManager.currentLocation?.distance(from: CLLocation(coordinate: self.route.crumbs[actualCrumb].location, altitude: self.locationManager.currentLocation!.altitude)))!) < distanceThreshold {
-                    self.isColliding = true
+                if let audioSource = SCNAudioSource(fileNamed: (self.route.crumbs[actualCrumb].audio!.lastPathComponent)) {
+                    let audioPlayer = SCNAudioPlayer(source: audioSource)
                     
-                    if let audioSource = SCNAudioSource(fileNamed: (self.route.crumbs[actualCrumb].audio!.lastPathComponent)) {
-                        let audioPlayer = SCNAudioPlayer(source: audioSource)
-                        
-                        self.sceneLocationView?.locationNodes[0].addAudioPlayer(audioPlayer)
-                        audioPlayer.didFinishPlayback = {
-                            self.sceneLocationView?.locationNodes[0].removeAudioPlayer(audioPlayer)
-                            if self.actualCrumb < self.route.crumbs.count {
-                                self.actualCrumb = self.actualCrumb + 1
-                                self.isColliding = false
-                                self.addJustOneNode()
-                            }
-                        }
+                    self.sceneLocationView?.locationNodes[0].addAudioPlayer(audioPlayer)
+                    audioPlayer.didFinishPlayback = {
+                        self.sceneLocationView?.locationNodes[0].removeAudioPlayer(audioPlayer)
+                        self.actualCrumb = self.actualCrumb + 1
+                        self.isColliding = false
+                        self.addJustOneNode()
                     }
                 }
-            }
-            else {
-                sceneLocationView?.pause()
-                print("DEBUG - Route completed! Good Job!")
             }
             renderTime = time + TimeInterval(0.75)
         }

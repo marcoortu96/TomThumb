@@ -17,7 +17,7 @@ struct RoutesView: View {
     @ObservedObject var routesFactory = RoutesFactory.getInstance()
     @State var audioRecorder = AudioRecorder()
     @State var crumbAudio = URL(fileURLWithPath: "")
-    @State var currentCrumb = Crumb(location:  CLLocationCoordinate2D())
+    @State var currentCrumb = Crumb(location: CLLocation())
     @State var crumbs = [Crumb]()
     
     var body: some View {

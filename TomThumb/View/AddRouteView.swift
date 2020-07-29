@@ -53,7 +53,7 @@ struct AddRouteView: View {
                                 newLocation.coordinate = self.centerCoordinate
                                 self.locations.append(newLocation)
                                 self.showingAudioAlert = true
-                                self.currentCrumb = Crumb(location: CLLocationCoordinate2D(latitude: newLocation.coordinate.latitude, longitude: newLocation.coordinate.longitude))
+                                self.currentCrumb = Crumb(location: CLLocation(latitude: newLocation.coordinate.latitude, longitude: newLocation.coordinate.longitude))
                                 
                             }) {
                                 Image(systemName: "plus")
@@ -131,7 +131,7 @@ struct AddRouteView: View {
         let geocoder = CLGeocoder()
         var partial = ""
         
-        geocoder.reverseGeocodeLocation(CLLocation(latitude: route.crumbs[0].location.latitude, longitude: route.crumbs[0].location.longitude), completionHandler: {(placemarks, error) -> Void in
+        geocoder.reverseGeocodeLocation(route.crumbs[0].location, completionHandler: {(placemarks, error) -> Void in
             // Place details
             var placeMark: CLPlacemark!
             placeMark = placemarks?[0]
@@ -142,7 +142,7 @@ struct AddRouteView: View {
                 partial = "da \(street) a "
             }
             
-            geocoder.reverseGeocodeLocation(CLLocation(latitude: route.crumbs[route.crumbs.count - 1].location.latitude, longitude: route.crumbs[route.crumbs.count - 1].location.longitude), completionHandler: {(placemarks, error) -> Void in
+            geocoder.reverseGeocodeLocation(route.crumbs[route.crumbs.count - 1].location, completionHandler: {(placemarks, error) -> Void in
                 // Place details
                 var placeMark: CLPlacemark!
                 placeMark = placemarks?[0]
@@ -194,6 +194,7 @@ struct PopupAudio: View {
                         .foregroundColor(.red)
                 }
             }
+            Divider()
             Button(action: {
                 self.showingAudioAlert.toggle()
                 self.crumbs.append(Crumb(location: self.currentCrumb.location, audio: self.selectedAudio))

@@ -34,7 +34,7 @@ class Route : Hashable, ObservableObject {
         
         var totalDistance = 0.0
         for i in stride(from: 0, to: mapRoute.crumbs.count - 1, by: 1) {
-            totalDistance = totalDistance + mapRoute.crumbs[i].location.distanceTo(coordinate: mapRoute.crumbs[i + 1].location)
+            totalDistance = totalDistance + mapRoute.crumbs[i].location.distance(from: mapRoute.crumbs[i + 1].location)
         }
         
         self.distance = totalDistance
@@ -66,7 +66,7 @@ class RoutesFactory: ObservableObject {
                             mapRoute: MapRoutesFactory().mapRoutes[1]))
         routes.append(Route(routeName: "Terza", user: "Matteo",
                             caregiver: CaregiverFactory().caregivers[0],
-                            mapRoute: MapRoutesFactory().mapRoutes[0]))
+                            mapRoute: MapRoutesFactory().mapRoutes[2]))
         routes.append(Route(routeName: "Quarta", user: "Alberto",
                             caregiver: CaregiverFactory().caregivers[0],
                             mapRoute: MapRoutesFactory().mapRoutes[1]))

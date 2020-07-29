@@ -26,20 +26,20 @@ struct MapView: UIViewRepresentable {
         var annotations = [MKPointAnnotation]()
         
         let startAnnotation = MKPointAnnotation()
-        startAnnotation.coordinate = mapRoute.crumbs[0].location
+        startAnnotation.coordinate = mapRoute.crumbs[0].location.coordinate
         startAnnotation.title = "start"
         annotations.append(startAnnotation)
         
         let finishAnnotation = MKPointAnnotation()
-        finishAnnotation.coordinate = mapRoute.crumbs[mapRoute.crumbs.count - 1].location
+        finishAnnotation.coordinate = mapRoute.crumbs[mapRoute.crumbs.count - 1].location.coordinate
         finishAnnotation.title = "finish"
         annotations.append(finishAnnotation)
         
         for (index,crumb) in mapRoute.crumbs[1..<(mapRoute.crumbs.count - 1)].enumerated() {
             let crumbAnnotation = MKPointAnnotation()
-            crumbAnnotation.coordinate = crumb.location
+            crumbAnnotation.coordinate =  crumb.location.coordinate
             crumbAnnotation.title = String(index + 1)
-            crumbAnnotation.subtitle = String("\(crumb.location.latitude), \(crumb.location.longitude)")
+            crumbAnnotation.subtitle = String("\(crumb.location)")
             annotations.append(crumbAnnotation)
         }
         mapView.subviews[1].isHidden = true //hide 'legal' label from right-lower corner

@@ -11,14 +11,14 @@ import MapKit
 
 
 class Crumb {
-    var location: CLLocationCoordinate2D
+    var location: CLLocation
     var audio: URL?
     
-    init(location: CLLocationCoordinate2D) {
+    init(location: CLLocation) {
         self.location = location
     }
     
-    init(location: CLLocationCoordinate2D, audio: URL) {
+    init(location: CLLocation, audio: URL) {
         self.location = location
         self.audio = audio
     }
