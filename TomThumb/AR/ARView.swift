@@ -17,37 +17,58 @@ struct ARView: View {
     var route: MapRoute
     var debug: Bool
     
+    @State var size: CGFloat = 0.7
+    var repeatingAnimation: Animation {
+        Animation
+            .linear(duration: 0.8)
+            .repeatForever()
+    }
+    
     var body: some View {
         ZStack {
             ARViewController(route: route, actualCrumb: $actualCrumb, lookAt: $lookAt)
             
             //Directional arrows section
-            ZStack {
+            
                 if lookAt == 1 {
                     //look left
                     Image(systemName: "shift.fill")
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .clipped()
-                    .rotationEffect(.degrees(-90))
-                    .frame(width: 50, height: 50)
-                    .foregroundColor(InterfaceConstants.genericLinkForegroundColor)
-                    .padding(.bottom, (UIScreen.main.bounds.size.height/100) * 45)
-                    .padding(.trailing, (UIScreen.main.bounds.size.width/100) * 83)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .clipped()
+                        .rotationEffect(.degrees(-90))
+                        .frame(width: 50, height: 50)
+                        .foregroundColor(InterfaceConstants.genericLinkForegroundColor)
+                        .padding(.bottom, (UIScreen.main.bounds.size.height/100) * 45)
+                        .padding(.trailing, (UIScreen.main.bounds.size.width/100) * 99)
+                        .scaleEffect(size)
+                        .onAppear() {
+                            withAnimation(self.repeatingAnimation) { self.size = 0.8 }
+                        }
+                        .onDisappear() {
+                            self.size = 0.7
+                        }
                     
                 } else if lookAt == 2 {
                     //look right
                     Image(systemName: "shift.fill")
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .clipped()
-                    .rotationEffect(.degrees(90))
-                    .frame(width: 50, height: 50)
-                    .foregroundColor(InterfaceConstants.genericLinkForegroundColor)
-                    .padding(.bottom, (UIScreen.main.bounds.size.height/100) * 45)
-                    .padding(.leading, (UIScreen.main.bounds.size.width/100) * 83)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .clipped()
+                        .rotationEffect(.degrees(90))
+                        .frame(width: 50, height: 50)
+                        .foregroundColor(InterfaceConstants.genericLinkForegroundColor)
+                        .padding(.bottom, (UIScreen.main.bounds.size.height/100) * 45)
+                        .padding(.leading, (UIScreen.main.bounds.size.width/100) * 99)
+                        .scaleEffect(size)
+                        .onAppear() {
+                            withAnimation(self.repeatingAnimation) { self.size = 0.8 }
+                        }
+                        .onDisappear() {
+                            self.size = 0.7
+                        }
                 }
-            }
+                
             
             //Route percentage section
             ZStack {
@@ -74,10 +95,10 @@ struct ARView: View {
                 }
                 .alert(isPresented: self.$showingEndARAlert) {
                     Alert(title: Text("Termina"), message: Text("Vuoi terminare questo test?"), primaryButton: Alert.Button.default(Text("OK"), action: {
-                            self.presentationMode.wrappedValue.dismiss() //back to previous page
+                        self.presentationMode.wrappedValue.dismiss() //back to previous page
                     }),
                           secondaryButton: Alert.Button.cancel(Text("Annulla"), action: {
-                    }))
+                          }))
                 }
                 .padding()
                 .background(Color.red.opacity(0.85))
@@ -132,14 +153,14 @@ struct ARView: View {
         }
     }
 }
-    
+
 struct PopUpTerminated: View {
     var body: some View {
         Text("Percorso completato")
             .font(.title)
         
     }
-        
+    
 }
 
 /*
