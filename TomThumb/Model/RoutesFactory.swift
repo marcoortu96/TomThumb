@@ -42,6 +42,10 @@ class Route : Hashable, ObservableObject {
         self.mapRoute = mapRoute
     }
     
+    func setRouteName(newName: String) {
+        routeName = newName
+    }
+    
     static func == (lhs: Route, rhs: Route) -> Bool {
         lhs.id == rhs.id
     }
@@ -96,6 +100,21 @@ class RoutesFactory: ObservableObject {
     public static func remove(index: IndexSet) {
         var routes = RoutesFactory.getInstance().getRoutes()
         routes.remove(atOffsets: index)
+        RoutesFactory.getInstance().setRoutes(routes: routes)
+    }
+    
+    func getByName(name: String) -> String {
+        let routes = RoutesFactory.getInstance().getRoutes()
+        return routes.filter {$0.routeName == name}[0].routeName
+    }
+    
+    public static func changeName(route: Route, newName: String) {
+        let routes = RoutesFactory.getInstance().getRoutes()
+        for r in routes {
+            if r.id == route.id {
+                r.routeName = newName
+            }
+        }
         RoutesFactory.getInstance().setRoutes(routes: routes)
     }
     

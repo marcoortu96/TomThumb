@@ -31,6 +31,7 @@ struct RoutesView: View {
                         NavigationLink(destination: RouteDetail(route: route)) {
                               Text(route.routeName)
                         }
+                        
                     }
                     .onDelete(perform: deleteRoute)
                 }
@@ -53,6 +54,7 @@ struct RoutesView: View {
     
     func deleteRoute(at offsets: IndexSet) {
         RoutesFactory.remove(index: offsets)
+        print(RoutesFactory.getInstance().getRoutes()[0].routeName)
     }
     
 }
