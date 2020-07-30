@@ -34,13 +34,13 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     
     var route: MapRoute
     @Binding var actualCrumb: Int
+    @Binding var lookAt: Int
     var locationManager = LocationManager()
     
-    let arrowImageView = UIImageView(image: UIImage(systemName: "shift.fill")!)
-    
-    init(route: MapRoute, actualCrumb: Binding<Int>) {
+    init(route: MapRoute, actualCrumb: Binding<Int>, lookAt: Binding<Int>) {
         self.route = route
         self._actualCrumb = actualCrumb
+        self._lookAt = lookAt
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -52,11 +52,6 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        //init orientationArrow
-        arrowImageView.tintColor = .systemGreen
-        arrowImageView.frame = CGRect(x: UIScreen.main.bounds.size.width/2.7, y: UIScreen.main.bounds.size.height/1.5, width: 100, height: 100)
-        
         sceneLocationView = SceneLocationView()
         guard let locationService = locationManager.locationManager else { return }
         
@@ -70,7 +65,7 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
         newSceneLocationView.translatesAutoresizingMaskIntoConstraints = false
         newSceneLocationView.arViewDelegate = self
         newSceneLocationView.locationEstimateMethod = locationEstimateMethod
-        
+        newSceneLocationView.allowsCameraControl = true
         newSceneLocationView.debugOptions = []
         newSceneLocationView.showsStatistics = false
         newSceneLocationView.showAxesNode = false // don't need ARCL's axesNode because we're showing SceneKit's
@@ -82,8 +77,6 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         rebuildSceneLocationView()
-        sceneLocationView?.addSubview(arrowImageView) // Show arrow on the scene
-        sceneLocationView?.bringSubviewToFront(arrowImageView)
         addJustOneNode()
         sceneLocationView?.run()
     }
@@ -171,7 +164,7 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     }
     
     func makeUIViewController(context: UIViewControllerRepresentableContext<ARViewController>) -> ARViewController {
-        return ARViewController(route: self.route, actualCrumb: self.$actualCrumb)
+        return ARViewController(route: self.route, actualCrumb: self.$actualCrumb, lookAt: self.$lookAt)
     }
     
     func updateUIViewController(_ uiViewController: ARViewController.UIViewControllerType, context: UIViewControllerRepresentableContext<ARViewController>) {
@@ -213,6 +206,11 @@ extension ARViewController: ARSCNViewDelegate {
                                       altitude: currentLocation.altitude)
         
         if time > renderTime {
+            DispatchQueue.main.async {
+                // UIView usage
+                self.getWhereIsLooking(sceneWidth: (self.sceneLocationView?.bounds.width)!, nodePosition: (self.sceneLocationView?.projectPoint(locationNodes[0].position))!)
+            }
+            
             print("DEBUG - Crumb at index \(self.actualCrumb) is \(Double(userLocation.distance(from: (locationNodes[0].location)!)).short) meters far away")
             
             if !isColliding && Double(userLocation.distance(from: (locationNodes[0].location)!)) < distanceThreshold {
@@ -231,6 +229,25 @@ extension ARViewController: ARSCNViewDelegate {
                 }
             }
             renderTime = time + TimeInterval(0.75)
+        }
+    }
+    
+    func getWhereIsLooking(sceneWidth: CGFloat, nodePosition: SCNVector3){
+        if(nodePosition.z < 1){
+            if(nodePosition.x > (Float(sceneWidth))){
+                print("Look Right")
+                self.lookAt = 2
+            }else if(nodePosition.x < 0){
+                print("Look Left")
+                self.lookAt = 1
+            }else{
+                self.lookAt = 0
+                return
+            }
+        }else if(nodePosition.x < 0){
+            print("Look Right")
+        }else{
+            print("Look Left")
         }
     }
     

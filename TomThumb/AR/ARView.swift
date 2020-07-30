@@ -11,6 +11,7 @@ import SwiftUI
 struct ARView: View {
     @ObservedObject var locationManager = LocationManager()
     @State var actualCrumb = 0
+    @State var lookAt = 0
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @State var showingEndARAlert = false
     var route: MapRoute
@@ -18,7 +19,36 @@ struct ARView: View {
     
     var body: some View {
         ZStack {
-            ARViewController(route: route, actualCrumb: $actualCrumb)
+            ARViewController(route: route, actualCrumb: $actualCrumb, lookAt: $lookAt)
+            
+            //Directional arrows section
+            ZStack {
+                if lookAt == 1 {
+                    //look left
+                    Image(systemName: "shift.fill")
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .clipped()
+                    .rotationEffect(.degrees(-90))
+                    .frame(width: 50, height: 50)
+                    .foregroundColor(InterfaceConstants.genericLinkForegroundColor)
+                    .padding(.bottom, (UIScreen.main.bounds.size.height/100) * 45)
+                    .padding(.trailing, (UIScreen.main.bounds.size.width/100) * 83)
+                    
+                } else if lookAt == 2 {
+                    //look right
+                    Image(systemName: "shift.fill")
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .clipped()
+                    .rotationEffect(.degrees(90))
+                    .frame(width: 50, height: 50)
+                    .foregroundColor(InterfaceConstants.genericLinkForegroundColor)
+                    .padding(.bottom, (UIScreen.main.bounds.size.height/100) * 45)
+                    .padding(.leading, (UIScreen.main.bounds.size.width/100) * 83)
+                }
+            }
+            
             //Route percentage section
             ZStack {
                 Text("\(actualCrumb)/\(route.crumbs.count)")
@@ -56,8 +86,9 @@ struct ARView: View {
                 .padding(.bottom, (UIScreen.main.bounds.size.height/100) * (debug ? 70 : 75))
                 .padding(.leading, (UIScreen.main.bounds.size.width/100) * 77)
             }
-            //Call caregiver section
+            
             if !debug {
+                //Call caregiver section
                 ZStack {
                     Button(action: {
                         print("Calling caregiver")
@@ -73,7 +104,6 @@ struct ARView: View {
                     .padding(.top, (UIScreen.main.bounds.size.height/100) * 75)
                     .padding(.trailing, (UIScreen.main.bounds.size.width/100) * 77)
                 }
-                
                 
                 //Help section
                 ZStack {
