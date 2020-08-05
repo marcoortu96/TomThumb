@@ -7,11 +7,15 @@
 //
 
 import SwiftUI
+import MapKit
+import ARCL
 
 struct ARView: View {
     @ObservedObject var locationManager = LocationManager()
     @State var actualCrumb = 0
     @State var lookAt = 0
+    // TEST point-segment
+    @State var prevCrumb = LocationNode(location: CLLocation())
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @State var showingEndARAlert = false
     var route: MapRoute
@@ -26,7 +30,7 @@ struct ARView: View {
     
     var body: some View {
         ZStack {
-            ARViewController(route: route, actualCrumb: $actualCrumb, lookAt: $lookAt)
+            ARViewController(route: route, actualCrumb: $actualCrumb, lookAt: $lookAt, prevCrumb: $prevCrumb)
             
             //Directional arrows section
             

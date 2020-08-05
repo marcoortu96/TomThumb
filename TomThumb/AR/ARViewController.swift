@@ -29,18 +29,21 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     public var annotationHeightAdjustmentFactor = -0.5
     
     public var renderTime: TimeInterval = 0
-    private let distanceThreshold: Double = 5.0
+    private let distanceThreshold: Double = 10.0
     private var isColliding = false
     
     var route: MapRoute
     @Binding var actualCrumb: Int
+    //TEST var for distance point-segment
+    @Binding var prevCrumb: LocationNode
     @Binding var lookAt: Int
     var locationManager = LocationManager()
     
-    init(route: MapRoute, actualCrumb: Binding<Int>, lookAt: Binding<Int>) {
+    init(route: MapRoute, actualCrumb: Binding<Int>, lookAt: Binding<Int>, prevCrumb: Binding<LocationNode>) {
         self.route = route
         self._actualCrumb = actualCrumb
         self._lookAt = lookAt
+        self._prevCrumb = prevCrumb
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -133,38 +136,37 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
         
         crumbNode.addChildNode(crumb)
         crumbNode.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 120, z: 0, duration: 100)))
-        //arrowNode.look(at: crumbNode.position)
         self.addScenewideNodeSettings(crumbNode)
         self.sceneLocationView?.addLocationNodeWithConfirmedLocation(locationNode: crumbNode)
     }
     
     // Add all crumbs at actual user altitude (- 5)
-    func addStackOfNodes() {
-        
-        guard (self.locationManager.currentLocation) != nil else {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-                self?.addStackOfNodes()
-            }
-            return
-        }
-        print("DEBUG - Reloading")
-        
-        let cubeSide = CGFloat(2)
-        
-        //Load crumbs
-        for (index,crumb) in self.route.crumbs.enumerated() {
-            let cubeNode = LocationNode(location: crumb.location)
-            let cube = SCNBox(width: cubeSide, height: cubeSide, length: cubeSide, chamferRadius: 0)
-            
-            cube.firstMaterial?.diffuse.contents = index == route.crumbs.count - 1 ? InterfaceConstants.finishPinColor : InterfaceConstants.crumbPinColor
-            cubeNode.addChildNode(SCNNode(geometry: cube))
-            self.addScenewideNodeSettings(cubeNode)
-            self.sceneLocationView?.addLocationNodeWithConfirmedLocation(locationNode: cubeNode)
-        }
-    }
+    /*func addStackOfNodes() {
+     
+     guard (self.locationManager.currentLocation) != nil else {
+     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+     self?.addStackOfNodes()
+     }
+     return
+     }
+     print("DEBUG - Reloading")
+     
+     let cubeSide = CGFloat(2)
+     
+     //Load crumbs
+     for (index,crumb) in self.route.crumbs.enumerated() {
+     let cubeNode = LocationNode(location: crumb.location)
+     let cube = SCNBox(width: cubeSide, height: cubeSide, length: cubeSide, chamferRadius: 0)
+     
+     cube.firstMaterial?.diffuse.contents = index == route.crumbs.count - 1 ? InterfaceConstants.finishPinColor : InterfaceConstants.crumbPinColor
+     cubeNode.addChildNode(SCNNode(geometry: cube))
+     self.addScenewideNodeSettings(cubeNode)
+     self.sceneLocationView?.addLocationNodeWithConfirmedLocation(locationNode: cubeNode)
+     }
+     }*/
     
     func makeUIViewController(context: UIViewControllerRepresentableContext<ARViewController>) -> ARViewController {
-        return ARViewController(route: self.route, actualCrumb: self.$actualCrumb, lookAt: self.$lookAt)
+        return ARViewController(route: self.route, actualCrumb: self.$actualCrumb, lookAt: self.$lookAt, prevCrumb: self.$prevCrumb)
     }
     
     func updateUIViewController(_ uiViewController: ARViewController.UIViewControllerType, context: UIViewControllerRepresentableContext<ARViewController>) {
@@ -213,8 +215,19 @@ extension ARViewController: ARSCNViewDelegate {
             
             print("DEBUG - Crumb at index \(self.actualCrumb) is \(Double(userLocation.distance(from: (locationNodes[0].location)!)).short) meters far away")
             
+            // TEST distance between current position and a segment where the extremes are prevCrumb and actualCrumb
+            // convert geographical coordinate in cartesian of current position
+            let currPosCartesian = coordGeoToCartesian(pos: currentLocation)
+            let distUserCrumbs = distancePointSegment(x: currPosCartesian.0, y: currPosCartesian.1, x1: Double(locationNodes[0].position.x), y1: Double(locationNodes[0].position.y), x2: Double(prevCrumb.position.x), y2: Double(prevCrumb.position.y))
+            if distUserCrumbs > 60 {
+                print("Lo proviamo domani")
+            }
+            
             if !isColliding && Double(userLocation.distance(from: (locationNodes[0].location)!)) < distanceThreshold {
                 self.isColliding = true
+                
+                // TEST Save previous crumb before the update
+                prevCrumb = locationNodes[0]
                 
                 if let audioSource = SCNAudioSource(fileNamed: (self.route.crumbs[actualCrumb].audio!.lastPathComponent)) {
                     let audioPlayer = SCNAudioPlayer(source: audioSource)
@@ -230,6 +243,22 @@ extension ARViewController: ARSCNViewDelegate {
             }
             renderTime = time + TimeInterval(0.75)
         }
+    }
+    
+    public func renderer(_ renderer: SCNSceneRenderer, didApplyAnimationsAtTime time: TimeInterval) {
+        
+    }
+    
+    public func renderer(_ renderer: SCNSceneRenderer, didSimulatePhysicsAtTime time: TimeInterval) {
+        
+    }
+    
+    public func renderer(_ renderer: SCNSceneRenderer, didApplyConstraintsAtTime time: TimeInterval) {
+        
+    }
+    
+    public func renderer(_ renderer: SCNSceneRenderer, willRenderScene scene: SCNScene, atTime time: TimeInterval) {
+        
     }
     
     func getWhereIsLooking(sceneWidth: CGFloat, nodePosition: SCNVector3){
@@ -251,20 +280,52 @@ extension ARViewController: ARSCNViewDelegate {
         }
     }
     
-    public func renderer(_ renderer: SCNSceneRenderer, didApplyAnimationsAtTime time: TimeInterval) {
+    // TEST convert geographical coordinate in cartesian of a location
+    func coordGeoToCartesian(pos: CLLocation) -> (Double, Double) {
+        let earthRadius = 6371000.0
+        var point: (Double, Double)
+        point.0 = earthRadius * cos(pos.coordinate.latitude) * cos(pos.coordinate.longitude)
+        point.1 = earthRadius * cos(pos.coordinate.latitude) * sin(pos.coordinate.longitude)
+        //var z = earthRadius *sin(lat)
         
+        return point
     }
     
-    public func renderer(_ renderer: SCNSceneRenderer, didSimulatePhysicsAtTime time: TimeInterval) {
+    // TEST calculate distance between point and a segment
+    func distancePointSegment(x: Double, y: Double, x1: Double, y1: Double, x2: Double, y2: Double) -> Double {
+        let A = x - x1
+        let B = y - y1
+        let C = x2 - x1
+        let D = y2 - y1
+        let dot = A * C + B * D
+        let len_sq = C * C + D * D
+        var param = -1.0
         
-    }
-    
-    public func renderer(_ renderer: SCNSceneRenderer, didApplyConstraintsAtTime time: TimeInterval) {
+        //in case of 0 length line
+        if len_sq != 0 {
+            param = dot / len_sq
+        }
         
-    }
-    
-    public func renderer(_ renderer: SCNSceneRenderer, willRenderScene scene: SCNScene, atTime time: TimeInterval) {
+        var xx: Double
+        var yy: Double;
         
+        if (param < 0) {
+            xx = x1
+            yy = y1
+        }
+        else if (param > 1) {
+            xx = x2
+            yy = y2
+        }
+        else {
+            xx = x1 + param * C
+            yy = y1 + param * D
+        }
+        
+        let dx = x - xx
+        let dy = y - yy
+        
+        return sqrt(dx * dx + dy * dy)
     }
     
 }
