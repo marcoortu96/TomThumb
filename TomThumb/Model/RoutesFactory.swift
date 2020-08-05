@@ -11,7 +11,9 @@ import MapKit
 
 class Route : Hashable, ObservableObject {
     let id = UUID()
-    var routeName: String
+    @Published var routeName: String
+    var startName: String
+    var finishName : String
     var user: String
     var crumbs: Int
     var distance: Double
@@ -20,6 +22,8 @@ class Route : Hashable, ObservableObject {
     
     init() {
         self.routeName = ""
+        self.startName = ""
+        self.finishName = ""
         self.user = ""
         self.crumbs = 0
         self.distance = 0.0
@@ -27,8 +31,10 @@ class Route : Hashable, ObservableObject {
         self.mapRoute = MapRoutesFactory().mapRoutes[0]
     }
     
-    init(routeName: String, user: String, caregiver: Caregiver, mapRoute: MapRoute) {
+    init(routeName: String, startName: String, finishName: String, user: String, caregiver: Caregiver, mapRoute: MapRoute) {
         self.routeName = routeName
+        self.startName = startName
+        self.finishName = finishName
         self.user = user
         self.crumbs = mapRoute.crumbs.count
         
@@ -62,16 +68,16 @@ class RoutesFactory: ObservableObject {
     @Published var routes: [Route]! = []
     
     init() {
-        routes.append(Route(routeName: "Prima", user: "Filippo",
+        routes.append(Route(routeName: "Prima", startName: "Via X", finishName: "Via Y", user: "Filippo",
                             caregiver: CaregiverFactory().caregivers[0],
                             mapRoute: MapRoutesFactory().mapRoutes[0]))
-        routes.append(Route(routeName: "Seconda", user: "Andrea",
+        routes.append(Route(routeName: "Seconda", startName: "Via X", finishName: "Via Y", user: "Andrea",
                             caregiver: CaregiverFactory().caregivers[0],
                             mapRoute: MapRoutesFactory().mapRoutes[1]))
-        routes.append(Route(routeName: "Terza", user: "Matteo",
+        routes.append(Route(routeName: "Terza", startName: "Via X", finishName: "Via Y", user: "Matteo",
                             caregiver: CaregiverFactory().caregivers[0],
                             mapRoute: MapRoutesFactory().mapRoutes[2]))
-        routes.append(Route(routeName: "Quarta", user: "Alberto",
+        routes.append(Route(routeName: "Quarta", startName: "Via X", finishName: "Via Y", user: "Alberto",
                             caregiver: CaregiverFactory().caregivers[0],
                             mapRoute: MapRoutesFactory().mapRoutes[1]))
     }
@@ -103,9 +109,9 @@ class RoutesFactory: ObservableObject {
         RoutesFactory.getInstance().setRoutes(routes: routes)
     }
     
-    func getByName(name: String) -> String {
+    func getById(id: UUID) -> Route {
         let routes = RoutesFactory.getInstance().getRoutes()
-        return routes.filter {$0.routeName == name}[0].routeName
+        return routes.filter {$0.id == id}[0]
     }
     
     public static func changeName(route: Route, newName: String) {

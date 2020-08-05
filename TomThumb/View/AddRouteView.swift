@@ -105,7 +105,10 @@ struct AddRouteView: View {
                             self.getRouteName(route: mapRoute)
                             self.showingConfirmRoute = true
                             if self.canSave {
-                                let newRoute = Route(routeName: self.routeName, user: ChildFactory().children[0].name, caregiver: CaregiverFactory().caregivers[0], mapRoute: mapRoute)
+                                let fullName = self.routeName.components(separatedBy: "/")
+                                let startName = fullName[0]
+                                let finishName = fullName[1]
+                                let newRoute = Route(routeName: "da \(startName) a \(finishName)", startName: startName, finishName: finishName, user: ChildFactory().children[0].name, caregiver: CaregiverFactory().caregivers[0], mapRoute: mapRoute)
                                 RoutesFactory.insertRoute(route: newRoute)
                                 self.showSheetView = false
                             }
@@ -139,7 +142,12 @@ struct AddRouteView: View {
             // Street address
             if let street = placeMark.thoroughfare {
                 print("start \(street)")
-                partial = "da \(street) a "
+                partial = "\(street) "
+            }
+            
+            if let streetNum = placeMark.subThoroughfare {
+                print("start num \(streetNum)")
+                partial = partial + "\(streetNum)/"
             }
             
             geocoder.reverseGeocodeLocation(route.crumbs[route.crumbs.count - 1].location, completionHandler: {(placemarks, error) -> Void in
@@ -150,7 +158,13 @@ struct AddRouteView: View {
                 // Street address
                 if let street = placeMark.thoroughfare {
                     print("finish \(street)")
-                    self.routeName = partial + "\(street)"
+                    partial = partial + "\(street) "
+                }
+                
+                if let streetNum = placeMark.subThoroughfare {
+                    print("finish num \(streetNum)")
+                    partial = partial + "\(streetNum)"
+                    self.routeName = partial
                     self.canSave = true
                 }
             })
