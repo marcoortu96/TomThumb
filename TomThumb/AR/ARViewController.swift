@@ -140,31 +140,6 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
         self.sceneLocationView?.addLocationNodeWithConfirmedLocation(locationNode: crumbNode)
     }
     
-    // Add all crumbs at actual user altitude (- 5)
-    /*func addStackOfNodes() {
-     
-     guard (self.locationManager.currentLocation) != nil else {
-     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-     self?.addStackOfNodes()
-     }
-     return
-     }
-     print("DEBUG - Reloading")
-     
-     let cubeSide = CGFloat(2)
-     
-     //Load crumbs
-     for (index,crumb) in self.route.crumbs.enumerated() {
-     let cubeNode = LocationNode(location: crumb.location)
-     let cube = SCNBox(width: cubeSide, height: cubeSide, length: cubeSide, chamferRadius: 0)
-     
-     cube.firstMaterial?.diffuse.contents = index == route.crumbs.count - 1 ? InterfaceConstants.finishPinColor : InterfaceConstants.crumbPinColor
-     cubeNode.addChildNode(SCNNode(geometry: cube))
-     self.addScenewideNodeSettings(cubeNode)
-     self.sceneLocationView?.addLocationNodeWithConfirmedLocation(locationNode: cubeNode)
-     }
-     }*/
-    
     func makeUIViewController(context: UIViewControllerRepresentableContext<ARViewController>) -> ARViewController {
         return ARViewController(route: self.route, actualCrumb: self.$actualCrumb, lookAt: self.$lookAt, prevCrumb: self.$prevCrumb)
     }
@@ -215,12 +190,32 @@ extension ARViewController: ARSCNViewDelegate {
             
             print("DEBUG - Crumb at index \(self.actualCrumb) is \(Double(userLocation.distance(from: (locationNodes[0].location)!)).short) meters far away")
             
-            // TEST distance between current position and a segment where the extremes are prevCrumb and actualCrumb
-            // convert geographical coordinate in cartesian of current position
-            let currPosCartesian = coordGeoToCartesian(pos: currentLocation)
-            let distUserCrumbs = distancePointSegment(x: currPosCartesian.0, y: currPosCartesian.1, x1: Double(locationNodes[0].position.x), y1: Double(locationNodes[0].position.y), x2: Double(prevCrumb.position.x), y2: Double(prevCrumb.position.y))
-            if distUserCrumbs > 60 {
-                print("Lo proviamo domani")
+            
+            if actualCrumb > 0 {
+                // TEST distance between current position and a segment where the extremes are prevCrumb and actualCrumb
+                // convert geographical coordinate in cartesian of current position
+                let currPosCartesian = coordGeoToCartesian(pos: currentLocation)
+                let previousCrumbCartes = coordGeoToCartesian(pos: prevCrumb.location)
+                let nextCrumbCartes = coordGeoToCartesian(pos: locationNodes[0].location)
+                
+                print("curr: \(currPosCartesian)")
+                print("prev: \(previousCrumbCartes)")
+                print("next: \(nextCrumbCartes)")
+                
+                //let distUserCrumbs = distancePointSegment(x: currPosCartesian.0, y: currPosCartesian.1, x1: Double(locationNodes[0].position.x), y1: Double(locationNodes[0].position.y), x2: Double(prevCrumb.position.x), y2: Double(prevCrumb.position.y))
+                let distUserCrumbs = distancePointSegment(x: currPosCartesian.0, y: currPosCartesian.1, x1: previousCrumbCartes.0, y1: previousCrumbCartes.1, x2: nextCrumbCartes.0, y2: nextCrumbCartes.1)
+                print(distUserCrumbs)
+                if distUserCrumbs > 60 {
+                    print("Lo proviamo domani")
+                    /*if let audioSource = SCNAudioSource(fileNamed: (self.route.crumbs[actualCrumb].audio!.lastPathComponent)) {
+                        let audioPlayer = SCNAudioPlayer(source: audioSource)
+                        
+                        self.sceneLocationView?.locationNodes[0].addAudioPlayer(audioPlayer)
+                        audioPlayer.didFinishPlayback = {
+                            self.sceneLocationView?.locationNodes[0].removeAudioPlayer(audioPlayer)
+                        }
+                    }*/
+                }
             }
             
             if !isColliding && Double(userLocation.distance(from: (locationNodes[0].location)!)) < distanceThreshold {
@@ -281,12 +276,15 @@ extension ARViewController: ARSCNViewDelegate {
     }
     
     // TEST convert geographical coordinate in cartesian of a location
-    func coordGeoToCartesian(pos: CLLocation) -> (Double, Double) {
+    func coordGeoToCartesian(pos: CLLocation) -> (Double, Double, Double) {
         let earthRadius = 6371000.0
-        var point: (Double, Double)
+        var point: (Double, Double, Double)
+
+        print("lat: \(pos.coordinate.latitude)\n lon: \(pos.coordinate.longitude)\n alt: \(Double(pos.altitude))")
         point.0 = earthRadius * cos(pos.coordinate.latitude) * cos(pos.coordinate.longitude)
         point.1 = earthRadius * cos(pos.coordinate.latitude) * sin(pos.coordinate.longitude)
-        //var z = earthRadius *sin(lat)
+        point.2 = earthRadius * sin(Double(pos.altitude) != 0.0 ? Double(pos.altitude) : Double(locationManager.currentLocation!.altitude))
+        print("x: \(point.0)\n y: \(point.1)\n z: \(point.2)")
         
         return point
     }
