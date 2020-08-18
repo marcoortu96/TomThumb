@@ -13,6 +13,7 @@ import MapKit
 import SceneKit
 import UIKit
 import SwiftUI
+import Firebase
 
 final class ARViewController: UIViewController, UIViewControllerRepresentable {
     var sceneLocationView: SceneLocationView?
@@ -183,6 +184,14 @@ extension ARViewController: ARSCNViewDelegate {
                                       altitude: currentLocation.altitude)
         
         if time > renderTime {
+            // Instance for DB firebase
+            let db = Database.database().reference()
+            let position = [
+                "latitude" : userLocation.coordinate.latitude,
+                "longitude" : userLocation.coordinate.longitude
+            ]
+            db.child("Assisted").setValue(position)
+            
             DispatchQueue.main.async {
                 // UIView usage
                 self.getWhereIsLooking(sceneWidth: (self.sceneLocationView?.bounds.width)!, nodePosition: (self.sceneLocationView?.projectPoint(locationNodes[0].position))!)
@@ -222,7 +231,7 @@ extension ARViewController: ARSCNViewDelegate {
                     }
                 }
             }
-            renderTime = time + TimeInterval(1.75)
+            renderTime = time + TimeInterval(0.75)
         }
     }
     
