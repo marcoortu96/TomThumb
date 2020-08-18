@@ -33,14 +33,14 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     private let distanceThreshold: Double = 10.0
     private var isColliding = false
     
-    var route: MapRoute
+    var route: Route
     @Binding var actualCrumb: Int
     //TEST var for distance point-segment
     @Binding var prevCrumb: LocationNode
     @Binding var lookAt: Int
     var locationManager = LocationManager()
     
-    init(route: MapRoute, actualCrumb: Binding<Int>, lookAt: Binding<Int>, prevCrumb: Binding<LocationNode>) {
+    init(route: Route, actualCrumb: Binding<Int>, lookAt: Binding<Int>, prevCrumb: Binding<LocationNode>) {
         self.route = route
         self._actualCrumb = actualCrumb
         self._lookAt = lookAt
@@ -115,7 +115,7 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
             }
             return
         }
-        guard (self.actualCrumb < self.route.crumbs.count) else {
+        guard (self.actualCrumb < self.route.mapRoute.crumbs.count) else {
             print("DEBUG - Crumb index out of bounds, you might have finished the route!")
             viewWillDisappear(false)
             return
@@ -123,7 +123,7 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
         
         self.sceneLocationView?.removeAllNodes()
         
-        let crumbNode = LocationNode(location: self.route.crumbs[self.actualCrumb].location)
+        let crumbNode = LocationNode(location: self.route.mapRoute.crumbs[self.actualCrumb].location)
         let crumbScene = SCNScene(named: "crumb.dae")
         guard let crumb: SCNNode = crumbScene?.rootNode.childNode(withName: "crumbModel", recursively: true) else {
             fatalError("crumbModel is not found")
@@ -131,7 +131,7 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
         
         if actualCrumb == 0 {
             crumb.geometry?.firstMaterial?.diffuse.contents = UIColor.systemRed
-        } else if actualCrumb == (self.route.crumbs.count - 1) {
+        } else if actualCrumb == (self.route.mapRoute.crumbs.count - 1) {
             crumb.geometry?.firstMaterial?.diffuse.contents = UIColor.systemGreen
         }
         
@@ -172,7 +172,7 @@ extension ARViewController: ARSCNViewDelegate {
     
     public func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         
-        guard actualCrumb < route.crumbs.count else { return }
+        guard actualCrumb < route.mapRoute.crumbs.count else { return }
         
         guard let currentLocation = self.sceneLocationView?.sceneLocationManager.currentLocation else { return }
         
@@ -186,11 +186,15 @@ extension ARViewController: ARSCNViewDelegate {
         if time > renderTime {
             // Instance for DB firebase
             let db = Database.database().reference()
-            let position = [
+            
+            
+            let routeData = [
+                "id" : self.route.id.uuidString as Any,
                 "latitude" : userLocation.coordinate.latitude,
-                "longitude" : userLocation.coordinate.longitude
+                "longitude" : userLocation.coordinate.longitude,
+                "collected" : self.actualCrumb
             ]
-            db.child("Assisted").setValue(position)
+            db.child("Assisted").setValue(routeData)
             
             DispatchQueue.main.async {
                 // UIView usage
@@ -219,7 +223,7 @@ extension ARViewController: ARSCNViewDelegate {
                 // TEST Save previous crumb before the update
                 prevCrumb = locationNodes[0]
                 
-                if let audioSource = SCNAudioSource(fileNamed: (self.route.crumbs[actualCrumb].audio!.lastPathComponent)) {
+                if let audioSource = SCNAudioSource(fileNamed: (self.route.mapRoute.crumbs[actualCrumb].audio!.lastPathComponent)) {
                     let audioPlayer = SCNAudioPlayer(source: audioSource)
                     
                     self.sceneLocationView?.locationNodes[0].addAudioPlayer(audioPlayer)

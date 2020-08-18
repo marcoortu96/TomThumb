@@ -50,7 +50,7 @@ struct RouteDetail: View {
                 }.accentColor(InterfaceConstants.genericLinkForegroundColor)
             }
             Section(header: Text("Prova")) {
-                NavigationLink(destination: ARView(route: route.mapRoute, debug: true)) {
+                NavigationLink(destination: ARView(route: route, debug: true)) {
                     Text("Avvia il test del percorso")
                         .frame(minWidth: 0, maxWidth: .infinity)
                         .foregroundColor(InterfaceConstants.positiveLinkForegroundColor)

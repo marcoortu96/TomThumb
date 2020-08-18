@@ -11,14 +11,24 @@ import Firebase
 
 struct AssistedView: View {
     @State var textFromDB = ""
+    @State var route = Route()
     var body: some View {
-        VStack {
-            Text("Polling:\n \(textFromDB)")
-            Button(action: {
-                self.readDataFromDB()
-            }) {
-                Text("PRESS ME!").accentColor(.white).background(Color(.blue))
-            }
+        NavigationView {
+            ZStack {
+                LiveMapView(mapRoute: route.mapRoute)
+                Button(action: {
+                    self.readDataFromDB()
+                }) {
+                    Image(systemName: "repeat")
+                    .foregroundColor(.white)
+                }
+                .padding()
+                .background(Color.blue.opacity(0.85))
+                .font(.title)
+                .clipShape(Circle())
+                .padding(.top, (UIScreen.main.bounds.size.height/100) * 70)
+                .padding(.leading, (UIScreen.main.bounds.size.width/100) * 77)
+            }.navigationBarTitle(Text("\(self.route.routeName)"), displayMode: .inline)
         }
     }
     
@@ -28,10 +38,19 @@ struct AssistedView: View {
             
             // Get user position value
             let value = snapshot.value as? NSDictionary
+            let routeId = value?["id"] as? String ?? "-1"
             let lat = value?["latitude"] as? Double ?? 0.0
             let lon = value?["longitude"] as? Double ?? 0.0
+            let collected = value?["collected"] as? Int ?? -1
             
-            self.textFromDB = "lat: \(lat)\n lon: \(lon)"
+            let fac = RoutesFactory.getInstance().getById(id: UUID(uuidString: routeId)!)
+            
+            if fac != nil {
+                self.route = fac
+            }
+        
+            
+            self.textFromDB = "lat: \(lat)\n lon: \(lon) \n \(routeId) \n \(collected)"
         }) { (error) in
             print(error.localizedDescription)
         }
@@ -39,8 +58,3 @@ struct AssistedView: View {
     }
 }
 
-struct AssistedView_Previews: PreviewProvider {
-    static var previews: some View {
-        AssistedView()
-    }
-}

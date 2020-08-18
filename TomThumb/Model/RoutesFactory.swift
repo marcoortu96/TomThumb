@@ -18,7 +18,7 @@ class Route : Hashable, ObservableObject {
     var crumbs: Int
     var distance: Double
     var caregiver: Caregiver
-    var mapRoute: MapRoute
+    @Published var mapRoute: MapRoute
     
     init() {
         self.routeName = ""

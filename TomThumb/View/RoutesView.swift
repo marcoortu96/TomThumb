@@ -29,7 +29,7 @@ struct RoutesView: View {
                     self.searchText == "" ? true : $0.routeName.localizedCaseInsensitiveContains(searchText)
                     }, id: \.self) { route in
                         NavigationLink(destination: RouteDetail(route: route)) {
-                              Text(route.routeName)
+                              Text("\(route.id)")
                         }
                         
                     }

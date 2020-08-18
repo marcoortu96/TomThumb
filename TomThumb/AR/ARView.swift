@@ -18,7 +18,7 @@ struct ARView: View {
     @State var prevCrumb = LocationNode(location: CLLocation())
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @State var showingEndARAlert = false
-    var route: MapRoute
+    var route: Route
     var debug: Bool
     
     @State var size: CGFloat = 0.7
@@ -76,13 +76,13 @@ struct ARView: View {
             
             //Route percentage section
             ZStack {
-                Text("\(actualCrumb)/\(route.crumbs.count)")
+                Text("\(actualCrumb)/\(route.mapRoute.crumbs.count)")
                 Circle()
                     .fill(Color.clear)
                     .frame(width: 50, height: 50)
                     .overlay(
                         Circle()
-                            .trim(from: 0, to: CGFloat((Double(Double(actualCrumb) / Double(route.crumbs.count)) * 100) * (0.01)))
+                            .trim(from: 0, to: CGFloat((Double(Double(actualCrumb) / Double(route.mapRoute.crumbs.count)) * 100) * (0.01)))
                             .stroke(style: StrokeStyle(lineWidth: 10, lineCap: .round, lineJoin: .round))
                             .fill(Color.red)
                 )
@@ -147,7 +147,7 @@ struct ARView: View {
                     .padding(.leading, (UIScreen.main.bounds.size.width/100) * 77)
                 }
             }
-            if self.actualCrumb == self.route.crumbs.count {
+            if self.actualCrumb == self.route.mapRoute.crumbs.count {
                 GeometryReader { _ in
                     PopUpTerminated()
                 }.background(Color.black.opacity(0.90))
