@@ -190,31 +190,17 @@ extension ARViewController: ARSCNViewDelegate {
             
             print("DEBUG - Crumb at index \(self.actualCrumb) is \(Double(userLocation.distance(from: (locationNodes[0].location)!)).short) meters far away")
             
-            
             if actualCrumb > 0 {
-                // TEST distance between current position and a segment where the extremes are prevCrumb and actualCrumb
-                // convert geographical coordinate in cartesian of current position
-                let currPosCartesian = coordGeoToCartesian(pos: currentLocation)
-                let previousCrumbCartes = coordGeoToCartesian(pos: prevCrumb.location)
-                let nextCrumbCartes = coordGeoToCartesian(pos: locationNodes[0].location)
                 
-                print("curr: \(currPosCartesian)")
-                print("prev: \(previousCrumbCartes)")
-                print("next: \(nextCrumbCartes)")
+                var distUserCrumbs = pointLineDistance(x1: prevCrumb.location.coordinate.longitude, y1: prevCrumb.location.coordinate.latitude, x2: locationNodes[0].location.coordinate.longitude, y2: locationNodes[0].location.coordinate.latitude, pointX: currentLocation.coordinate.longitude, pointY: currentLocation.coordinate.latitude)
                 
-                //let distUserCrumbs = distancePointSegment(x: currPosCartesian.0, y: currPosCartesian.1, x1: Double(locationNodes[0].position.x), y1: Double(locationNodes[0].position.y), x2: Double(prevCrumb.position.x), y2: Double(prevCrumb.position.y))
-                let distUserCrumbs = distancePointSegment(x: currPosCartesian.0, y: currPosCartesian.1, x1: previousCrumbCartes.0, y1: previousCrumbCartes.1, x2: nextCrumbCartes.0, y2: nextCrumbCartes.1)
-                print(distUserCrumbs)
+                distUserCrumbs = distUserCrumbs * 111111
+                
+                print("DEBUG - point-segment distance: \(distUserCrumbs)")
+                
                 if distUserCrumbs > 60 {
-                    print("Lo proviamo domani")
-                    /*if let audioSource = SCNAudioSource(fileNamed: (self.route.crumbs[actualCrumb].audio!.lastPathComponent)) {
-                        let audioPlayer = SCNAudioPlayer(source: audioSource)
-                        
-                        self.sceneLocationView?.locationNodes[0].addAudioPlayer(audioPlayer)
-                        audioPlayer.didFinishPlayback = {
-                            self.sceneLocationView?.locationNodes[0].removeAudioPlayer(audioPlayer)
-                        }
-                    }*/
+                    //MARK: - INSERIRE AUDIO QUI
+                    print("DEBUG - Far from trajectory")
                 }
             }
             
@@ -236,7 +222,7 @@ extension ARViewController: ARSCNViewDelegate {
                     }
                 }
             }
-            renderTime = time + TimeInterval(0.75)
+            renderTime = time + TimeInterval(1.75)
         }
     }
     
@@ -259,71 +245,51 @@ extension ARViewController: ARSCNViewDelegate {
     func getWhereIsLooking(sceneWidth: CGFloat, nodePosition: SCNVector3){
         if(nodePosition.z < 1){
             if(nodePosition.x > (Float(sceneWidth))){
-                print("Look Right")
                 self.lookAt = 2
             }else if(nodePosition.x < 0){
-                print("Look Left")
                 self.lookAt = 1
             }else{
                 self.lookAt = 0
                 return
             }
         }else if(nodePosition.x < 0){
-            print("Look Right")
+            self.lookAt = 2
         }else{
-            print("Look Left")
+            self.lookAt = 1
         }
     }
     
-    // TEST convert geographical coordinate in cartesian of a location
-    func coordGeoToCartesian(pos: CLLocation) -> (Double, Double, Double) {
-        let earthRadius = 6371000.0
-        var point: (Double, Double, Double)
-
-        print("lat: \(pos.coordinate.latitude)\n lon: \(pos.coordinate.longitude)\n alt: \(Double(pos.altitude))")
-        point.0 = earthRadius * cos(pos.coordinate.latitude) * cos(pos.coordinate.longitude)
-        point.1 = earthRadius * cos(pos.coordinate.latitude) * sin(pos.coordinate.longitude)
-        point.2 = earthRadius * sin(Double(pos.altitude) != 0.0 ? Double(pos.altitude) : Double(locationManager.currentLocation!.altitude))
-        print("x: \(point.0)\n y: \(point.1)\n z: \(point.2)")
-        
-        return point
+    func square(x: Double) -> Double{
+        return x * x
     }
     
-    // TEST calculate distance between point and a segment
-    func distancePointSegment(x: Double, y: Double, x1: Double, y1: Double, x2: Double, y2: Double) -> Double {
-        let A = x - x1
-        let B = y - y1
-        let C = x2 - x1
-        let D = y2 - y1
-        let dot = A * C + B * D
-        let len_sq = C * C + D * D
-        var param = -1.0
+    func pointLineDistance(x1: Double, y1: Double, x2: Double, y2: Double, pointX: Double, pointY: Double) -> Double {
+        var diffX = x2 - x1;
+        var diffY = y2 - y1;
         
-        //in case of 0 length line
-        if len_sq != 0 {
-            param = dot / len_sq
+        if ((diffX == 0) && (diffY == 0)) {
+            diffX = pointX - x1;
+            diffY = pointY - y1;
+            return sqrt(diffX * diffX + diffY * diffY);
         }
         
-        var xx: Double
-        var yy: Double;
+        let t = ((pointX - x1) * diffX + (pointY - y1) * diffY) / (diffX * diffX + diffY * diffY);
         
-        if (param < 0) {
-            xx = x1
-            yy = y1
-        }
-        else if (param > 1) {
-            xx = x2
-            yy = y2
-        }
-        else {
-            xx = x1 + param * C
-            yy = y1 + param * D
+        if (t < 0) {
+            //point is nearest to the first point i.e x1 and y1
+            diffX = pointX - x1;
+            diffY = pointY - y1;
+        } else if (t > 1) {
+            //point is nearest to the end point i.e x2 and y2
+            diffX = pointX - x2;
+            diffY = pointY - y2;
+        } else {
+            //if perpendicular line intersect the line segment.
+            diffX = pointX - (x1 + t * diffX);
+            diffY = pointY - (y1 + t * diffY);
         }
         
-        let dx = x - xx
-        let dy = y - yy
-        
-        return sqrt(dx * dx + dy * dy)
+        //returning shortest distance
+        return sqrt(diffX * diffX + diffY * diffY);
     }
-    
 }
