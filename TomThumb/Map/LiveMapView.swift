@@ -25,22 +25,24 @@ struct LiveMapView: UIViewRepresentable {
         let mapView = MKMapView()
         var annotations = [MKPointAnnotation]()
         
-        let startAnnotation = MKPointAnnotation()
-        startAnnotation.coordinate = mapRoute.crumbs[0].location.coordinate
-        startAnnotation.title = "start"
-        annotations.append(startAnnotation)
-        
-        let finishAnnotation = MKPointAnnotation()
-        finishAnnotation.coordinate = mapRoute.crumbs[mapRoute.crumbs.count - 1].location.coordinate
-        finishAnnotation.title = "finish"
-        annotations.append(finishAnnotation)
-        
-        for (index,crumb) in mapRoute.crumbs[1..<(mapRoute.crumbs.count - 1)].enumerated() {
-            let crumbAnnotation = MKPointAnnotation()
-            crumbAnnotation.coordinate =  crumb.location.coordinate
-            crumbAnnotation.title = String(index + 1)
-            crumbAnnotation.subtitle = String("\(crumb.location)")
-            annotations.append(crumbAnnotation)
+        if mapRoute.crumbs.count > 1 {
+            let startAnnotation = MKPointAnnotation()
+            startAnnotation.coordinate = mapRoute.crumbs[0].location.coordinate
+            startAnnotation.title = "start"
+            annotations.append(startAnnotation)
+            
+            let finishAnnotation = MKPointAnnotation()
+            finishAnnotation.coordinate = mapRoute.crumbs[mapRoute.crumbs.count - 1].location.coordinate
+            finishAnnotation.title = "finish"
+            annotations.append(finishAnnotation)
+            
+            for (index,crumb) in mapRoute.crumbs[1..<(mapRoute.crumbs.count - 1)].enumerated() {
+                let crumbAnnotation = MKPointAnnotation()
+                crumbAnnotation.coordinate =  crumb.location.coordinate
+                crumbAnnotation.title = String(index + 1)
+                crumbAnnotation.subtitle = String("\(crumb.location)")
+                annotations.append(crumbAnnotation)
+            }
         }
         mapView.subviews[1].isHidden = true //hide 'legal' label from right-lower corner
         mapView.mapType = .hybrid

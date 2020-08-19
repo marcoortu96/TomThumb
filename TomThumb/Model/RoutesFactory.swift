@@ -28,7 +28,7 @@ class Route : Hashable, ObservableObject {
         self.crumbs = 0
         self.distance = 0.0
         self.caregiver = CaregiverFactory().caregivers[0]
-        self.mapRoute = MapRoutesFactory().mapRoutes[0]
+        self.mapRoute = MapRoute()
     }
     
     init(routeName: String, startName: String, finishName: String, user: String, caregiver: Caregiver, mapRoute: MapRoute) {
@@ -112,6 +112,11 @@ class RoutesFactory: ObservableObject {
     func getById(id: UUID) -> Route {
         let routes = RoutesFactory.getInstance().getRoutes()
         return routes.filter {$0.id == id}[0]
+    }
+    
+    func getByName(name: String) -> Route {
+        let routes = RoutesFactory.getInstance().getRoutes()
+        return routes.filter {$0.routeName == name}[0]
     }
     
     public static func changeName(route: Route, newName: String) {

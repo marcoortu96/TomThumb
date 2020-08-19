@@ -8,16 +8,22 @@
 
 import SwiftUI
 import Firebase
+import FirebaseDatabase
 
 struct AssistedView: View {
     @State var textFromDB = ""
     @State var route = Route()
+    @State var showMap = false
+    
     var body: some View {
         NavigationView {
             ZStack {
-                LiveMapView(mapRoute: route.mapRoute)
+                if showMap {
+                    LiveMapView(mapRoute: route.mapRoute)
+                }
                 Button(action: {
                     self.readDataFromDB()
+                    self.showMap = true
                 }) {
                     Image(systemName: "repeat")
                     .foregroundColor(.white)
@@ -28,29 +34,37 @@ struct AssistedView: View {
                 .clipShape(Circle())
                 .padding(.top, (UIScreen.main.bounds.size.height/100) * 70)
                 .padding(.leading, (UIScreen.main.bounds.size.width/100) * 77)
-            }.navigationBarTitle(Text("\(self.route.routeName)"), displayMode: .inline)
+                
+                Text(textFromDB)
+                }.onAppear(perform: {
+                    self.readDataFromDB()
+                })
+            .onDisappear(perform: {
+                self.showMap = false
+            }).navigationBarTitle(Text("\(self.route.routeName)"), displayMode: .inline)
+            
         }
     }
     
     func readDataFromDB() {
         let ref = Database.database().reference()
-        ref.child("Assisted").observeSingleEvent(of: .value, with: { (snapshot) in
+        ref.child("Assisted").observe(.childAdded, with: { (snapshot) in
             
             // Get user position value
             let value = snapshot.value as? NSDictionary
-            let routeId = value?["id"] as? String ?? "-1"
+            let routeName = value?["name"] as? String ?? "-1"
             let lat = value?["latitude"] as? Double ?? 0.0
             let lon = value?["longitude"] as? Double ?? 0.0
             let collected = value?["collected"] as? Int ?? -1
             
-            let fac = RoutesFactory.getInstance().getById(id: UUID(uuidString: routeId)!)
+            let fac = RoutesFactory.getInstance().getByName(name: routeName)
             
-            if fac != nil {
-                self.route = fac
-            }
+            //if fac != nil {
+            self.route = fac
+            //}
         
             
-            self.textFromDB = "lat: \(lat)\n lon: \(lon) \n \(routeId) \n \(collected)"
+            self.textFromDB = "lat: \(lat)\n lon: \(lon) \n \(routeName) \n \(collected)"
         }) { (error) in
             print(error.localizedDescription)
         }

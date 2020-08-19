@@ -12,6 +12,10 @@ import MapKit
 struct MapRoute {
     var crumbs: [Crumb]
     
+    init() {
+        self.crumbs = []
+    }
+    
     init(crumbs: [Crumb]) {
         self.crumbs = crumbs
     }

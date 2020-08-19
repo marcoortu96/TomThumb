@@ -14,6 +14,7 @@ import SceneKit
 import UIKit
 import SwiftUI
 import Firebase
+import FirebaseDatabase
 
 final class ARViewController: UIViewController, UIViewControllerRepresentable {
     var sceneLocationView: SceneLocationView?
@@ -189,7 +190,7 @@ extension ARViewController: ARSCNViewDelegate {
             
             
             let routeData = [
-                "id" : self.route.id.uuidString as Any,
+                "name" : self.route.routeName as Any,
                 "latitude" : userLocation.coordinate.latitude,
                 "longitude" : userLocation.coordinate.longitude,
                 "collected" : self.actualCrumb
