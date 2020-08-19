@@ -12,9 +12,11 @@ import MapKit
 
 struct LiveMapView: UIViewRepresentable {
     var mapRoute: MapRoute
+    var annotations: [MKPointAnnotation]
     
-    init(mapRoute: MapRoute) {
+    init(mapRoute: MapRoute, annotations: [MKPointAnnotation]) {
         self.mapRoute = mapRoute
+        self.annotations = annotations
     }
     
     func makeCoordinator() -> LiveMapView.Coordinator {
@@ -23,9 +25,9 @@ struct LiveMapView: UIViewRepresentable {
     
     func makeUIView(context: Context) -> MKMapView {
         let mapView = MKMapView()
-        var annotations = [MKPointAnnotation]()
+        //var annotations = [MKPointAnnotation]()
         
-        if mapRoute.crumbs.count > 1 {
+        /*if mapRoute.crumbs.count > 1 {
             let startAnnotation = MKPointAnnotation()
             startAnnotation.coordinate = mapRoute.crumbs[0].location.coordinate
             startAnnotation.title = "start"
@@ -43,7 +45,7 @@ struct LiveMapView: UIViewRepresentable {
                 crumbAnnotation.subtitle = String("\(crumb.location)")
                 annotations.append(crumbAnnotation)
             }
-        }
+        }*/
         mapView.subviews[1].isHidden = true //hide 'legal' label from right-lower corner
         mapView.mapType = .hybrid
         mapView.delegate = context.coordinator
@@ -53,7 +55,10 @@ struct LiveMapView: UIViewRepresentable {
     }
     
     func updateUIView(_ view: MKMapView, context: Context) {
-        
+        if annotations.count != view.annotations.count {
+            view.removeAnnotations(view.annotations)
+            view.addAnnotations(annotations)
+        }
     }
     
     class Coordinator: NSObject, MKMapViewDelegate {

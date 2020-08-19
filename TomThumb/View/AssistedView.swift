@@ -9,17 +9,19 @@
 import SwiftUI
 import Firebase
 import FirebaseDatabase
+import MapKit
 
 struct AssistedView: View {
     @State var textFromDB = ""
     @State var route = Route()
     @State var showMap = false
+    @State private var locations = [MKPointAnnotation]()
     
     var body: some View {
         NavigationView {
             ZStack {
                 if showMap {
-                    LiveMapView(mapRoute: route.mapRoute)
+                    LiveMapView(mapRoute: route.mapRoute, annotations: locations)
                 }
                 Button(action: {
                     self.readDataFromDB()
@@ -64,11 +66,36 @@ struct AssistedView: View {
             //if fac != nil {
             self.route = fac
             //}
+            
+            if fac.mapRoute.crumbs.count > 1 {
+                let startAnnotation = MKPointAnnotation()
+                startAnnotation.coordinate = fac.mapRoute.crumbs[0].location.coordinate
+                startAnnotation.title = "start"
+                self.locations.append(startAnnotation)
+                
+                let finishAnnotation = MKPointAnnotation()
+                finishAnnotation.coordinate = fac.mapRoute.crumbs[fac.mapRoute.crumbs.count - 1].location.coordinate
+                finishAnnotation.title = "finish"
+                self.locations.append(finishAnnotation)
+                
+                for (index,crumb) in fac.mapRoute.crumbs[1..<(fac.mapRoute.crumbs.count - 1)].enumerated() {
+                    let crumbAnnotation = MKPointAnnotation()
+                    crumbAnnotation.coordinate =  crumb.location.coordinate
+                    crumbAnnotation.title = String(index + 1)
+                    crumbAnnotation.subtitle = String("\(crumb.location)")
+                    self.locations.append(crumbAnnotation)
+                }
+            }
+            
+            let assistedAnnotation = MKPointAnnotation()
+            assistedAnnotation.coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
+            self.locations.append(assistedAnnotation)
+            
         
             
-            self.textFromDB = "lat: \(lat)\n lon: \(lon) \n id: \(routeId) \n collected: \(collected)"
+            //self.textFromDB = "lat: \(lat)\n lon: \(lon) \n id: \(routeId) \n collected: \(collected)"
             
-            print(self.textFromDB)
+            //print(self.textFromDB)
         }) { (error) in
             print(error.localizedDescription)
         }
