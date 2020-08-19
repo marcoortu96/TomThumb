@@ -9,8 +9,10 @@
 import Foundation
 import MapKit
 
+var globalId = 0
+
 class Route : Hashable, ObservableObject {
-    let id = UUID()
+    var id : Int
     @Published var routeName: String
     var startName: String
     var finishName : String
@@ -21,6 +23,7 @@ class Route : Hashable, ObservableObject {
     @Published var mapRoute: MapRoute
     
     init() {
+        self.id = globalId
         self.routeName = ""
         self.startName = ""
         self.finishName = ""
@@ -29,9 +32,12 @@ class Route : Hashable, ObservableObject {
         self.distance = 0.0
         self.caregiver = CaregiverFactory().caregivers[0]
         self.mapRoute = MapRoute()
+        
+        globalId = globalId + 1
     }
     
     init(routeName: String, startName: String, finishName: String, user: String, caregiver: Caregiver, mapRoute: MapRoute) {
+        self.id = globalId
         self.routeName = routeName
         self.startName = startName
         self.finishName = finishName
@@ -46,6 +52,8 @@ class Route : Hashable, ObservableObject {
         self.distance = totalDistance
         self.caregiver = caregiver
         self.mapRoute = mapRoute
+        
+        globalId = globalId + 1
     }
     
     func setRouteName(newName: String) {
@@ -109,7 +117,7 @@ class RoutesFactory: ObservableObject {
         RoutesFactory.getInstance().setRoutes(routes: routes)
     }
     
-    func getById(id: UUID) -> Route {
+    func getById(id: Int) -> Route {
         let routes = RoutesFactory.getInstance().getRoutes()
         return routes.filter {$0.id == id}[0]
     }

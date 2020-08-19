@@ -190,7 +190,7 @@ extension ARViewController: ARSCNViewDelegate {
             
             
             let routeData = [
-                "name" : self.route.routeName as Any,
+                "id" : self.route.id as Any,
                 "latitude" : userLocation.coordinate.latitude,
                 "longitude" : userLocation.coordinate.longitude,
                 "collected" : self.actualCrumb

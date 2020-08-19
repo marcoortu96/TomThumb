@@ -39,32 +39,36 @@ struct AssistedView: View {
                 }.onAppear(perform: {
                     self.readDataFromDB()
                 })
-            .onDisappear(perform: {
-                self.showMap = false
-            }).navigationBarTitle(Text("\(self.route.routeName)"), displayMode: .inline)
+            .navigationBarTitle(Text("\(self.route.routeName)"), displayMode: .inline)
             
-        }
+        }.onDisappear(perform: {
+            
+            print("vado via")
+            self.showMap = false
+        })
     }
     
     func readDataFromDB() {
         let ref = Database.database().reference()
-        ref.child("Assisted").observe(.childAdded, with: { (snapshot) in
+        ref.child("Assisted").observeSingleEvent(of: .value, with: { (snapshot) in
             
             // Get user position value
             let value = snapshot.value as? NSDictionary
-            let routeName = value?["name"] as? String ?? "-1"
+            let routeId = value?["id"] as? Int ?? -1
             let lat = value?["latitude"] as? Double ?? 0.0
             let lon = value?["longitude"] as? Double ?? 0.0
             let collected = value?["collected"] as? Int ?? -1
             
-            let fac = RoutesFactory.getInstance().getByName(name: routeName)
+            let fac = RoutesFactory.getInstance().getById(id: routeId)
             
             //if fac != nil {
             self.route = fac
             //}
         
             
-            self.textFromDB = "lat: \(lat)\n lon: \(lon) \n \(routeName) \n \(collected)"
+            self.textFromDB = "lat: \(lat)\n lon: \(lon) \n id: \(routeId) \n collected: \(collected)"
+            
+            print(self.textFromDB)
         }) { (error) in
             print(error.localizedDescription)
         }
