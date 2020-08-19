@@ -36,12 +36,15 @@ struct AssistedView: View {
                 .clipShape(Circle())
                 .padding(.top, (UIScreen.main.bounds.size.height/100) * 70)
                 .padding(.leading, (UIScreen.main.bounds.size.width/100) * 77)
-                
-                Text(textFromDB)
+                VStack {
+                    Text(textFromDB)
+                }
+                .padding(.bottom, (UIScreen.main.bounds.size.height/100) * 70)
+                .padding(.trailing, (UIScreen.main.bounds.size.width/100) * 40)
                 }.onAppear(perform: {
                     self.readDataFromDB()
                 })
-            .navigationBarTitle(Text("\(self.route.routeName)"), displayMode: .inline)
+                .navigationBarTitle(Text("\(self.locations.count)"), displayMode: .inline)
             
         }.onDisappear(perform: {
             
@@ -52,17 +55,18 @@ struct AssistedView: View {
     
     func readDataFromDB() {
         let ref = Database.database().reference()
-        ref.child("Assisted").observeSingleEvent(of: .value, with: { (snapshot) in
+        ref.child("Assisted").observe(.value, with: { (snapshot) in
             
             // Get user position value
             let value = snapshot.value as? NSDictionary
-            let routeId = value?["id"] as? Int ?? -1
+            print("value \n \(value)")
+            let routeId = value?["id"] as? Int ?? 0
             let lat = value?["latitude"] as? Double ?? 0.0
             let lon = value?["longitude"] as? Double ?? 0.0
             let collected = value?["collected"] as? Int ?? -1
             
             let fac = RoutesFactory.getInstance().getById(id: routeId)
-            
+        
             //if fac != nil {
             self.route = fac
             //}
@@ -88,12 +92,15 @@ struct AssistedView: View {
             }
             
             let assistedAnnotation = MKPointAnnotation()
+            if self.locations.count > self.route.mapRoute.crumbs.count {
+                self.locations.removeLast(self.route.mapRoute.crumbs.count + 1)
+            }
             assistedAnnotation.coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
             self.locations.append(assistedAnnotation)
             
         
             
-            //self.textFromDB = "lat: \(lat)\n lon: \(lon) \n id: \(routeId) \n collected: \(collected)"
+            self.textFromDB = "lat: \(lat)\nlon: \(lon) \nid: \(routeId) \n collected: \(collected)"
             
             //print(self.textFromDB)
         }) { (error) in

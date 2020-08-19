@@ -55,7 +55,7 @@ struct LiveMapView: UIViewRepresentable {
     }
     
     func updateUIView(_ view: MKMapView, context: Context) {
-        if annotations.count != view.annotations.count {
+        if annotations.count == view.annotations.count {
             view.removeAnnotations(view.annotations)
             view.addAnnotations(annotations)
         }
