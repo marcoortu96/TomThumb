@@ -56,34 +56,38 @@ struct LiveMapView: UIViewRepresentable {
                 return nil
             }
             
-            let annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: "pin")
-            
             switch annotation.title! {
             case "start":
+                let annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: "pin")
                 annotationView.markerTintColor = InterfaceConstants.startPinColor
                 annotationView.isEnabled = false
+                annotationView.titleVisibility = MKFeatureVisibility.visible;
+                annotationView.canShowCallout = true
+                return annotationView
             case "finish":
+                let annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: "pin")
                 annotationView.markerTintColor = InterfaceConstants.finishPinColor
                 annotationView.isEnabled = false
+                annotationView.titleVisibility = MKFeatureVisibility.visible;
+                annotationView.canShowCallout = true
+                return annotationView
             default:
                 if annotation.subtitle == "crumb" {
+                    let annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: "pin")
                     annotationView.markerTintColor = InterfaceConstants.crumbPinColor
                     annotationView.glyphImage = UIImage(systemName: "staroflife.fill")
                     annotationView.isEnabled = false
+                    annotationView.titleVisibility = MKFeatureVisibility.visible;
+                    annotationView.canShowCallout = true
+                    return annotationView
                 } else {
-                    annotationView.markerTintColor = .orange
-                    annotationView.glyphImage = UIImage(systemName: "person.circle.fill")
+                    let annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: "pin")
+                    annotationView.image = UIImage(named: "dot")
                     annotationView.isEnabled = true
+                    return annotationView
                 }
-            
             }
-            
-            annotationView.titleVisibility = MKFeatureVisibility.visible;
-            annotationView.canShowCallout = true
-            
-            return annotationView
         }
-        
     }
 }
 

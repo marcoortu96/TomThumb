@@ -75,6 +75,7 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
         newSceneLocationView.showsStatistics = false
         newSceneLocationView.showAxesNode = false // don't need ARCL's axesNode because we're showing SceneKit's
         newSceneLocationView.autoenablesDefaultLighting = true
+        newSceneLocationView.isUserInteractionEnabled = false
         view.addSubview(newSceneLocationView)
         sceneLocationView = newSceneLocationView
     }
@@ -223,6 +224,7 @@ extension ARViewController: ARSCNViewDelegate {
                 
                 // TEST Save previous crumb before the update
                 prevCrumb = locationNodes[0]
+                UIDevice.vibrate()
                 
                 if let audioSource = SCNAudioSource(fileNamed: (self.route.mapRoute.crumbs[actualCrumb].audio!.lastPathComponent)) {
                     let audioPlayer = SCNAudioPlayer(source: audioSource)
@@ -305,5 +307,11 @@ extension ARViewController: ARSCNViewDelegate {
         
         //returning shortest distance
         return sqrt(diffX * diffX + diffY * diffY);
+    }
+}
+
+extension UIDevice {
+    static func vibrate() {
+        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
     }
 }
