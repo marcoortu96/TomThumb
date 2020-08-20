@@ -13,12 +13,12 @@ import MapKit
 struct LiveMapView: UIViewRepresentable {
     var route: Route
     var annotations: [MKPointAnnotation]
-    var collected: Int
+    @Binding var collected: Int
     
-    init(route: Route, annotations: [MKPointAnnotation], collected: Int) {
+    init(route: Route, annotations: [MKPointAnnotation], collected: Binding<Int>) {
         self.route = route
         self.annotations = annotations
-        self.collected = collected
+        self._collected = collected
     }
     
     func makeCoordinator() -> LiveMapView.Coordinator {
@@ -59,14 +59,20 @@ struct LiveMapView: UIViewRepresentable {
             switch annotation.title! {
             case "start":
                 let annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: "pin")
-                annotationView.markerTintColor = InterfaceConstants.startPinColor
+                annotationView.markerTintColor = .gray
+                if self.parent.collected >= 1 {
+                    annotationView.markerTintColor = InterfaceConstants.startPinColor
+                }
                 annotationView.isEnabled = false
                 annotationView.titleVisibility = MKFeatureVisibility.visible;
                 annotationView.canShowCallout = true
                 return annotationView
             case "finish":
                 let annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: "pin")
-                annotationView.markerTintColor = InterfaceConstants.finishPinColor
+                annotationView.markerTintColor = .gray
+                if self.parent.collected == self.parent.route.crumbs {
+                    annotationView.markerTintColor = InterfaceConstants.finishPinColor
+                }
                 annotationView.isEnabled = false
                 annotationView.titleVisibility = MKFeatureVisibility.visible;
                 annotationView.canShowCallout = true
@@ -74,7 +80,12 @@ struct LiveMapView: UIViewRepresentable {
             default:
                 if annotation.subtitle == "crumb" {
                     let annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: "pin")
-                    annotationView.markerTintColor = InterfaceConstants.crumbPinColor
+                    annotationView.markerTintColor = .gray
+                    let numTitle = Int(annotation.title!!)
+                    if self.parent.collected > numTitle! {
+                        annotationView.markerTintColor = InterfaceConstants.crumbPinColor
+                    }
+                    //annotationView.markerTintColor = InterfaceConstants.crumbPinColor
                     annotationView.glyphImage = UIImage(systemName: "staroflife.fill")
                     annotationView.isEnabled = false
                     annotationView.titleVisibility = MKFeatureVisibility.visible;
@@ -82,7 +93,8 @@ struct LiveMapView: UIViewRepresentable {
                     return annotationView
                 } else {
                     let annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: "pin")
-                    annotationView.image = UIImage(named: "dot")
+                    let image = UIImage(named: "dot")
+                    annotationView.image = image?.resized(to: CGSize(width: 50, height: 50))
                     annotationView.isEnabled = true
                     return annotationView
                 }
@@ -91,4 +103,10 @@ struct LiveMapView: UIViewRepresentable {
     }
 }
 
-
+extension UIImage {
+    func resized(to size: CGSize) -> UIImage {
+        return UIGraphicsImageRenderer(size: size).image { _ in
+            draw(in: CGRect(origin: .zero, size: size))
+        }
+    }
+}

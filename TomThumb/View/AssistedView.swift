@@ -23,14 +23,14 @@ struct AssistedView: View {
             ZStack {
                 Text("Premi aggiorna per caricare la mappa")
                 if showMap {
-                    LiveMapView(route: route, annotations: locations, collected: collected)
+                    LiveMapView(route: route, annotations: locations, collected: $collected)
                 }
                 Button(action: {
                     self.readDataFromDB()
                     self.showMap = true
                 }) {
                     Image(systemName: "repeat")
-                    .foregroundColor(.white)
+                        .foregroundColor(.white)
                 }
                 .padding()
                 .background(Color.blue.opacity(0.85))
@@ -39,23 +39,27 @@ struct AssistedView: View {
                 .padding(.top, (UIScreen.main.bounds.size.height/100) * 70)
                 .padding(.leading, (UIScreen.main.bounds.size.width/100) * 77)
                 
-                ZStack {
-                    Text("\(self.collected)/\(route.mapRoute.crumbs.count)")
-                    Circle()
-                        .fill(Color.clear)
-                        .frame(width: 50, height: 50)
-                        .overlay(
-                            Circle()
-                                .trim(from: 0, to: CGFloat((Double(Double(self.collected) / Double(route.mapRoute.crumbs.count)) * 100) * (0.01)))
-                                .stroke(style: StrokeStyle(lineWidth: 10, lineCap: .round, lineJoin: .round))
-                                .fill(Color.red)
-                    )
+                if showMap {
                     
-                }.padding(.bottom, (UIScreen.main.bounds.size.height/100) * 68)
-                    .padding(.trailing, (UIScreen.main.bounds.size.width/100) * 75)
-                }.onAppear(perform: {
-                    self.readDataFromDB()
-                })
+                    
+                    ZStack {
+                        Text("\(self.collected)/\(route.mapRoute.crumbs.count)")
+                        Circle()
+                            .fill(Color.clear)
+                            .frame(width: 50, height: 50)
+                            .overlay(
+                                Circle()
+                                    .trim(from: 0, to: CGFloat((Double(Double(self.collected) / Double(route.mapRoute.crumbs.count)) * 100) * (0.01)))
+                                    .stroke(style: StrokeStyle(lineWidth: 10, lineCap: .round, lineJoin: .round))
+                                    .fill(Color.red)
+                        )
+                        
+                    }.padding(.bottom, (UIScreen.main.bounds.size.height/100) * 68)
+                        .padding(.trailing, (UIScreen.main.bounds.size.width/100) * 75)
+                }
+            }.onAppear(perform: {
+                self.readDataFromDB()
+            })
                 .navigationBarTitle(Text("\(self.route.routeName)"), displayMode: .inline)
             
         }.onDisappear(perform: {
@@ -71,14 +75,14 @@ struct AssistedView: View {
             
             // Get user position value
             let value = snapshot.value as? NSDictionary
-            print("value \n \(value ?? ["error" : "cannot retrive values from DB"])")
+            //print("value \n \(value ?? ["error" : "cannot retrive values from DB"])")
             let routeId = value?["id"] as? Int ?? 0
             let lat = value?["latitude"] as? Double ?? 0.0
             let lon = value?["longitude"] as? Double ?? 0.0
             let collected = value?["collected"] as? Int ?? -1
             
             let fac = RoutesFactory.getInstance().getById(id: routeId)
-        
+            
             //if fac != nil {
             self.route = fac
             //}
