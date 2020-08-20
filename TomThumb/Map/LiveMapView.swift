@@ -11,12 +11,14 @@ import MapKit
 
 
 struct LiveMapView: UIViewRepresentable {
-    var mapRoute: MapRoute
+    var route: Route
     var annotations: [MKPointAnnotation]
+    var collected: Int
     
-    init(mapRoute: MapRoute, annotations: [MKPointAnnotation]) {
-        self.mapRoute = mapRoute
+    init(route: Route, annotations: [MKPointAnnotation], collected: Int) {
+        self.route = route
         self.annotations = annotations
+        self.collected = collected
     }
     
     func makeCoordinator() -> LiveMapView.Coordinator {
@@ -25,27 +27,6 @@ struct LiveMapView: UIViewRepresentable {
     
     func makeUIView(context: Context) -> MKMapView {
         let mapView = MKMapView()
-        //var annotations = [MKPointAnnotation]()
-        
-        /*if mapRoute.crumbs.count > 1 {
-            let startAnnotation = MKPointAnnotation()
-            startAnnotation.coordinate = mapRoute.crumbs[0].location.coordinate
-            startAnnotation.title = "start"
-            annotations.append(startAnnotation)
-            
-            let finishAnnotation = MKPointAnnotation()
-            finishAnnotation.coordinate = mapRoute.crumbs[mapRoute.crumbs.count - 1].location.coordinate
-            finishAnnotation.title = "finish"
-            annotations.append(finishAnnotation)
-            
-            for (index,crumb) in mapRoute.crumbs[1..<(mapRoute.crumbs.count - 1)].enumerated() {
-                let crumbAnnotation = MKPointAnnotation()
-                crumbAnnotation.coordinate =  crumb.location.coordinate
-                crumbAnnotation.title = String(index + 1)
-                crumbAnnotation.subtitle = String("\(crumb.location)")
-                annotations.append(crumbAnnotation)
-            }
-        }*/
         mapView.subviews[1].isHidden = true //hide 'legal' label from right-lower corner
         mapView.mapType = .hybrid
         mapView.delegate = context.coordinator
@@ -56,6 +37,7 @@ struct LiveMapView: UIViewRepresentable {
     
     func updateUIView(_ view: MKMapView, context: Context) {
         if annotations.count == view.annotations.count {
+            //view.annotations.dropLast()
             view.removeAnnotations(view.annotations)
             view.addAnnotations(annotations)
         }
@@ -84,9 +66,16 @@ struct LiveMapView: UIViewRepresentable {
                 annotationView.markerTintColor = InterfaceConstants.finishPinColor
                 annotationView.isEnabled = false
             default:
-                annotationView.markerTintColor = InterfaceConstants.crumbPinColor
-                annotationView.glyphImage = UIImage(systemName: "staroflife.fill")
-                annotationView.isEnabled = true
+                if annotation.subtitle == "crumb" {
+                    annotationView.markerTintColor = InterfaceConstants.crumbPinColor
+                    annotationView.glyphImage = UIImage(systemName: "staroflife.fill")
+                    annotationView.isEnabled = false
+                } else {
+                    annotationView.markerTintColor = .orange
+                    annotationView.glyphImage = UIImage(systemName: "person.circle.fill")
+                    annotationView.isEnabled = true
+                }
+            
             }
             
             annotationView.titleVisibility = MKFeatureVisibility.visible;

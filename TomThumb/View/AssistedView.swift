@@ -16,12 +16,14 @@ struct AssistedView: View {
     @State var route = Route()
     @State var showMap = false
     @State private var locations = [MKPointAnnotation]()
+    @State var collected = 0
     
     var body: some View {
         NavigationView {
             ZStack {
+                Text("Premi aggiorna per caricare la mappa")
                 if showMap {
-                    LiveMapView(mapRoute: route.mapRoute, annotations: locations)
+                    LiveMapView(route: route, annotations: locations, collected: collected)
                 }
                 Button(action: {
                     self.readDataFromDB()
@@ -36,20 +38,30 @@ struct AssistedView: View {
                 .clipShape(Circle())
                 .padding(.top, (UIScreen.main.bounds.size.height/100) * 70)
                 .padding(.leading, (UIScreen.main.bounds.size.width/100) * 77)
-                VStack {
-                    Text(textFromDB)
-                }
-                .padding(.bottom, (UIScreen.main.bounds.size.height/100) * 70)
-                .padding(.trailing, (UIScreen.main.bounds.size.width/100) * 40)
+                
+                ZStack {
+                    Text("\(self.collected)/\(route.mapRoute.crumbs.count)")
+                    Circle()
+                        .fill(Color.clear)
+                        .frame(width: 50, height: 50)
+                        .overlay(
+                            Circle()
+                                .trim(from: 0, to: CGFloat((Double(Double(self.collected) / Double(route.mapRoute.crumbs.count)) * 100) * (0.01)))
+                                .stroke(style: StrokeStyle(lineWidth: 10, lineCap: .round, lineJoin: .round))
+                                .fill(Color.red)
+                    )
+                    
+                }.padding(.bottom, (UIScreen.main.bounds.size.height/100) * 68)
+                    .padding(.trailing, (UIScreen.main.bounds.size.width/100) * 75)
                 }.onAppear(perform: {
                     self.readDataFromDB()
                 })
-                .navigationBarTitle(Text("\(self.locations.count)"), displayMode: .inline)
+                .navigationBarTitle(Text("\(self.route.routeName)"), displayMode: .inline)
             
         }.onDisappear(perform: {
-            
-            print("vado via")
+            self.locations = []
             self.showMap = false
+            
         })
     }
     
@@ -59,7 +71,7 @@ struct AssistedView: View {
             
             // Get user position value
             let value = snapshot.value as? NSDictionary
-            print("value \n \(value)")
+            print("value \n \(value ?? ["error" : "cannot retrive values from DB"])")
             let routeId = value?["id"] as? Int ?? 0
             let lat = value?["latitude"] as? Double ?? 0.0
             let lon = value?["longitude"] as? Double ?? 0.0
@@ -86,7 +98,7 @@ struct AssistedView: View {
                     let crumbAnnotation = MKPointAnnotation()
                     crumbAnnotation.coordinate =  crumb.location.coordinate
                     crumbAnnotation.title = String(index + 1)
-                    crumbAnnotation.subtitle = String("\(crumb.location)")
+                    crumbAnnotation.subtitle = "crumb"
                     self.locations.append(crumbAnnotation)
                 }
             }
@@ -96,11 +108,11 @@ struct AssistedView: View {
                 self.locations.removeLast(self.route.mapRoute.crumbs.count + 1)
             }
             assistedAnnotation.coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
+            assistedAnnotation.title = self.route.user
+            assistedAnnotation.subtitle = "\(lat.short),\(lon.short)"
             self.locations.append(assistedAnnotation)
-            
-        
-            
-            self.textFromDB = "lat: \(lat)\nlon: \(lon) \nid: \(routeId) \n collected: \(collected)"
+            self.collected = collected
+            self.textFromDB = "lat: \(lat)\nlon: \(lon) \ncrumb: \(collected)"
             
             //print(self.textFromDB)
         }) { (error) in
