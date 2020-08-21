@@ -14,12 +14,15 @@ struct ARView: View {
     @ObservedObject var locationManager = LocationManager()
     @State var actualCrumb = 0
     @State var lookAt = 0
+    @State var nPlays = 0
     // TEST point-segment
     @State var prevCrumb = LocationNode(location: CLLocation())
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @State var showingEndARAlert = false
     var route: Route
     var debug: Bool
+    
+    @State var isShowing = true
     
     @State var size: CGFloat = 0.7
     var repeatingAnimation: Animation {
@@ -30,7 +33,7 @@ struct ARView: View {
     
     var body: some View {
         ZStack {
-            ARViewController(route: route, actualCrumb: $actualCrumb, lookAt: $lookAt, prevCrumb: $prevCrumb)
+            ARViewController(route: route, actualCrumb: $actualCrumb, lookAt: $lookAt, prevCrumb: $prevCrumb, nPlays: $nPlays)
             
             //Directional arrows section
             
@@ -72,8 +75,7 @@ struct ARView: View {
                             self.size = 0.7
                         }
                 }
-                
-            
+
             //Route percentage section
             ZStack {
                 Text("\(actualCrumb)/\(route.mapRoute.crumbs.count)")
@@ -117,6 +119,8 @@ struct ARView: View {
                 ZStack {
                     Button(action: {
                         print("Calling caregiver")
+                        let url: NSURL = URL(string: "tel://+393491114782")! as NSURL
+                        UIApplication.shared.open(url as URL)
                         
                     }) {
                         Image(systemName: "phone")
@@ -154,7 +158,16 @@ struct ARView: View {
                     .cornerRadius(15)
                     .frame(width: (UIScreen.main.bounds.size.width/100) * 75, height: (UIScreen.main.bounds.size.height/100) * 20)
             }
+            if self.nPlays >= 2 && isShowing {
+                
+                GeometryReader { _ in
+                    PopUpCall(caregiver: self.route.caregiver, isShowing: self.$isShowing)
+                }.background(Color.black.opacity(0.90))
+                .cornerRadius(15)
+                .frame(width: (UIScreen.main.bounds.size.width/100) * 75, height: (UIScreen.main.bounds.size.height/100) * 20)
+            }
         }
+        
     }
 }
 
@@ -162,6 +175,48 @@ struct PopUpTerminated: View {
     var body: some View {
         Text("Percorso completato")
             .font(.title)
+        
+    }
+    
+}
+
+struct PopUpCall: View {
+    
+    @State var caregiver: Caregiver
+    @Binding var isShowing: Bool
+    
+    var body: some View {
+        VStack {
+            Text("Chiama \(self.caregiver.name)")
+            HStack {
+                Button(action: {
+                    print("Calling caregiver")
+                    self.isShowing = false
+                    let url: NSURL = URL(string: "tel://\(self.caregiver.phoneNumber)")! as NSURL
+                    UIApplication.shared.open(url as URL)
+                    
+                }) {
+                    Image(systemName: "phone")
+                        .foregroundColor(.white)
+                }
+                .padding()
+                .background(Color.green.opacity(0.85))
+                .font(.title)
+                .clipShape(Circle())
+                Spacer().frame(width: (UIScreen.main.bounds.size.width/100) * 25)
+                Button(action: {
+                    self.isShowing = false
+                    
+                }) {
+                    Image(systemName: "multiply")
+                        .foregroundColor(.white)
+                }
+                .padding()
+                .background(Color.red.opacity(0.85))
+                .font(.title)
+                .clipShape(Circle())
+            }
+        }
         
     }
     

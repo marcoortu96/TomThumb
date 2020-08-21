@@ -31,8 +31,11 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     public var annotationHeightAdjustmentFactor = -0.5
     
     public var renderTime: TimeInterval = 0
-    private let distanceThreshold: Double = 100.0
+    private let distanceThreshold: Double = 30.0
     private var isColliding = false
+    
+    private var isPlaying = false
+    @Binding var nPlays: Int
     
     var route: Route
     @Binding var actualCrumb: Int
@@ -41,11 +44,12 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     @Binding var lookAt: Int
     var locationManager = LocationManager()
     
-    init(route: Route, actualCrumb: Binding<Int>, lookAt: Binding<Int>, prevCrumb: Binding<LocationNode>) {
+    init(route: Route, actualCrumb: Binding<Int>, lookAt: Binding<Int>, prevCrumb: Binding<LocationNode>, nPlays: Binding<Int>) {
         self.route = route
         self._actualCrumb = actualCrumb
         self._lookAt = lookAt
         self._prevCrumb = prevCrumb
+        self._nPlays = nPlays
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -163,7 +167,7 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     }
     
     func makeUIViewController(context: UIViewControllerRepresentableContext<ARViewController>) -> ARViewController {
-        return ARViewController(route: self.route, actualCrumb: self.$actualCrumb, lookAt: self.$lookAt, prevCrumb: self.$prevCrumb)
+        return ARViewController(route: self.route, actualCrumb: self.$actualCrumb, lookAt: self.$lookAt, prevCrumb: self.$prevCrumb, nPlays: self.$nPlays)
     }
     
     func updateUIViewController(_ uiViewController: ARViewController.UIViewControllerType, context: UIViewControllerRepresentableContext<ARViewController>) {
@@ -232,8 +236,23 @@ extension ARViewController: ARSCNViewDelegate {
                 
                 print("DEBUG - point-segment distance: \(distUserCrumbs)")
                 
-                if distUserCrumbs > 60 {
+                if distUserCrumbs > 28 {
                     //MARK: - INSERIRE AUDIO QUI
+                    
+                    if let audioSource = SCNAudioSource(fileNamed: "farFromCrumb.m4a") {
+                        let audioPlayer = SCNAudioPlayer(source: audioSource)
+                        
+                        if !self.isPlaying && self.nPlays < 2 {
+                            self.isPlaying = true
+                            self.nPlays = self.nPlays + 1
+                            self.sceneLocationView?.locationNodes[0].addAudioPlayer(audioPlayer)
+                            audioPlayer.didFinishPlayback = {
+                                self.sceneLocationView?.locationNodes[0].removeAudioPlayer(audioPlayer)
+                                self.isPlaying = false
+                            }
+                        }
+                    }
+                    
                     print("DEBUG - Far from trajectory")
                 }
             }
