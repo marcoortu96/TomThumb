@@ -75,7 +75,7 @@ struct AssistedView: View {
             
             // Get user position value
             let value = snapshot.value as? NSDictionary
-            //print("value \n \(value ?? ["error" : "cannot retrive values from DB"])")
+            print("value \n \(value ?? ["error" : "cannot retrive values from DB"])")
             let routeId = value?["id"] as? Int ?? 0
             let lat = value?["latitude"] as? Double ?? 0.0
             let lon = value?["longitude"] as? Double ?? 0.0

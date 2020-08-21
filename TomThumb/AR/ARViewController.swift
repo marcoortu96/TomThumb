@@ -31,7 +31,7 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     public var annotationHeightAdjustmentFactor = -0.5
     
     public var renderTime: TimeInterval = 0
-    private let distanceThreshold: Double = 10.0
+    private let distanceThreshold: Double = 100.0
     private var isColliding = false
     
     var route: Route
@@ -118,8 +118,7 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
             return
         }
         guard (self.actualCrumb < self.route.mapRoute.crumbs.count) else {
-            print("DEBUG - Crumb index out of bounds, you might have finished the route!")
-            viewWillDisappear(false)
+            terminateAR()
             return
         }
         
@@ -128,7 +127,7 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
         let crumbNode = LocationNode(location: self.route.mapRoute.crumbs[self.actualCrumb].location)
         let crumbScene = SCNScene(named: "crumb.dae")
         guard let crumb: SCNNode = crumbScene?.rootNode.childNode(withName: "crumbModel", recursively: true) else {
-            fatalError("crumbModel is not found")
+            fatalError("crumbModel not found")
         }
         
         if actualCrumb == 0 {
@@ -141,6 +140,26 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
         crumbNode.runAction(SCNAction.repeatForever(SCNAction.rotateBy(x: 0, y: 120, z: 0, duration: 100)))
         self.addScenewideNodeSettings(crumbNode)
         self.sceneLocationView?.addLocationNodeWithConfirmedLocation(locationNode: crumbNode)
+    }
+    
+    func terminateAR() {
+        let db = Database.database().reference()
+        
+        guard let currentLocation = self.sceneLocationView?.sceneLocationManager.currentLocation else { return }
+        
+        let userLocation = CLLocation(coordinate: currentLocation.coordinate,
+        altitude: currentLocation.altitude)
+        
+        let routeData = [
+            "id" : self.route.id as Any,
+            "latitude" : userLocation.coordinate.latitude,
+            "longitude" : userLocation.coordinate.longitude,
+            "collected" : self.actualCrumb
+        ]
+        db.child("Assisted").setValue(routeData)
+        
+        print("DEBUG - Crumb index out of bounds, you might have finished the route!")
+        viewWillDisappear(false)
     }
     
     func makeUIViewController(context: UIViewControllerRepresentableContext<ARViewController>) -> ARViewController {
