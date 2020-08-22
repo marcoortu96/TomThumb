@@ -70,7 +70,7 @@ struct RouteDetail: View {
         }.onAppear(perform: {
             print("appaio")
         })
-            .navigationBarTitle(Text("Dettaglio percorso"), displayMode: .inline)
+            .navigationBarTitle(Text("Dati percorso"), displayMode: .inline)
     }
     
     struct ChangeRouteName: View {

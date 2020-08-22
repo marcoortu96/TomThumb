@@ -40,7 +40,7 @@ class AudioRecorder: NSObject, ObservableObject {
             print("Errore di setup nella sessione di recording")
         }
         
-        let documentPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let documentPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
         let audioFilename = documentPath.appendingPathComponent("\(Date().toString(dateFormat: "dd-MM-YY'at'_HH:mm:ss")).m4a")
         let settings = [
             AVFormatIDKey: Int(kAudioFormatMPEG4AAC),

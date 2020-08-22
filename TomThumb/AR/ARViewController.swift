@@ -28,10 +28,10 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     // These three properties are properties of individual nodes. We'll set them the same way for each node added.
     public var continuallyAdjustNodePositionWhenWithinRange = true
     public var continuallyUpdatePositionAndScale = true
-    public var annotationHeightAdjustmentFactor = -0.5
+    public var annotationHeightAdjustmentFactor = 1.0
     
     public var renderTime: TimeInterval = 0
-    private let distanceThreshold: Double = 30.0
+    private let distanceThreshold: Double = 10.0
     private var isColliding = false
     
     private var isPlaying = false
@@ -236,7 +236,7 @@ extension ARViewController: ARSCNViewDelegate {
                 
                 print("DEBUG - point-segment distance: \(distUserCrumbs)")
                 
-                if distUserCrumbs > 28 {
+                if distUserCrumbs > 60 {
                     //MARK: - INSERIRE AUDIO QUI
                     
                     if let audioSource = SCNAudioSource(fileNamed: "farFromCrumb.m4a") {
@@ -311,10 +311,6 @@ extension ARViewController: ARSCNViewDelegate {
         }else{
             self.lookAt = 1
         }
-    }
-    
-    func square(x: Double) -> Double{
-        return x * x
     }
     
     func pointLineDistance(x1: Double, y1: Double, x2: Double, y2: Double, pointX: Double, pointY: Double) -> Double {
