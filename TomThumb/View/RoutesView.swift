@@ -31,7 +31,6 @@ struct RoutesView: View {
                         NavigationLink(destination: RouteDetail(route: route)) {
                               Text("\(route.routeName)")
                         }
-                        
                     }
                     .onDelete(perform: deleteRoute)
                 }

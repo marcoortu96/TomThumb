@@ -67,10 +67,7 @@ struct RouteDetail: View {
                         .foregroundColor(InterfaceConstants.genericLinkForegroundColor)
                 }
             }
-        }.onAppear(perform: {
-            print("appaio")
-        })
-            .navigationBarTitle(Text("Dati percorso"), displayMode: .inline)
+        }.navigationBarTitle(Text("Dati percorso"), displayMode: .inline)
     }
     
     struct ChangeRouteName: View {

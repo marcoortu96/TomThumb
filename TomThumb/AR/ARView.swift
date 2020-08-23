@@ -15,14 +15,15 @@ struct ARView: View {
     @State var actualCrumb = 0
     @State var lookAt = 0
     @State var nPlays = 0
-    // TEST point-segment
     @State var prevCrumb = LocationNode(location: CLLocation())
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
-    @State var showingEndARAlert = false
+    
     var route: Route
     var debug: Bool
     
-    @State var isShowing = true
+    @State var showingEndARAlert = false
+    @State var showingCallAlert = true
+    @State var showingHelpAlert = false
     
     @State var size: CGFloat = 0.7
     var repeatingAnimation: Animation {
@@ -114,7 +115,7 @@ struct ARView: View {
                 .padding(.leading, (UIScreen.main.bounds.size.width/100) * 77)
             }
             
-            if !debug {
+            if debug {
                 //Call caregiver section
                 ZStack {
                     Button(action: {
@@ -130,7 +131,7 @@ struct ARView: View {
                     .background(Color.green.opacity(0.85))
                     .font(.title)
                     .clipShape(Circle())
-                    .padding(.top, (UIScreen.main.bounds.size.height/100) * 75)
+                    .padding(.top, (UIScreen.main.bounds.size.height/100) * 70)
                     .padding(.trailing, (UIScreen.main.bounds.size.width/100) * 77)
                 }
                 
@@ -138,6 +139,7 @@ struct ARView: View {
                 ZStack {
                     Button(action: {
                         print("Help")
+                        self.showingHelpAlert = true
                         
                     }) {
                         Image(systemName: "questionmark")
@@ -147,10 +149,20 @@ struct ARView: View {
                     .background(Color.yellow.opacity(0.85))
                     .font(.title)
                     .clipShape(Circle())
-                    .padding(.top, (UIScreen.main.bounds.size.height/100) * (debug ? 70 : 75))
+                    .padding(.top, (UIScreen.main.bounds.size.height/100) * 70)
                     .padding(.leading, (UIScreen.main.bounds.size.width/100) * 77)
                 }
+                
             }
+            
+            if self.showingHelpAlert {
+                GeometryReader { _ in
+                    PopUpHelp(caregiver: self.route.caregiver, isShowing: self.$showingHelpAlert)
+                }.background(Color.black.opacity(0.90))
+                    .cornerRadius(15)
+                    .frame(width: (UIScreen.main.bounds.size.width/100) * 75, height: (UIScreen.main.bounds.size.height/100) * 20)
+            }
+            
             if self.actualCrumb == self.route.mapRoute.crumbs.count {
                 GeometryReader { _ in
                     PopUpTerminated()
@@ -158,10 +170,10 @@ struct ARView: View {
                     .cornerRadius(15)
                     .frame(width: (UIScreen.main.bounds.size.width/100) * 75, height: (UIScreen.main.bounds.size.height/100) * 20)
             }
-            if self.nPlays >= 2 && isShowing {
+            if self.nPlays >= 2 && showingCallAlert {
                 
                 GeometryReader { _ in
-                    PopUpCall(caregiver: self.route.caregiver, isShowing: self.$isShowing)
+                    PopUpCall(caregiver: self.route.caregiver, isShowing: self.$showingCallAlert)
                 }.background(Color.black.opacity(0.90))
                 .cornerRadius(15)
                 .frame(width: (UIScreen.main.bounds.size.width/100) * 75, height: (UIScreen.main.bounds.size.height/100) * 20)
@@ -175,14 +187,12 @@ struct PopUpTerminated: View {
     var body: some View {
         Text("Percorso completato")
             .font(.title)
-        
     }
-    
 }
 
 struct PopUpCall: View {
     
-    @State var caregiver: Caregiver
+    var caregiver: Caregiver
     @Binding var isShowing: Bool
     
     var body: some View {
@@ -219,7 +229,47 @@ struct PopUpCall: View {
         }
         
     }
+}
+
+struct PopUpHelp: View {
     
+    var caregiver: Caregiver
+    @Binding var isShowing: Bool
+    
+    var body: some View {
+        VStack {
+            Text("Cosa succede?")
+            HStack {
+                Button(action: {
+                    //MARK: - Aggiungere riproduzione audio in caso di sconosciuti
+                    print("Stranger")
+                    self.isShowing = false
+                }) {
+                    Image(systemName: "person.fill")
+                        .foregroundColor(.white)
+                }
+                .padding()
+                .background(Color.green.opacity(0.85))
+                .font(.title)
+                .clipShape(Circle())
+                Spacer().frame(width: (UIScreen.main.bounds.size.width/100) * 25)
+                Button(action: {
+                    print("Obstacle")
+                    self.isShowing = false
+                    let url: NSURL = URL(string: "tel://\(self.caregiver.phoneNumber)")! as NSURL
+                    UIApplication.shared.open(url as URL)
+                }) {
+                    Image(systemName: "triangle.fill")
+                        .foregroundColor(.white)
+                }
+                .padding()
+                .background(Color.red.opacity(0.85))
+                .font(.title)
+                .clipShape(Circle())
+            }
+        }
+        
+    }
 }
 
 /*
