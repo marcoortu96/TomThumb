@@ -21,7 +21,9 @@ struct AssistedView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                Text("Premi aggiorna per caricare la mappa")
+                if !showMap {
+                    Text("Premi aggiorna per caricare la mappa")
+                }
                 if showMap {
                     LiveMapView(route: route, annotations: locations, collected: $collected)
                 }
@@ -40,8 +42,6 @@ struct AssistedView: View {
                 .padding(.leading, (UIScreen.main.bounds.size.width/100) * 77)
                 
                 if showMap {
-                    
-                    
                     ZStack {
                         Text("\(self.collected)/\(route.mapRoute.crumbs.count)")
                         Circle()
@@ -65,7 +65,6 @@ struct AssistedView: View {
         }.onDisappear(perform: {
             self.locations = []
             self.showMap = false
-            
         })
     }
     
@@ -83,9 +82,7 @@ struct AssistedView: View {
             
             let fac = RoutesFactory.getInstance().getById(id: routeId)
             
-            //if fac != nil {
             self.route = fac
-            //}
             
             if fac.mapRoute.crumbs.count > 1 {
                 let startAnnotation = MKPointAnnotation()
@@ -116,9 +113,7 @@ struct AssistedView: View {
             assistedAnnotation.subtitle = "\(lat.short),\(lon.short)"
             self.locations.append(assistedAnnotation)
             self.collected = collected
-            self.textFromDB = "lat: \(lat)\nlon: \(lon) \ncrumb: \(collected)"
             
-            //print(self.textFromDB)
         }) { (error) in
             print(error.localizedDescription)
         }

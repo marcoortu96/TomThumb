@@ -212,6 +212,11 @@ extension ARViewController: ARSCNViewDelegate {
             // Instance for DB firebase
             let db = Database.database().reference()
             
+            /* Ogni 0.75s pubblica sul db:
+                - id del percorso (possiamo eseguire solo i percorsi della factory)
+                - posizione assistito (lat, lon)
+                - quante crumb ha raccolto
+             */
             
             let routeData = [
                 "id" : self.route.id as Any,
@@ -221,24 +226,25 @@ extension ARViewController: ARSCNViewDelegate {
             ]
             db.child("Assisted").setValue(routeData)
             
+            // Controllo se viene visualizzata la crumb, in caso contrario mostro le frecce
             DispatchQueue.main.async {
-                // UIView usage
                 self.getWhereIsLooking(sceneWidth: (self.sceneLocationView?.bounds.width)!, nodePosition: (self.sceneLocationView?.projectPoint(locationNodes[0].position))!)
             }
             
             print("DEBUG - Crumb at index \(self.actualCrumb) is \(Double(userLocation.distance(from: (locationNodes[0].location)!)).short) meters far away")
             
             if actualCrumb > 0 {
-                
+                // Calcolo la distanza tra la posizione attuale e il segmento che congiunge crumb[n] e crumb[n + 1]
                 var distUserCrumbs = pointLineDistance(x1: prevCrumb.location.coordinate.longitude, y1: prevCrumb.location.coordinate.latitude, x2: locationNodes[0].location.coordinate.longitude, y2: locationNodes[0].location.coordinate.latitude, pointX: currentLocation.coordinate.longitude, pointY: currentLocation.coordinate.latitude)
                 
+                // Distanza calcolata in gradi, converto in metri
                 distUserCrumbs = distUserCrumbs * 111111
                 
                 print("DEBUG - point-segment distance: \(distUserCrumbs)")
                 
+                // Se la distanza punto segmento è superiore ai 60 metri
                 if distUserCrumbs > 60 {
-                    //MARK: - INSERIRE AUDIO QUI
-                    
+                    // Riproduco l'audio 2 volte, dopo di che, in ARView, mostro il pop-up per chiamare il caregiver
                     if let audioSource = SCNAudioSource(fileNamed: "farFromCrumb.m4a") {
                         let audioPlayer = SCNAudioPlayer(source: audioSource)
                         
@@ -252,24 +258,28 @@ extension ARViewController: ARSCNViewDelegate {
                             }
                         }
                     }
-                    
                     print("DEBUG - Far from trajectory")
                 }
             }
             
+            // Controllo se l'assistito è entro distanceThreshold metri dalla crumb visualizzata nella scena
             if !isColliding && Double(userLocation.distance(from: (locationNodes[0].location)!)) < distanceThreshold {
                 self.isColliding = true
                 
-                // TEST Save previous crumb before the update
+                // Salvo la crumb per caricare il prossimo segmento crumb[n] crumb[n + 1]
                 prevCrumb = locationNodes[0]
+                
+                // Faccio vibrare il telefono
                 UIDevice.vibrate()
                 
+                // Riproduco l'audio associato alla crumb
                 if let audioSource = SCNAudioSource(fileNamed: (self.route.mapRoute.crumbs[actualCrumb].audio!.lastPathComponent)) {
                     let audioPlayer = SCNAudioPlayer(source: audioSource)
                     
                     self.sceneLocationView?.locationNodes[0].addAudioPlayer(audioPlayer)
                     audioPlayer.didFinishPlayback = {
                         self.sceneLocationView?.locationNodes[0].removeAudioPlayer(audioPlayer)
+                        // Solo dopo aver riprodotto l'audio mostro la nuova crumb
                         self.actualCrumb = self.actualCrumb + 1
                         self.isColliding = false
                         self.addJustOneNode()
@@ -296,6 +306,7 @@ extension ARViewController: ARSCNViewDelegate {
         
     }
     
+    // Funzione di orientamento: se la crumb non viene inquadrata, l'assistito viene guidato nell'inquadrare nuovamente la crumb
     func getWhereIsLooking(sceneWidth: CGFloat, nodePosition: SCNVector3){
         if(nodePosition.z < 1){
             if(nodePosition.x > (Float(sceneWidth))){
@@ -313,6 +324,7 @@ extension ARViewController: ARSCNViewDelegate {
         }
     }
     
+    // Funzione per il calcolo della distanza punto-segmento
     func pointLineDistance(x1: Double, y1: Double, x2: Double, y2: Double, pointX: Double, pointY: Double) -> Double {
         var diffX = x2 - x1;
         var diffY = y2 - y1;

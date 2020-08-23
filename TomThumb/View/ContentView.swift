@@ -10,8 +10,6 @@ import SwiftUI
 import MapKit
 
 struct ContentView: View {
-    @State private var selection = 0
-    @State var showAddRouteView = false
     
     var body: some View {
         TabView {
@@ -21,12 +19,6 @@ struct ContentView: View {
                         Text("Percorsi")
                     }
             }.tag(0)
-            /*ARView(route: MapRoutesFactory().mapRoutes[0], debug: false).tabItem {
-                    VStack {
-                        Image(systemName: "goforward")
-                        Text("Esecuzione")
-                    }
-            }.tag(1)*/
             AssistedView().tabItem {
                     VStack {
                         Image(systemName: "goforward")
