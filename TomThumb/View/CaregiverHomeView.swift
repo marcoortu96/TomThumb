@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  CaregiverHomeView.swift
 //  TomThumb
 //
 //  Created by Marco Ortu on 13/07/2020.
@@ -9,8 +9,8 @@
 import SwiftUI
 import MapKit
 
-struct ContentView: View {
-    
+struct CaregiverHomeView: View {
+    //@Binding var pushView: Bool
     var body: some View {
         TabView {
             RoutesView().tabItem {
@@ -32,14 +32,12 @@ struct ContentView: View {
                 }
             }
             .tag(2)
-        }.onAppear {
-            UITabBar.appearance().backgroundColor =  InterfaceConstants.tabBackgroundColor
-        }.accentColor(InterfaceConstants.tabForegroundColor)
+        }
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
+/*struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
     }
-}
+}*/
