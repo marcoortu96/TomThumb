@@ -10,25 +10,32 @@ import SwiftUI
 import MapKit
 
 struct CaregiverHomeView: View {
-    //@Binding var pushView: Bool
+    @State var navBarHidden: Bool = true
     var body: some View {
         TabView {
             RoutesView().tabItem {
                     VStack {
                         Image(systemName: "list.bullet")
                         Text("Percorsi")
+                            .navigationBarHidden(true)
+                            .navigationBarBackButtonHidden(true)
                     }
             }.tag(0)
             AssistedView().tabItem {
                     VStack {
                         Image(systemName: "goforward")
                         Text("Esecuzione")
+                            .navigationBarHidden(true)
+                            .navigationBarBackButtonHidden(true)
                     }
             }.tag(1)
             SettingsView().tabItem {
                 VStack {
                     Image(systemName: "gear")
                     Text("Impostazioni")
+                        .navigationBarHidden(true)
+                        .navigationBarBackButtonHidden(true)
+                        
                 }
             }
             .tag(2)
