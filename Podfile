@@ -7,4 +7,8 @@ target 'TomThumb' do
 
   # Pods for TomThumb
   pod 'ARCL'
+  pod 'Firebase/Analytics'
+  pod 'Firebase/Core'
+  pod 'Firebase/Database'
+  pod 'Firebase/Auth'
 end
