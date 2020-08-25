@@ -80,7 +80,7 @@ struct AssistedView: View {
             let lon = value?["longitude"] as? Double ?? 0.0
             let collected = value?["collected"] as? Int ?? -1
             
-            let fac = RoutesFactory.getInstance().getById(id: routeId)
+             let fac = RoutesFactory.getInstance().getById(id: routeId)
             
             self.route = fac
             

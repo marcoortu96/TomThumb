@@ -9,10 +9,21 @@
 import SwiftUI
 
 struct StartView: View {
+    @State var isNavigationBarHidden: Bool = true
+    @State var route = Route()
     var body: some View {
         NavigationView {
             VStack {
-                NavigationLink(destination: CaregiverHomeView()) {
+                NavigationLink(destination: CaregiverHomeView()
+                    .navigationBarTitle("")
+                    .navigationBarHidden(isNavigationBarHidden)
+                    .navigationBarBackButtonHidden(isNavigationBarHidden)
+                    .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                        self.isNavigationBarHidden = true
+                    }
+                    .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
+                        self.isNavigationBarHidden = false
+                    }) {
                     HStack {
                         Image(systemName: "person.fill")
                             .accentColor(.black)
@@ -22,8 +33,6 @@ struct StartView: View {
                             .font(.largeTitle)
                             .edgesIgnoringSafeArea(.all)
                     }
-                    .navigationBarHidden(true)
-                    .navigationBarBackButtonHidden(true)
                     .padding(.top, 50)
                     .padding(.bottom, 50)
                     .padding(.trailing, (UIScreen.main.bounds.size.width/100)*20)
@@ -32,7 +41,16 @@ struct StartView: View {
                     .background(Color.green)
                 }
                 
-                NavigationLink(destination: AssistedHomeView()) {
+                NavigationLink(destination: AssistedHomeView(route: route)
+                    .navigationBarTitle("")
+                    .navigationBarHidden(isNavigationBarHidden)
+                    .navigationBarBackButtonHidden(isNavigationBarHidden)
+                    .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                        self.isNavigationBarHidden = true
+                    }
+                    .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
+                        self.isNavigationBarHidden = false
+                    }) {
                     HStack {
                         Image(systemName: "person.fill")
                             .accentColor(.black)
@@ -42,8 +60,6 @@ struct StartView: View {
                             .accentColor(.black)
                             .font(.largeTitle)
                     }
-                    .navigationBarHidden(true)
-                    .navigationBarBackButtonHidden(true)
                     .padding(.top, 50)
                     .padding(.bottom, 50)
                     .padding(.trailing, (UIScreen.main.bounds.size.width/100)*22)
@@ -52,7 +68,10 @@ struct StartView: View {
                     .background(Color.blue)
                 }
                 
-            }.navigationBarTitle(Text("Tom Thumb"))
+            }
+            .navigationBarTitle("")
+            .navigationBarHidden(true)
+            .navigationBarBackButtonHidden(true)
         }
     }
 }

@@ -10,26 +10,50 @@ import SwiftUI
 import MapKit
 
 struct AssistedHomeView: View {
-    @State var route = Route()
-    //@Binding var pushView: Bool
+    @ObservedObject var route: Route
+    @State var isNavigationBarHidden = true
     var body: some View {
         TabView {
-            ARView(route: route, debug: true).tabItem {
+            ARView(route: route, debug: true)
+                .tabItem {
                     VStack {
                         Image(systemName: "list.bullet")
                         Text("Percorso")
-                            .navigationBarBackButtonHidden(true)
-                            .navigationBarHidden(true)
+                            /*.navigationBarTitle("")
+                            .navigationBarHidden(isNavigationBarHidden)
+                            .navigationBarBackButtonHidden(isNavigationBarHidden)
+                            .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                                self.isNavigationBarHidden = true
+                        }
+                        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
+                            self.isNavigationBarHidden = false
+                        }*/
                     }
-            }.tag(0)
-            recentRoutes().tabItem {
+            }
+            .tag(0)
+            .onAppear {
+                self.isNavigationBarHidden = true
+            }
+            RecentRoutes()
+                .tabItem {
                     VStack {
                         Image(systemName: "goforward")
                         Text("Recenti")
-                            .navigationBarBackButtonHidden(true)
-                            .navigationBarHidden(true)
+                            /*.navigationBarTitle("")
+                            .navigationBarHidden(isNavigationBarHidden)
+                            .navigationBarBackButtonHidden(isNavigationBarHidden)
+                            .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                                self.isNavigationBarHidden = true
+                        }
+                        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
+                            self.isNavigationBarHidden = false
+                        }*/
                     }
-            }.tag(1)
+            }
+            .tag(1)
+            .onAppear {
+                self.isNavigationBarHidden = true
+            }
         }
     }
 }
