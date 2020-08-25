@@ -22,6 +22,8 @@ struct StartView: View {
                             .font(.largeTitle)
                             .edgesIgnoringSafeArea(.all)
                     }
+                    .navigationBarHidden(true)
+                    .navigationBarBackButtonHidden(true)
                     .padding(.top, 50)
                     .padding(.bottom, 50)
                     .padding(.trailing, (UIScreen.main.bounds.size.width/100)*20)
@@ -40,6 +42,8 @@ struct StartView: View {
                             .accentColor(.black)
                             .font(.largeTitle)
                     }
+                    .navigationBarHidden(true)
+                    .navigationBarBackButtonHidden(true)
                     .padding(.top, 50)
                     .padding(.bottom, 50)
                     .padding(.trailing, (UIScreen.main.bounds.size.width/100)*22)

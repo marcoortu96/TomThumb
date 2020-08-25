@@ -18,12 +18,16 @@ struct AssistedHomeView: View {
                     VStack {
                         Image(systemName: "list.bullet")
                         Text("Percorso")
+                            .navigationBarBackButtonHidden(true)
+                            .navigationBarHidden(true)
                     }
             }.tag(0)
             recentRoutes().tabItem {
                     VStack {
                         Image(systemName: "goforward")
                         Text("Recenti")
+                            .navigationBarBackButtonHidden(true)
+                            .navigationBarHidden(true)
                     }
             }.tag(1)
         }
