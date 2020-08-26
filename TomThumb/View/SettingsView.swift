@@ -9,12 +9,8 @@
 import SwiftUI
 
 struct SettingsView: View {
-    
-    @State private var previewIndex = 0
-    var previewOptions = ["Default"]
     var body: some View {
         NavigationView {
-            VStack {
                 Form {
                     Section(header: Text("Profilo")) {
                         NavigationLink(destination: ProfileDetail(caregiver: CaregiverFactory().caregivers[1])) {
@@ -35,28 +31,6 @@ struct SettingsView: View {
                             }
                         }
                     }
-                    Section(header: Text("Audio")) {
-                        Picker(selection: $previewIndex, label: Text("Inizio percorso")) {
-                            ForEach(0 ..< previewOptions.count) {
-                                Text(self.previewOptions[$0])
-                            }
-                        }
-                        Picker(selection: $previewIndex, label: Text("Mollica raccolta")) {
-                            ForEach(0 ..< previewOptions.count) {
-                                Text(self.previewOptions[$0])
-                            }
-                        }
-                        Picker(selection: $previewIndex, label: Text("Fine Percorso")) {
-                            ForEach(0 ..< previewOptions.count) {
-                                Text(self.previewOptions[$0])
-                            }
-                        }
-                        Picker(selection: $previewIndex, label: Text("Fuori Traiettoria")) {
-                            ForEach(0 ..< previewOptions.count) {
-                                Text(self.previewOptions[$0])
-                            }
-                        }
-                    }
                     Section {
                         Button(action: {
                             print("Perform an action here...")
@@ -65,8 +39,9 @@ struct SettingsView: View {
                         }
                     }
                 }
-            }.navigationBarTitle("Impostazioni")
-        }.accentColor(InterfaceConstants.genericLinkForegroundColor)
+                .navigationBarTitle("Impostazioni")
+                .accentColor(InterfaceConstants.genericLinkForegroundColor)
+        }
     }
 }
 

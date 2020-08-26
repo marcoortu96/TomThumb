@@ -9,21 +9,12 @@
 import SwiftUI
 
 struct StartView: View {
-    @State var isNavigationBarHidden: Bool = true
     @State var route = Route()
+    @EnvironmentObject var navBarPrefs: NavBarPreferences
     var body: some View {
         NavigationView {
             VStack {
-                NavigationLink(destination: CaregiverHomeView()
-                    .navigationBarTitle("")
-                    .navigationBarHidden(isNavigationBarHidden)
-                    .navigationBarBackButtonHidden(isNavigationBarHidden)
-                    .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-                        self.isNavigationBarHidden = true
-                    }
-                    .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
-                        self.isNavigationBarHidden = false
-                    }) {
+                NavigationLink(destination: CaregiverHomeView()) {
                     HStack {
                         Image(systemName: "person.fill")
                             .accentColor(.black)
@@ -40,17 +31,13 @@ struct StartView: View {
                     .cornerRadius(12)
                     .background(Color.green)
                 }
-                
-                NavigationLink(destination: AssistedHomeView(route: route)
-                    .navigationBarTitle("")
-                    .navigationBarHidden(isNavigationBarHidden)
-                    .navigationBarBackButtonHidden(isNavigationBarHidden)
-                    .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-                        self.isNavigationBarHidden = true
-                    }
-                    .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
-                        self.isNavigationBarHidden = false
-                    }) {
+                .navigationBarTitle(Text(""), displayMode: .inline)
+                .navigationBarHidden(navBarPrefs.navBarIsHidden)
+                .navigationBarBackButtonHidden(navBarPrefs.navBarIsHidden)
+                .onAppear {
+                     self.navBarPrefs.navBarIsHidden = true
+                }
+                NavigationLink(destination: AssistedHomeView(route: route)) {
                     HStack {
                         Image(systemName: "person.fill")
                             .accentColor(.black)
@@ -67,11 +54,14 @@ struct StartView: View {
                     .cornerRadius(12)
                     .background(Color.blue)
                 }
-                
+                .navigationBarTitle(Text(""), displayMode: .inline)
+                .navigationBarHidden(navBarPrefs.navBarIsHidden)
+                .navigationBarBackButtonHidden(navBarPrefs.navBarIsHidden)
+                .onAppear {
+                     self.navBarPrefs.navBarIsHidden = true
+                }
+
             }
-            .navigationBarTitle("")
-            .navigationBarHidden(true)
-            .navigationBarBackButtonHidden(true)
         }
     }
 }

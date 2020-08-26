@@ -10,66 +10,42 @@ import SwiftUI
 import MapKit
 
 struct CaregiverHomeView: View {
-    @State var isNavigationBarHidden: Bool = true
     @State var route = Route()
+    @EnvironmentObject var navBarPrefs: NavBarPreferences
     var body: some View {
         TabView {
             RoutesView().tabItem {
                 VStack {
                     Image(systemName: "list.bullet")
                     Text("Percorsi")
-                        /*.navigationBarTitle("")
-                        .navigationBarHidden(isNavigationBarHidden)
-                        .navigationBarBackButtonHidden(isNavigationBarHidden)
-                        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-                            self.isNavigationBarHidden = true
-                        }
-                        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
-                            self.isNavigationBarHidden = false
-                        }*/
+                        .navigationBarBackButtonHidden(true)
                 }
             }
             .tag(0)
             .onAppear {
-                self.isNavigationBarHidden = true
+                self.navBarPrefs.navBarIsHidden = true
             }
             AssistedView(route: route).tabItem {
                 VStack {
                     Image(systemName: "goforward")
                     Text("Esecuzione")
-                        /*.navigationBarTitle("")
-                        .navigationBarHidden(isNavigationBarHidden)
-                        .navigationBarBackButtonHidden(isNavigationBarHidden)
-                        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-                            self.isNavigationBarHidden = true
-                        }
-                        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
-                            self.isNavigationBarHidden = false
-                        }*/
+                        .navigationBarBackButtonHidden(true)
                 }
             }
             .tag(1)
             .onAppear {
-                self.isNavigationBarHidden = true
+                self.navBarPrefs.navBarIsHidden = true
             }
             SettingsView().tabItem {
                 VStack {
                     Image(systemName: "gear")
                     Text("Impostazioni")
-                        /*.navigationBarTitle("")
-                        .navigationBarHidden(isNavigationBarHidden)
-                        .navigationBarBackButtonHidden(isNavigationBarHidden)
-                        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-                            self.isNavigationBarHidden = true
-                        }
-                        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
-                            self.isNavigationBarHidden = false
-                        }*/
+                        .navigationBarBackButtonHidden(true)
                 }
             }
             .tag(2)
             .onAppear {
-                self.isNavigationBarHidden = true
+                self.navBarPrefs.navBarIsHidden = true
             }
         }
     }
