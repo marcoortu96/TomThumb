@@ -83,7 +83,7 @@ struct ARView: View {
             
             //Route percentage section \(actualCrumb)/\(route.mapRoute.crumbs.count)
             ZStack {
-                Text("\(self.nPlays) \(self.showingCallAlert.description)")
+                Text("\(self.actualCrumb)/\(self.route.crumbs)")
                 Circle()
                     .fill(Color.clear)
                     .frame(width: 50, height: 50)

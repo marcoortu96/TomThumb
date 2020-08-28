@@ -9,5 +9,6 @@
 import Foundation
 
 class NavBarPreferences: ObservableObject {
+    
     @Published var navBarIsHidden = true
 }

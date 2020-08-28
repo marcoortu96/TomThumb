@@ -25,9 +25,9 @@ struct AssistedHomeView: View {
             }
             .tag(0)
             .onAppear {
-                //self.isNavigationBarHidden = true
                 self.navBarPrefs.navBarIsHidden = true
             }
+            
             RecentRoutes()
                 .tabItem {
                     VStack {

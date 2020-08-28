@@ -21,16 +21,16 @@ struct StartView: View {
                             .font(.title)
                         Text("Caregiver")
                             .accentColor(.black)
-                            .font(.system(size: (UIScreen.main.bounds.size.width/100)*5))
-                            .background(Color.red)
-                            .edgesIgnoringSafeArea(.all)
+                            .font(.system(size: (UIScreen.main.bounds.size.width/100)*7))
+                            
                     }
                     .padding(.top, 50)
                     .padding(.bottom, 50)
-                    .padding(.trailing, (UIScreen.main.bounds.size.width/100)*18)
-                    .padding(.leading, (UIScreen.main.bounds.size.width/100)*18)
+                    .padding(.trailing, (UIScreen.main.bounds.size.width/100)*20)
+                    .padding(.leading, (UIScreen.main.bounds.size.width/100)*20)
                     .cornerRadius(12)
                     .background(Color.green)
+                    .edgesIgnoringSafeArea(.all)
                 }
                 .navigationBarTitle(Text(""), displayMode: .inline)
                 .navigationBarHidden(navBarPrefs.navBarIsHidden)
@@ -45,16 +45,16 @@ struct StartView: View {
                             .font(.title)
                         Text("Assistito")
                             .accentColor(.black)
-                            .font(.system(size: (UIScreen.main.bounds.size.width/100)*5))
-                            .background(Color.red)
-                        .edgesIgnoringSafeArea(.all)
+                            .font(.system(size: (UIScreen.main.bounds.size.width/100)*7))
+                            
                     }
                     .padding(.top, 50)
                     .padding(.bottom, 50)
-                    .padding(.trailing, (UIScreen.main.bounds.size.width/100)*20)
-                    .padding(.leading, (UIScreen.main.bounds.size.width/100)*20)
+                    .padding(.trailing, (UIScreen.main.bounds.size.width/100)*22)
+                    .padding(.leading, (UIScreen.main.bounds.size.width/100)*22)
                     .cornerRadius(12)
                     .background(Color.blue)
+                    .edgesIgnoringSafeArea(.all)
                 }
                 .navigationBarTitle(Text(""), displayMode: .inline)
                 .navigationBarHidden(navBarPrefs.navBarIsHidden)
