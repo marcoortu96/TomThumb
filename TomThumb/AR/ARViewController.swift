@@ -244,20 +244,19 @@ extension ARViewController: ARSCNViewDelegate {
                 
                 // Se la distanza punto segmento è superiore ai 60 metri
                 if distUserCrumbs > 60 {
-                    // Riproduco l'audio 2 volte, dopo di che, in ARView, mostro il pop-up per chiamare il caregiver
-                    if let audioSource = SCNAudioSource(fileNamed: "farFromCrumb.m4a") {
-                        let audioPlayer = SCNAudioPlayer(source: audioSource)
-                        
-                        if !self.isPlaying && self.nPlays < 2 {
-                            self.isPlaying = true
-                            self.nPlays = self.nPlays + 1
-                            self.sceneLocationView?.locationNodes[0].addAudioPlayer(audioPlayer)
-                            audioPlayer.didFinishPlayback = {
-                                self.sceneLocationView?.locationNodes[0].removeAudioPlayer(audioPlayer)
-                                self.isPlaying = false
-                            }
+                    // Riproduco l'audio 1 volta, dopo di che, in ARView, mostro il pop-up per chiamare il caregiver
+       
+                    if !self.isPlaying && self.nPlays < 1 {
+                        AudioPlayer.player.startPlayback(audio: URL(fileURLWithPath: Bundle.main.path(forResource: "farFromCrumb.m4a", ofType: nil)!))
+                        self.isPlaying = true
+                        self.nPlays = self.nPlays + 1
+                        let audioPlayer = try! AVAudioPlayer(contentsOf: URL(fileURLWithPath: Bundle.main.path(forResource: "farFromCrumb.m4a", ofType: nil)!))
+                        AudioPlayer.player.audioPlayerDidFinishPlaying(audioPlayer, successfully: true)
+                        if !AudioPlayer.player.isPlaying {
+                            self.isPlaying = false
                         }
                     }
+                    
                     print("DEBUG - Far from trajectory")
                 }
             }
@@ -272,19 +271,11 @@ extension ARViewController: ARSCNViewDelegate {
                 // Faccio vibrare il telefono
                 UIDevice.vibrate()
                 
-                // Riproduco l'audio associato alla crumb
-                if let audioSource = SCNAudioSource(fileNamed: (self.route.mapRoute.crumbs[actualCrumb].audio!.lastPathComponent)) {
-                    let audioPlayer = SCNAudioPlayer(source: audioSource)
-                    
-                    self.sceneLocationView?.locationNodes[0].addAudioPlayer(audioPlayer)
-                    audioPlayer.didFinishPlayback = {
-                        self.sceneLocationView?.locationNodes[0].removeAudioPlayer(audioPlayer)
-                        // Solo dopo aver riprodotto l'audio mostro la nuova crumb
+                
+                AudioPlayer.player.startPlayback(audio: self.route.mapRoute.crumbs[actualCrumb].audio!)
                         self.actualCrumb = self.actualCrumb + 1
-                        self.isColliding = false
                         self.addJustOneNode()
-                    }
-                }
+                  
             }
             renderTime = time + TimeInterval(0.75)
         }

@@ -9,6 +9,10 @@
 import SwiftUI
 import MapKit
 import ARCL
+import Firebase
+import AVFoundation
+import FirebaseStorage
+
 
 struct ARView: View {
     @ObservedObject var locationManager = LocationManager()
@@ -38,48 +42,48 @@ struct ARView: View {
             
             //Directional arrows section
             
-                if lookAt == 1 {
-                    //look left
-                    Image(systemName: "shift.fill")
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .clipped()
-                        .rotationEffect(.degrees(-90))
-                        .frame(width: 50, height: 50)
-                        .foregroundColor(InterfaceConstants.genericLinkForegroundColor)
-                        .padding(.bottom, (UIScreen.main.bounds.size.height/100) * 45)
-                        .padding(.trailing, (UIScreen.main.bounds.size.width/100) * 99)
-                        .scaleEffect(size)
-                        .onAppear() {
-                            withAnimation(self.repeatingAnimation) { self.size = 0.8 }
-                        }
-                        .onDisappear() {
-                            self.size = 0.7
-                        }
-                    
-                } else if lookAt == 2 {
-                    //look right
-                    Image(systemName: "shift.fill")
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .clipped()
-                        .rotationEffect(.degrees(90))
-                        .frame(width: 50, height: 50)
-                        .foregroundColor(InterfaceConstants.genericLinkForegroundColor)
-                        .padding(.bottom, (UIScreen.main.bounds.size.height/100) * 45)
-                        .padding(.leading, (UIScreen.main.bounds.size.width/100) * 99)
-                        .scaleEffect(size)
-                        .onAppear() {
-                            withAnimation(self.repeatingAnimation) { self.size = 0.8 }
-                        }
-                        .onDisappear() {
-                            self.size = 0.7
-                        }
+            if lookAt == 1 {
+                //look left
+                Image(systemName: "shift.fill")
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .clipped()
+                    .rotationEffect(.degrees(-90))
+                    .frame(width: 50, height: 50)
+                    .foregroundColor(InterfaceConstants.genericLinkForegroundColor)
+                    .padding(.bottom, (UIScreen.main.bounds.size.height/100) * 45)
+                    .padding(.trailing, (UIScreen.main.bounds.size.width/100) * 99)
+                    .scaleEffect(size)
+                    .onAppear() {
+                        withAnimation(self.repeatingAnimation) { self.size = 0.8 }
                 }
-
-            //Route percentage section
+                .onDisappear() {
+                    self.size = 0.7
+                }
+                
+            } else if lookAt == 2 {
+                //look right
+                Image(systemName: "shift.fill")
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .clipped()
+                    .rotationEffect(.degrees(90))
+                    .frame(width: 50, height: 50)
+                    .foregroundColor(InterfaceConstants.genericLinkForegroundColor)
+                    .padding(.bottom, (UIScreen.main.bounds.size.height/100) * 45)
+                    .padding(.leading, (UIScreen.main.bounds.size.width/100) * 99)
+                    .scaleEffect(size)
+                    .onAppear() {
+                        withAnimation(self.repeatingAnimation) { self.size = 0.8 }
+                }
+                .onDisappear() {
+                    self.size = 0.7
+                }
+            }
+            
+            //Route percentage section \(actualCrumb)/\(route.mapRoute.crumbs.count)
             ZStack {
-                Text("\(actualCrumb)/\(route.mapRoute.crumbs.count)")
+                Text("\(self.nPlays) \(self.showingCallAlert.description)")
                 Circle()
                     .fill(Color.clear)
                     .frame(width: 50, height: 50)
@@ -170,13 +174,13 @@ struct ARView: View {
                     .cornerRadius(15)
                     .frame(width: (UIScreen.main.bounds.size.width/100) * 75, height: (UIScreen.main.bounds.size.height/100) * 20)
             }
-            if self.nPlays >= 2 && showingCallAlert {
+            if self.nPlays >= 1 && showingCallAlert {
                 
                 GeometryReader { _ in
-                    PopUpCall(caregiver: self.route.caregiver, isShowing: self.$showingCallAlert)
+                    PopUpCall(caregiver: self.route.caregiver, isShowing: self.$showingCallAlert, nPlays: self.$nPlays)
                 }.background(Color.black.opacity(0.90))
-                .cornerRadius(15)
-                .frame(width: (UIScreen.main.bounds.size.width/100) * 75, height: (UIScreen.main.bounds.size.height/100) * 20)
+                    .cornerRadius(15)
+                    .frame(width: (UIScreen.main.bounds.size.width/100) * 75, height: (UIScreen.main.bounds.size.height/100) * 20)
             }
         }
         
@@ -194,6 +198,7 @@ struct PopUpCall: View {
     
     var caregiver: Caregiver
     @Binding var isShowing: Bool
+    @Binding var nPlays: Int
     
     var body: some View {
         VStack {
@@ -215,7 +220,8 @@ struct PopUpCall: View {
                 .clipShape(Circle())
                 Spacer().frame(width: (UIScreen.main.bounds.size.width/100) * 25)
                 Button(action: {
-                    self.isShowing = false
+                    self.nPlays = 0
+                    self.isShowing = true
                     
                 }) {
                     Image(systemName: "multiply")
@@ -243,6 +249,40 @@ struct PopUpHelp: View {
                 Button(action: {
                     //MARK: - Aggiungere riproduzione audio in caso di sconosciuti
                     print("Stranger")
+                    let store = Storage.storage()
+                    let ref = store.reference()
+                    
+                    let audio = ref.child("audio/start1.m4a")
+                    
+                    let path = audio.fullPath.split(separator: "/")[1]
+                    
+                    print(path)
+                    
+                    let fileUrl = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent(String(path))
+                    
+                    var player = AVAudioPlayer()
+                    
+                    audio.getData(maxSize: 3 * 1024 * 1024) { (data, error) in
+                        if let error = error {
+                            print("error \(error)")       
+                        } else {
+                            if let d = data {
+                                do {
+                                    try d.write(to: fileUrl)
+                                    player = try AVAudioPlayer(contentsOf: fileUrl)
+                                    player.play()
+                                } catch {
+                                    print("error")
+                                }
+                            }
+                        }
+                    }
+                    
+                    
+                    
+                    
+                    
+                    
                     self.isShowing = false
                 }) {
                     Image(systemName: "person.fill")
