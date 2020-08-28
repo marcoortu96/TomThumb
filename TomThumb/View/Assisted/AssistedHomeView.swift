@@ -10,26 +10,36 @@ import SwiftUI
 import MapKit
 
 struct AssistedHomeView: View {
-    @State var route = Route()
-    //@Binding var pushView: Bool
+    @ObservedObject var route: Route
+    @State var isNavigationBarHidden = true
+    @EnvironmentObject var navBarPrefs: NavBarPreferences
     var body: some View {
         TabView {
-            ARView(route: route, debug: true).tabItem {
+            ARView(route: route, debug: true)
+                .tabItem {
                     VStack {
-                        Image(systemName: "list.bullet")
+                        Image(systemName: "location")
                         Text("Percorso")
                             .navigationBarBackButtonHidden(true)
-                            .navigationBarHidden(true)
                     }
-            }.tag(0)
-            recentRoutes().tabItem {
+            }
+            .tag(0)
+            .onAppear {
+                //self.isNavigationBarHidden = true
+                self.navBarPrefs.navBarIsHidden = true
+            }
+            RecentRoutes()
+                .tabItem {
                     VStack {
-                        Image(systemName: "goforward")
+                        Image(systemName: "clock")
                         Text("Recenti")
                             .navigationBarBackButtonHidden(true)
-                            .navigationBarHidden(true)
                     }
-            }.tag(1)
+            }
+            .tag(1)
+            .onAppear {
+                self.navBarPrefs.navBarIsHidden = true
+            }
         }
     }
 }

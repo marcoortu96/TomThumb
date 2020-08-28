@@ -25,7 +25,7 @@ struct AssistedView: View {
                     Text("Premi aggiorna per caricare la mappa")
                 }
                 if showMap {
-                    LiveMapView(route: route, annotations: locations, collected: $collected)
+                    LiveMapView(route: route, annotations: locations, collected: $collected).edgesIgnoringSafeArea(.all)
                 }
                 Button(action: {
                     self.readDataFromDB()
@@ -38,7 +38,7 @@ struct AssistedView: View {
                 .background(Color.blue.opacity(0.85))
                 .font(.title)
                 .clipShape(Circle())
-                .padding(.top, (UIScreen.main.bounds.size.height/100) * 70)
+                .padding(.top, (UIScreen.main.bounds.size.height/100) * 65)
                 .padding(.leading, (UIScreen.main.bounds.size.width/100) * 77)
                 
                 if showMap {
@@ -80,7 +80,7 @@ struct AssistedView: View {
             let lon = value?["longitude"] as? Double ?? 0.0
             let collected = value?["collected"] as? Int ?? -1
             
-            let fac = RoutesFactory.getInstance().getById(id: routeId)
+             let fac = RoutesFactory.getInstance().getById(id: routeId)
             
             self.route = fac
             
