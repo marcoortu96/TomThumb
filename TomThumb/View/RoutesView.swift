@@ -19,7 +19,7 @@ struct RoutesView: View {
     @State var crumbAudio = URL(fileURLWithPath: "")
     @State var currentCrumb = Crumb(location: CLLocation())
     @State var crumbs = [Crumb]()
-    @State var routes = [Route]()
+    @State var routes = Set<Route>()
     
     var body: some View {
         NavigationView {
@@ -80,7 +80,7 @@ struct RoutesView: View {
                            caregiver: CaregiverFactory().caregivers[0],
                            mapRoute: MapRoute(crumbs: crumbs)
                 )
-                self.routes.append(route)
+                self.routes.insert(route)
                 
             }
         }) { (error) in
