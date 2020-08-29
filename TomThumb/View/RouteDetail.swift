@@ -64,37 +64,6 @@ struct RouteDetail: View {
                 Button(action: {
                     //Send route to user
                     print("Share tapped!")
-                    let store = Storage.storage()
-                    let ref = store.reference()
-                    
-                    //let audio = ref.child("audio/start1.m4a")
-                    
-                    let audio = self.route.mapRoute.crumbs[0].audio
-                    
-                    /*let path = audio.fullPath.split(separator: "/")[1]
-                    
-                    print(path)
-                    
-                    let fileUrl = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent(String(path))
-                    
-                    let player = AudioPlayer()
-                    
-                    audio.getData(maxSize: 3 * 1024 * 1024) { (data, error) in
-                        if let error = error {
-                            print("error \(error)")
-                        } else {
-                            if let d = data {
-                                do {
-                                    try d.write(to: fileUrl)
-                                    player.startPlayback(audio: fileUrl)
-                                } catch {
-                                    print("error")
-                                }
-                            }
-                        }
-                    }*/
-                    
-                    AudioPlayer.player.startPlayback(audio: audio!)
                 }) {
                     Text("Invia percorso")
                         .frame(minWidth: 0, maxWidth: .infinity)

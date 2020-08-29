@@ -9,39 +9,33 @@
 import Foundation
 import MapKit
 
-var globalId = 0
-
 class Route : Hashable, ObservableObject {
     var id : Int
     @Published var routeName: String
     var startName: String
     var finishName : String
-    var user: String
     var crumbs: Int
     var distance: Double
     var caregiver: Caregiver
     @Published var mapRoute: MapRoute
     
     init() {
-        self.id = globalId
+        self.id = UUID().hashValue
         self.routeName = ""
         self.startName = ""
         self.finishName = ""
-        self.user = ""
         self.crumbs = 0
         self.distance = 0.0
         self.caregiver = CaregiverFactory().caregivers[0]
         self.mapRoute = MapRoute()
-        
-        globalId = globalId + 1
     }
     
-    init(routeName: String, startName: String, finishName: String, user: String, caregiver: Caregiver, mapRoute: MapRoute) {
-        self.id = globalId
+    init(routeName: String, startName: String, finishName: String, caregiver: Caregiver, mapRoute: MapRoute) {
+        self.id = UUID().hashValue
         self.routeName = routeName
         self.startName = startName
         self.finishName = finishName
-        self.user = user
+        self.caregiver = CaregiverFactory().caregivers[0]
         self.crumbs = mapRoute.crumbs.count
         
         var totalDistance = 0.0
@@ -50,10 +44,24 @@ class Route : Hashable, ObservableObject {
         }
         
         self.distance = totalDistance
-        self.caregiver = caregiver
         self.mapRoute = mapRoute
+    }
+    
+    init(id: Int, routeName: String, startName: String, finishName: String, caregiver: Caregiver, mapRoute: MapRoute) {
+        self.id = id
+        self.routeName = routeName
+        self.startName = startName
+        self.finishName = finishName
+        self.crumbs = mapRoute.crumbs.count
+        self.caregiver = caregiver
         
-        globalId = globalId + 1
+        var totalDistance = 0.0
+        for i in stride(from: 0, to: mapRoute.crumbs.count - 1, by: 1) {
+            totalDistance = totalDistance + mapRoute.crumbs[i].location.distance(from: mapRoute.crumbs[i + 1].location)
+        }
+        
+        self.distance = totalDistance
+        self.mapRoute = mapRoute
     }
     
     func setRouteName(newName: String) {
@@ -76,17 +84,13 @@ class RoutesFactory: ObservableObject {
     @Published var routes: [Route]! = []
     
     init() {
-        routes.append(Route(routeName: "Prima", startName: "Via X", finishName: "Via Y", user: "Filippo",
-                            caregiver: CaregiverFactory().caregivers[0],
+        routes.append(Route(routeName: "Prima", startName: "Via X", finishName: "Via Y", caregiver: CaregiverFactory().caregivers[0],
                             mapRoute: MapRoutesFactory().mapRoutes[0]))
-        routes.append(Route(routeName: "Seconda", startName: "Via X", finishName: "Via Y", user: "Andrea",
-                            caregiver: CaregiverFactory().caregivers[0],
+        routes.append(Route(routeName: "Seconda", startName: "Via X", finishName: "Via Y", caregiver: CaregiverFactory().caregivers[0],
                             mapRoute: MapRoutesFactory().mapRoutes[1]))
-        routes.append(Route(routeName: "Terza", startName: "Via X", finishName: "Via Y", user: "Matteo",
-                            caregiver: CaregiverFactory().caregivers[0],
+        routes.append(Route(routeName: "Terza", startName: "Via X", finishName: "Via Y", caregiver: CaregiverFactory().caregivers[0],
                             mapRoute: MapRoutesFactory().mapRoutes[2]))
-        routes.append(Route(routeName: "Quarta", startName: "Via X", finishName: "Via Y", user: "Alberto",
-                            caregiver: CaregiverFactory().caregivers[0],
+        routes.append(Route(routeName: "Quarta", startName: "Via X", finishName: "Via Y", caregiver: CaregiverFactory().caregivers[0],
                             mapRoute: MapRoutesFactory().mapRoutes[1]))
     }
     

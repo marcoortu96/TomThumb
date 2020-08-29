@@ -271,7 +271,6 @@ extension ARViewController: ARSCNViewDelegate {
                 // Faccio vibrare il telefono
                 UIDevice.vibrate()
                 
-                
                 AudioPlayer.player.startPlayback(audio: self.route.mapRoute.crumbs[actualCrumb].audio!)
                         self.actualCrumb = self.actualCrumb + 1
                         self.addJustOneNode()

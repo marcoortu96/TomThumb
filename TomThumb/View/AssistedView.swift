@@ -109,7 +109,6 @@ struct AssistedView: View {
                 self.locations.removeLast(self.route.mapRoute.crumbs.count + 1)
             }
             assistedAnnotation.coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
-            assistedAnnotation.title = self.route.user
             assistedAnnotation.subtitle = "\(lat.short),\(lon.short)"
             self.locations.append(assistedAnnotation)
             self.collected = collected
