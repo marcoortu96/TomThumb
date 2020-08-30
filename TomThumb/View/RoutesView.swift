@@ -19,8 +19,7 @@ struct RoutesView: View {
     @State var crumbAudio = URL(fileURLWithPath: "")
     @State var currentCrumb = Crumb(location: CLLocation())
     @State var crumbs = [Crumb]()
-    @State var routes = Set<Route>()
-    
+    @State var routes = [Route]()
     var body: some View {
         NavigationView {
             VStack {
@@ -46,7 +45,14 @@ struct RoutesView: View {
             )
         }
         .onAppear {
-            self.getRoutesFromDb()
+            Database.database().reference().child("Routes").observe(DataEventType.value, with: { (snapshot) in
+                if snapshot.childrenCount > 0 {
+                    self.getRoutesFromDb()
+                } else {
+                    print("Non ci sono percorsi")
+                }
+            })
+            
         }
         .accentColor(InterfaceConstants.genericLinkForegroundColor)
         .sheet(isPresented: $showAddRouteView) {
@@ -71,17 +77,18 @@ struct RoutesView: View {
                 //print(value["crumbs"] as! NSArray)
                 for crumb in value["crumbs"] as! [[String : Any]] {
                     //print(crumb["audio"])
-                    crumbs.append(Crumb(location: CLLocation(latitude: crumb["latitude"] as! Double, longitude: crumb["longitude"] as! Double)))
+                    crumbs.append(Crumb(location: CLLocation(latitude: crumb["latitude"] as! Double, longitude: crumb["longitude"] as! Double), audio: URL(fileURLWithPath: crumb["audio"] as! String)))
                 }
                 let route = Route(id: Int(key)!,
-                           routeName: value["routeName"] as! String,
-                           startName: value["startName"] as! String,
-                           finishName: value["finishName"] as! String,
+                                  routeName: value["routeName"] as! String,
+                                  startName: value["startName"] as! String,
+                                  finishName: value["finishName"] as! String,
                            caregiver: CaregiverFactory().caregivers[0],
                            mapRoute: MapRoute(crumbs: crumbs)
                 )
-                self.routes.insert(route)
-                
+                if !self.routes.contains(route) {
+                    self.routes.append(route)   
+                }
             }
         }) { (error) in
             print(error.localizedDescription)

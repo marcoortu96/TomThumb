@@ -120,7 +120,7 @@ struct AddRouteView: View {
                                 metadata.contentType = "audio/x-m4a"
                                 
                                 var routeData = [String : Any]()
-                                routeData["\(newRoute.id)"] = [
+                                routeData = [
                                                                 "routeName" : "da \(startName) a \(finishName)",
                                                                 "startName" : startName,
                                                                 "finishName" : finishName
@@ -130,7 +130,7 @@ struct AddRouteView: View {
                                 
                                 for (index, crumb) in self.crumbs.enumerated() {
                                     crumbData["\(index)"] = [
-                                                             "audio" : crumb.audio?.lastPathComponent as Any,
+                                                             "audio" : crumb.audio!.lastPathComponent as String,
                                                              "latitude" : crumb.location.coordinate.latitude,
                                                              "longitude" : crumb.location.coordinate.longitude
                                                             ]
@@ -138,18 +138,33 @@ struct AddRouteView: View {
                                     let audio = crumb.audio
                                     let storeRef = store.reference().child("audio/\(audio!.lastPathComponent)")
                                     
+                                    // Upload audio
                                     let _ = storeRef.putFile(from: audio!, metadata: metadata) { (metadata, error) in
                                         guard let _ = metadata else {
                                             print("error occurred: \(error.debugDescription)")
                                             return
                                         }
                                     }
+                                    
+                                    // TEST Downlaod audio
+                                    // Creo URL per la cartella document
+                                    let documentPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+                                    let audioUrl = documentPath.appendingPathComponent("\(audio!.lastPathComponent)")
+
+                                    // Download audio in locale
+                                    let _ = storeRef.write(toFile: audioUrl) { url, error in
+                                      if let error = error {
+                                        print("ERROR nel download dell'audio: \(error.localizedDescription)")
+                                      } else {
+                                        print("Audio scaricato in locale")
+                                      }
+                                    }
                                 }
-                                
-                                db.child("Routes").setValue(routeData)
-                                db.child("Routes").child("\(newRoute.id)").child("crumbs").setValue(crumbData)
-                                
-                                RoutesFactory.insertRoute(route: newRoute)
+
+                                let child = db.child("Routes").child("\(newRoute.id)")
+                                child.setValue(routeData)
+                                child.child("crumbs").setValue(crumbData)
+                                //RoutesFactory.insertRoute(route: newRoute)
                                 self.showSheetView = false
                             }
                         }),
