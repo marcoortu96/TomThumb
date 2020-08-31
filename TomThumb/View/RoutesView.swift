@@ -64,8 +64,19 @@ struct RoutesView: View {
     }
     
     func deleteRoute(at offsets: IndexSet) {
-        RoutesFactory.remove(index: offsets)
-        print(RoutesFactory.getInstance().getRoutes()[0].routeName)
+        let db = Database.database().reference()
+        
+        // Rimozione della route dal db
+        
+        db.child("Routes").child(self.routes[offsets.first!].id).removeValue() { (error, ref) in
+            if error != nil {
+                print("error \(error.debugDescription)")
+            }
+        }
+        
+        // Rimozione della route dalla lista delle route mostrate nella view
+        self.routes.remove(atOffsets: offsets)
+        
     }
     
     // Func per scaricare i percorsi dal DB

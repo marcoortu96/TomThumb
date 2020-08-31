@@ -32,11 +32,13 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     public var annotationHeightAdjustmentFactor = 1.0
     
     public var renderTime: TimeInterval = 0
-    private let distanceThreshold: Double = 40.0
+    private let distanceThreshold: Double = 10.0
     private var isColliding = false
     
     private var isPlaying = false
     @Binding var nPlays: Int
+    
+    @State var isTesting: Bool
     
     var route: Route
     @Binding var actualCrumb: Int
@@ -45,12 +47,13 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     @Binding var lookAt: Int
     var locationManager = LocationManager()
     
-    init(route: Route, actualCrumb: Binding<Int>, lookAt: Binding<Int>, prevCrumb: Binding<LocationNode>, nPlays: Binding<Int>) {
+    init(route: Route, actualCrumb: Binding<Int>, lookAt: Binding<Int>, prevCrumb: Binding<LocationNode>, nPlays: Binding<Int>, isTesting: Bool) {
         self.route = route
         self._actualCrumb = actualCrumb
         self._lookAt = lookAt
         self._prevCrumb = prevCrumb
         self._nPlays = nPlays
+        self.isTesting = isTesting
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -93,8 +96,6 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        sceneLocationView?.removeAllNodes()
-        sceneLocationView?.pause()
         super.viewWillDisappear(animated)
     }
     
@@ -153,7 +154,7 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
         guard let currentLocation = self.sceneLocationView?.sceneLocationManager.currentLocation else { return }
         
         let userLocation = CLLocation(coordinate: currentLocation.coordinate,
-        altitude: currentLocation.altitude)
+                                      altitude: currentLocation.altitude)
         
         let routeData = [
             "id" : self.route.id as Any,
@@ -161,14 +162,19 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
             "longitude" : userLocation.coordinate.longitude,
             "collected" : self.actualCrumb
         ]
-        db.child("Assisted").setValue(routeData)
+        db.child(isTesting ? "Test" : "Assisted").setValue(routeData)
+        
+        if !isTesting {
+            db.child("Assisted").updateChildValues(["isExecuting": false])
+        }
         
         print("DEBUG - Crumb index out of bounds, you might have finished the route!")
-        viewWillDisappear(false)
+        sceneLocationView?.removeAllNodes()
+        sceneLocationView?.pause()
     }
     
     func makeUIViewController(context: UIViewControllerRepresentableContext<ARViewController>) -> ARViewController {
-        return ARViewController(route: self.route, actualCrumb: self.$actualCrumb, lookAt: self.$lookAt, prevCrumb: self.$prevCrumb, nPlays: self.$nPlays)
+        return ARViewController(route: self.route, actualCrumb: self.$actualCrumb, lookAt: self.$lookAt, prevCrumb: self.$prevCrumb, nPlays: self.$nPlays, isTesting: self.isTesting)
     }
     
     func updateUIViewController(_ uiViewController: ARViewController.UIViewControllerType, context: UIViewControllerRepresentableContext<ARViewController>) {
@@ -214,9 +220,9 @@ extension ARViewController: ARSCNViewDelegate {
             let db = Database.database().reference()
             
             /* Ogni 0.75s pubblica sul db:
-                - id del percorso (possiamo eseguire solo i percorsi della factory)
-                - posizione assistito (lat, lon)
-                - quante crumb ha raccolto
+             - id del percorso (possiamo eseguire solo i percorsi della factory)
+             - posizione assistito (lat, lon)
+             - quante crumb ha raccolto
              */
             
             let routeData = [
@@ -225,7 +231,11 @@ extension ARViewController: ARSCNViewDelegate {
                 "longitude" : userLocation.coordinate.longitude,
                 "collected" : self.actualCrumb
                 ] as [String : Any]
-            db.child("Assisted").setValue(routeData)
+            db.child(isTesting ? "Test" : "Assisted").setValue(routeData)
+            
+            if !isTesting {
+                db.child("Assisted").updateChildValues(["isExecuting": true])
+            }
             
             // Controllo se viene visualizzata la crumb, in caso contrario mostro le frecce
             DispatchQueue.main.async {
@@ -245,28 +255,36 @@ extension ARViewController: ARSCNViewDelegate {
                 
                 // Se la distanza punto segmento è superiore ai 60 metri
                 if distUserCrumbs > 60 {
-                    // Riproduco l'audio 1 volta, dopo di che, in ARView, mostro il pop-up per chiamare il caregiver
-       
+                    // Scarico l'audio, lo riproduco l'audio 1 volta, dopo di che, in ARView, mostro il pop-up per chiamare il caregiver
+                    
                     if !self.isPlaying && self.nPlays < 1 {
                         let storage = Storage.storage()
                         let pathString = "\(self.route.mapRoute.crumbs[actualCrumb].audio!.lastPathComponent)"
-                        let storageRef = storage.reference().child(  "audio/farFromCrumb.m4a")
+                        let storageRef = storage.reference().child("audio/farFromCrumb.m4a")
                         let fileUrls = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
                         
                         guard let fileUrl = fileUrls.first?.appendingPathComponent(pathString) else {
                             return
                         }
-                        let downloadTask = storageRef.write(toFile: fileUrl)
-                        downloadTask.observe(.success) { _ in
+                        
+                        let directoryContents = try! FileManager.default.contentsOfDirectory(at: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0], includingPropertiesForKeys: nil)
+                        
+                        print(directoryContents)
+                        
+                        if !directoryContents.contains(fileUrl) {
+                            print("Scarico il file dallo storage")
+                            let downloadTask = storageRef.write(toFile: fileUrl)
+                            downloadTask.observe(.success) { _ in
+                                self.isPlaying = true
+                                AudioPlayer.player.startPlayback(audio: fileUrl)
+                            }
+                        } else {
+                            print("Il file è gia in locale")
+                            self.isPlaying = true
                             AudioPlayer.player.startPlayback(audio: fileUrl)
                         }
-                        self.isPlaying = true
                         self.nPlays = self.nPlays + 1
-                        let audioPlayer = try! AVAudioPlayer(contentsOf: URL(fileURLWithPath: Bundle.main.path(forResource: "farFromCrumb.m4a", ofType: nil)!))
-                        AudioPlayer.player.audioPlayerDidFinishPlaying(audioPlayer, successfully: true)
-                        if !AudioPlayer.player.isPlaying {
-                            self.isPlaying = false
-                        }
+                        self.isPlaying = false
                     }
                     
                     print("DEBUG - Far from trajectory")
@@ -285,19 +303,36 @@ extension ARViewController: ARSCNViewDelegate {
                 
                 let storage = Storage.storage()
                 let pathString = "\(self.route.mapRoute.crumbs[actualCrumb].audio!.lastPathComponent)"
-                let storageRef = storage.reference().child(  "audio/\(self.route.mapRoute.crumbs[actualCrumb].audio!.lastPathComponent)")
+                let storageRef = storage.reference().child("audio/\(self.route.mapRoute.crumbs[actualCrumb].audio!.lastPathComponent)")
                 let fileUrls = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
                 
                 guard let fileUrl = fileUrls.first?.appendingPathComponent(pathString) else {
                     return
                 }
-                let downloadTask = storageRef.write(toFile: fileUrl)
-                downloadTask.observe(.success) { _ in
-                    AudioPlayer.player.startPlayback(audio: fileUrl)
-                }
-                self.actualCrumb = self.actualCrumb + 1
+                
+                let check = URL(string: "file:///private/\(fileUrl.absoluteString.dropFirst(8))")
+                print("check: \(check!)")
+                
+                let directoryContents = try! FileManager.default.contentsOfDirectory(at: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0], includingPropertiesForKeys: nil)
+                print(directoryContents)
+        
+                
+                if !directoryContents.contains(check!) {
+                    print("Scarico il file dallo storage")
+                    let downloadTask = storageRef.write(toFile: fileUrl)
+                    downloadTask.observe(.success) { _ in
+                        AudioPlayer.player.startPlayback(audio: fileUrl)
+                        self.isColliding = false
+                        self.actualCrumb = self.actualCrumb + 1
                         self.addJustOneNode()
-                  
+                    }
+                } else {
+                    print("Il file è gia in locale")
+                    AudioPlayer.player.startPlayback(audio: fileUrl)
+                    self.isColliding = false
+                    self.actualCrumb = self.actualCrumb + 1
+                    self.addJustOneNode()
+                }
             }
             renderTime = time + TimeInterval(0.75)
         }

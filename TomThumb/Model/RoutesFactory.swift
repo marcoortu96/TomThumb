@@ -121,10 +121,10 @@ class RoutesFactory: ObservableObject {
         RoutesFactory.getInstance().setRoutes(routes: routes)
     }
     
-    /*func getById(id: Int) -> Route {
+    func getById(id: String) -> Route {
         let routes = RoutesFactory.getInstance().getRoutes()
         return routes.filter {$0.id == id}[0]
-    }*/
+    }
     
     func getByName(name: String) -> Route {
         let routes = RoutesFactory.getInstance().getRoutes()

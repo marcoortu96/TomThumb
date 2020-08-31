@@ -11,6 +11,7 @@ import MapKit
 import UIKit
 import AVFoundation
 import Firebase
+import FirebaseDatabase
 import FirebaseStorage
 
 struct RouteDetail: View {
@@ -64,6 +65,7 @@ struct RouteDetail: View {
                 Button(action: {
                     //Send route to user
                     print("Share tapped!")
+                    self.sendRoute()
                 }) {
                     Text("Invia percorso")
                         .frame(minWidth: 0, maxWidth: .infinity)
@@ -71,6 +73,18 @@ struct RouteDetail: View {
                 }
             }
         }.navigationBarTitle(Text("Dati percorso"), displayMode: .inline)
+    
+    }
+    
+    func sendRoute() {
+        let ref = Database.database().reference()
+        
+        ref.child("Assisted").updateChildValues(
+            [
+                "isExecuting" : true,
+                "id" : self.route.id
+        ])
+        
     }
     
     struct ChangeRouteName: View {
@@ -98,6 +112,10 @@ struct RouteDetail: View {
         }
         
         func updateRoute() {
+            let ref = Database.database().reference()
+            
+            ref.child("Routes").child(route.id).updateChildValues(["routeName": route.routeName])
+            
             RoutesFactory.getInstance().setRoutes(routes: RoutesFactory.getInstance().getRoutes())
         }
     }

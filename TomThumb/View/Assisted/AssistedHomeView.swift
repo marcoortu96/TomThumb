@@ -8,26 +8,38 @@
 
 import SwiftUI
 import MapKit
+import Firebase
+import FirebaseDatabase
 
 struct AssistedHomeView: View {
-    @ObservedObject var route: Route
+    @State var route = Route()
+    @State var isExecuting = false
     @State var isNavigationBarHidden = true
     @EnvironmentObject var navBarPrefs: NavBarPreferences
     var body: some View {
+        
         TabView {
-            ARView(route: route, debug: true)
-                .tabItem {
-                    VStack {
-                        Image(systemName: "location")
-                        Text("Percorso")
-                            .navigationBarBackButtonHidden(true)
-                    }
+            if !isExecuting {
+                Button(action: {
+                    self.isExecuting.toggle()
+                }) {
+                    Text("Avvia percorso")
+                }
             }
-            .tag(0)
-            .onAppear {
-                self.navBarPrefs.navBarIsHidden = true
+            if isExecuting {
+                ARView(route: route, debug: false)
+                    .tabItem {
+                        VStack {
+                            Image(systemName: "location")
+                            Text("Percorso")
+                                .navigationBarBackButtonHidden(true)
+                        }
+                }
+                .tag(0)
+                .onAppear {
+                    self.navBarPrefs.navBarIsHidden = true
+                }
             }
-            
             RecentRoutes()
                 .tabItem {
                     VStack {
@@ -39,8 +51,45 @@ struct AssistedHomeView: View {
             .tag(1)
             .onAppear {
                 self.navBarPrefs.navBarIsHidden = true
+                
             }
+        }.onAppear{
+            self.fetchNewRoute()
         }
+        
+    }
+    
+    func fetchNewRoute() {
+        let ref = Database.database().reference()
+        
+        ref.child("Assisted").observeSingleEvent(of: .value, with: { (snapshot) in
+            let value = snapshot.value as? NSDictionary
+            let isExecuting = value?["isExecuting"] as! Bool
+            let id = value?["id"] as! String
+            
+            if isExecuting {
+                ref.child("Routes").child("\(id)").observe(.value, with: { (snapshot) in
+                    let value = snapshot.value as? [String : Any]
+                    print("value \n \(value ?? ["result" : ["error" : "cannot retrive values from DB"]])")
+                    var crumbs = [Crumb]()
+                    //print(value!["crumbs"]!)
+                    for crumb in value?["crumbs"] as! [[String : Any]] {
+                        //print(crumb["audio"])
+                        crumbs.append(Crumb(location: CLLocation(latitude: crumb["latitude"] as! Double, longitude: crumb["longitude"] as! Double), audio: URL(fileURLWithPath: crumb["audio"] as! String)))
+                    }
+                    let routeTmp = Route(id: id,
+                                         routeName: value!["routeName"] as! String,
+                                         startName: value!["startName"] as! String,
+                                         finishName: value!["finishName"] as! String,
+                                         caregiver: CaregiverFactory().caregivers[0],
+                                         mapRoute: MapRoute(crumbs: crumbs)
+                    )
+                    self.route = routeTmp
+                    print(self.route.id)
+                })
+            }
+            
+        })
     }
 }
 

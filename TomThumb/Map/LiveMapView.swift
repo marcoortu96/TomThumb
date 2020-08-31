@@ -64,6 +64,7 @@ struct LiveMapView: UIViewRepresentable {
                     annotationView.markerTintColor = InterfaceConstants.startPinColor
                 }
                 annotationView.isEnabled = false
+                annotationView.displayPriority = .required
                 annotationView.titleVisibility = MKFeatureVisibility.visible;
                 annotationView.canShowCallout = true
                 return annotationView
@@ -74,6 +75,7 @@ struct LiveMapView: UIViewRepresentable {
                     annotationView.markerTintColor = InterfaceConstants.finishPinColor
                 }
                 annotationView.isEnabled = false
+                annotationView.displayPriority = .required
                 annotationView.titleVisibility = MKFeatureVisibility.visible;
                 annotationView.canShowCallout = true
                 return annotationView
@@ -88,6 +90,7 @@ struct LiveMapView: UIViewRepresentable {
                     //annotationView.markerTintColor = InterfaceConstants.crumbPinColor
                     annotationView.glyphImage = UIImage(systemName: "staroflife.fill")
                     annotationView.isEnabled = false
+                    annotationView.displayPriority = .required
                     annotationView.titleVisibility = MKFeatureVisibility.visible;
                     annotationView.canShowCallout = true
                     return annotationView
@@ -95,6 +98,7 @@ struct LiveMapView: UIViewRepresentable {
                     let annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: "pin")
                     let image = UIImage(named: "dot")
                     annotationView.image = image?.resized(to: CGSize(width: 50, height: 50))
+                    annotationView.displayPriority = .required
                     annotationView.isEnabled = true
                     return annotationView
                 }

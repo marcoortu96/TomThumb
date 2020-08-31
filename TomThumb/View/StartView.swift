@@ -38,7 +38,7 @@ struct StartView: View {
                 .onAppear {
                      self.navBarPrefs.navBarIsHidden = true
                 }
-                NavigationLink(destination: AssistedHomeView(route: route)) {
+                NavigationLink(destination: AssistedHomeView()) {
                     HStack {
                         Image(systemName: "person.fill")
                             .accentColor(.black)

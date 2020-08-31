@@ -23,7 +23,7 @@ struct ARView: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     
     var route: Route
-    var debug: Bool
+    @State var debug: Bool
     
     @State var showingEndARAlert = false
     @State var showingCallAlert = true
@@ -38,7 +38,7 @@ struct ARView: View {
     
     var body: some View {
         ZStack {
-            ARViewController(route: route, actualCrumb: $actualCrumb, lookAt: $lookAt, prevCrumb: $prevCrumb, nPlays: $nPlays)
+            ARViewController(route: route, actualCrumb: $actualCrumb, lookAt: $lookAt, prevCrumb: $prevCrumb, nPlays: $nPlays, isTesting: debug)
             
             //Directional arrows section
             
