@@ -145,20 +145,6 @@ struct AddRouteView: View {
                                             return
                                         }
                                     }
-                                    
-                                    // TEST Downlaod audio
-                                    // Creo URL per la cartella document
-                                    let documentPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-                                    let audioUrl = documentPath.appendingPathComponent("\(audio!.lastPathComponent)")
-
-                                    // Download audio in locale
-                                    let _ = storeRef.write(toFile: audioUrl) { url, error in
-                                      if let error = error {
-                                        print("ERROR nel download dell'audio: \(error.localizedDescription)")
-                                      } else {
-                                        print("Audio scaricato in locale")
-                                      }
-                                    }
                                 }
 
                                 let child = db.child("Routes").child("\(newRoute.id)")

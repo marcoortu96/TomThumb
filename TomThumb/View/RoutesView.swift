@@ -9,6 +9,8 @@
 import SwiftUI
 import MapKit
 import Firebase
+import FirebaseStorage
+import FirebaseDatabase
 
 
 struct RoutesView: View {
@@ -69,12 +71,13 @@ struct RoutesView: View {
     // Func per scaricare i percorsi dal DB
     func getRoutesFromDb() {
         let db = Database.database().reference()
-        db.child("Routes").observe(.value, with: { (snapshot) in
+        
+        db.child("Routes").observeSingleEvent(of: .value, with: { (snapshot) in
             let snapValue = snapshot.value as? [String : [String : Any]]
-            //print("value \n \(value ?? ["error" : "cannot retrive values from DB"])")
+            //print("value \n \(snapValue ?? ["result" : ["error" : "cannot retrive values from DB"]])")
             for (key, value) in snapValue! {
                 var crumbs = [Crumb]()
-                //print(value["crumbs"] as! NSArray)
+                
                 for crumb in value["crumbs"] as! [[String : Any]] {
                     //print(crumb["audio"])
                     crumbs.append(Crumb(location: CLLocation(latitude: crumb["latitude"] as! Double, longitude: crumb["longitude"] as! Double), audio: URL(fileURLWithPath: crumb["audio"] as! String)))
@@ -93,6 +96,7 @@ struct RoutesView: View {
         }) { (error) in
             print(error.localizedDescription)
         }
+        
     }
     
 }

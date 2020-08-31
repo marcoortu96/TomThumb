@@ -15,6 +15,7 @@ import UIKit
 import SwiftUI
 import Firebase
 import FirebaseDatabase
+import FirebaseStorage
 
 final class ARViewController: UIViewController, UIViewControllerRepresentable {
     var sceneLocationView: SceneLocationView?
@@ -31,7 +32,7 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     public var annotationHeightAdjustmentFactor = 1.0
     
     public var renderTime: TimeInterval = 0
-    private let distanceThreshold: Double = 10.0
+    private let distanceThreshold: Double = 40.0
     private var isColliding = false
     
     private var isPlaying = false
@@ -247,7 +248,18 @@ extension ARViewController: ARSCNViewDelegate {
                     // Riproduco l'audio 1 volta, dopo di che, in ARView, mostro il pop-up per chiamare il caregiver
        
                     if !self.isPlaying && self.nPlays < 1 {
-                        AudioPlayer.player.startPlayback(audio: URL(fileURLWithPath: Bundle.main.path(forResource: "farFromCrumb.m4a", ofType: nil)!))
+                        let storage = Storage.storage()
+                        let pathString = "\(self.route.mapRoute.crumbs[actualCrumb].audio!.lastPathComponent)"
+                        let storageRef = storage.reference().child(  "audio/farFromCrumb.m4a")
+                        let fileUrls = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+                        
+                        guard let fileUrl = fileUrls.first?.appendingPathComponent(pathString) else {
+                            return
+                        }
+                        let downloadTask = storageRef.write(toFile: fileUrl)
+                        downloadTask.observe(.success) { _ in
+                            AudioPlayer.player.startPlayback(audio: fileUrl)
+                        }
                         self.isPlaying = true
                         self.nPlays = self.nPlays + 1
                         let audioPlayer = try! AVAudioPlayer(contentsOf: URL(fileURLWithPath: Bundle.main.path(forResource: "farFromCrumb.m4a", ofType: nil)!))
@@ -271,8 +283,19 @@ extension ARViewController: ARSCNViewDelegate {
                 // Faccio vibrare il telefono
                 UIDevice.vibrate()
                 
-                AudioPlayer.player.startPlayback(audio: self.route.mapRoute.crumbs[actualCrumb].audio!)
-                        self.actualCrumb = self.actualCrumb + 1
+                let storage = Storage.storage()
+                let pathString = "\(self.route.mapRoute.crumbs[actualCrumb].audio!.lastPathComponent)"
+                let storageRef = storage.reference().child(  "audio/\(self.route.mapRoute.crumbs[actualCrumb].audio!.lastPathComponent)")
+                let fileUrls = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+                
+                guard let fileUrl = fileUrls.first?.appendingPathComponent(pathString) else {
+                    return
+                }
+                let downloadTask = storageRef.write(toFile: fileUrl)
+                downloadTask.observe(.success) { _ in
+                    AudioPlayer.player.startPlayback(audio: fileUrl)
+                }
+                self.actualCrumb = self.actualCrumb + 1
                         self.addJustOneNode()
                   
             }
