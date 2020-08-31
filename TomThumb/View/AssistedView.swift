@@ -68,6 +68,34 @@ struct AssistedView: View {
         })
     }
     
+    func getRouteDataFromDB() {
+        let dbRef = Database.database().reference()
+        
+        if self.route.routeName == "" {
+            dbRef.child("Routes").child("\(self.route.id)").observeSingleEvent(of: .value, with: { (snapshot) in
+                       let value = snapshot.value as? [String : Any]
+                       //print("value \n \(snapValue ?? ["result" : ["error" : "cannot retrive values from DB"]])")
+                           var crumbs = [Crumb]()
+                           
+                       for crumb in value?["crumbs"] as! [[String : Any]] {
+                               //print(crumb["audio"])
+                               crumbs.append(Crumb(location: CLLocation(latitude: crumb["latitude"] as! Double, longitude: crumb["longitude"] as! Double), audio: URL(fileURLWithPath: crumb["audio"] as! String)))
+                           }
+                       let routeTmp = Route(id: self.route.id,
+                                         routeName: value!["routeName"] as! String,
+                                             startName: value!["startName"] as! String,
+                                             finishName: value!["finishName"] as! String,
+                                      caregiver: CaregiverFactory().caregivers[0],
+                                      mapRoute: MapRoute(crumbs: crumbs)
+                           )
+                       self.route = routeTmp
+                   }) { (error) in
+                       print(error.localizedDescription)
+                   }
+        }
+       
+    }
+    
     func readDataFromDB() {
         let ref = Database.database().reference()
         ref.child("Assisted").observe(.value, with: { (snapshot) in
@@ -75,27 +103,25 @@ struct AssistedView: View {
             // Get user position value
             let value = snapshot.value as? NSDictionary
             print("value \n \(value ?? ["error" : "cannot retrive values from DB"])")
-            let routeId = value?["id"] as? Int ?? 0
+            _ = value?["id"] as? Int ?? 0
             let lat = value?["latitude"] as? Double ?? 0.0
             let lon = value?["longitude"] as? Double ?? 0.0
             let collected = value?["collected"] as? Int ?? -1
             
-             let fac = RoutesFactory.getInstance().getById(id: routeId)
+            self.getRouteDataFromDB()
             
-            self.route = fac
-            
-            if fac.mapRoute.crumbs.count > 1 {
+            if self.route.mapRoute.crumbs.count > 1 {
                 let startAnnotation = MKPointAnnotation()
-                startAnnotation.coordinate = fac.mapRoute.crumbs[0].location.coordinate
+                startAnnotation.coordinate = self.route.mapRoute.crumbs[0].location.coordinate
                 startAnnotation.title = "start"
                 self.locations.append(startAnnotation)
                 
                 let finishAnnotation = MKPointAnnotation()
-                finishAnnotation.coordinate = fac.mapRoute.crumbs[fac.mapRoute.crumbs.count - 1].location.coordinate
+                finishAnnotation.coordinate = self.route.mapRoute.crumbs[self.route.mapRoute.crumbs.count - 1].location.coordinate
                 finishAnnotation.title = "finish"
                 self.locations.append(finishAnnotation)
                 
-                for (index,crumb) in fac.mapRoute.crumbs[1..<(fac.mapRoute.crumbs.count - 1)].enumerated() {
+                for (index,crumb) in self.route.mapRoute.crumbs[1..<(self.route.mapRoute.crumbs.count - 1)].enumerated() {
                     let crumbAnnotation = MKPointAnnotation()
                     crumbAnnotation.coordinate =  crumb.location.coordinate
                     crumbAnnotation.title = String(index + 1)

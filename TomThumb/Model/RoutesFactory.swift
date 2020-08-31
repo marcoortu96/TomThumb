@@ -10,7 +10,7 @@ import Foundation
 import MapKit
 
 class Route : Hashable, ObservableObject {
-    var id : Int
+    var id : String
     @Published var routeName: String
     var startName: String
     var finishName : String
@@ -20,7 +20,7 @@ class Route : Hashable, ObservableObject {
     @Published var mapRoute: MapRoute
     
     init() {
-        self.id = UUID().hashValue
+        self.id = UUID().uuidString
         self.routeName = ""
         self.startName = ""
         self.finishName = ""
@@ -31,7 +31,7 @@ class Route : Hashable, ObservableObject {
     }
     
     init(routeName: String, startName: String, finishName: String, caregiver: Caregiver, mapRoute: MapRoute) {
-        self.id = UUID().hashValue
+        self.id = UUID().uuidString
         self.routeName = routeName
         self.startName = startName
         self.finishName = finishName
@@ -47,7 +47,7 @@ class Route : Hashable, ObservableObject {
         self.mapRoute = mapRoute
     }
     
-    init(id: Int, routeName: String, startName: String, finishName: String, caregiver: Caregiver, mapRoute: MapRoute) {
+    init(id: String, routeName: String, startName: String, finishName: String, caregiver: Caregiver, mapRoute: MapRoute) {
         self.id = id
         self.routeName = routeName
         self.startName = startName
@@ -121,10 +121,10 @@ class RoutesFactory: ObservableObject {
         RoutesFactory.getInstance().setRoutes(routes: routes)
     }
     
-    func getById(id: Int) -> Route {
+    /*func getById(id: Int) -> Route {
         let routes = RoutesFactory.getInstance().getRoutes()
         return routes.filter {$0.id == id}[0]
-    }
+    }*/
     
     func getByName(name: String) -> Route {
         let routes = RoutesFactory.getInstance().getRoutes()

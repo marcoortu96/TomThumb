@@ -82,7 +82,7 @@ struct RoutesView: View {
                     //print(crumb["audio"])
                     crumbs.append(Crumb(location: CLLocation(latitude: crumb["latitude"] as! Double, longitude: crumb["longitude"] as! Double), audio: URL(fileURLWithPath: crumb["audio"] as! String)))
                 }
-                let route = Route(id: Int(key)!,
+                let route = Route(id: String(key),
                                   routeName: value["routeName"] as! String,
                                   startName: value["startName"] as! String,
                                   finishName: value["finishName"] as! String,

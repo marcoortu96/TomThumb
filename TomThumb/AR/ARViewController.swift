@@ -220,11 +220,11 @@ extension ARViewController: ARSCNViewDelegate {
              */
             
             let routeData = [
-                "id" : self.route.id as Any,
+                "id" : self.route.id as String,
                 "latitude" : userLocation.coordinate.latitude,
                 "longitude" : userLocation.coordinate.longitude,
                 "collected" : self.actualCrumb
-            ]
+                ] as [String : Any]
             db.child("Assisted").setValue(routeData)
             
             // Controllo se viene visualizzata la crumb, in caso contrario mostro le frecce
