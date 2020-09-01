@@ -17,83 +17,57 @@ struct AssistedView: View {
     @State var showMap = false
     @State private var locations = [MKPointAnnotation]()
     @State var collected = 0
+    @State var isExecuting = false
     
     var body: some View {
         NavigationView {
             ZStack {
-                if !showMap {
-                    Text("Premi aggiorna per caricare la mappa")
+                if !showMap && isExecuting == false {
+                    Text("Non ci sono percorsi in esecuzione")
                 }
-                if showMap {
-                    LiveMapView(route: route, annotations: locations, collected: $collected).edgesIgnoringSafeArea(.all)
-                }
-                Button(action: {
-                    self.readDataFromDB()
-                    self.showMap = true
-                }) {
-                    Image(systemName: "repeat")
-                        .foregroundColor(.white)
-                }
-                .padding()
-                .background(Color.blue.opacity(0.85))
-                .font(.title)
-                .clipShape(Circle())
-                .padding(.top, (UIScreen.main.bounds.size.height/100) * 65)
-                .padding(.leading, (UIScreen.main.bounds.size.width/100) * 77)
-                
-                if showMap {
-                    ZStack {
-                        Text("\(self.collected)/\(route.mapRoute.crumbs.count)")
-                        Circle()
-                            .fill(Color.clear)
-                            .frame(width: 50, height: 50)
-                            .overlay(
-                                Circle()
-                                    .trim(from: 0, to: CGFloat((Double(Double(self.collected) / Double(route.mapRoute.crumbs.count)) * 100) * (0.01)))
-                                    .stroke(style: StrokeStyle(lineWidth: 10, lineCap: .round, lineJoin: .round))
-                                    .fill(Color.red)
-                        )
-                        
-                    }.padding(.bottom, (UIScreen.main.bounds.size.height/100) * 68)
-                        .padding(.trailing, (UIScreen.main.bounds.size.width/100) * 75)
+                if isExecuting == true {
+                    if showMap {
+                        LiveMapView(route: route, annotations: locations, collected: $collected).edgesIgnoringSafeArea(.all)
+                        ZStack {
+                            Text("\(self.collected)/\(route.mapRoute.crumbs.count)")
+                            Circle()
+                                .fill(Color.clear)
+                                .frame(width: 50, height: 50)
+                                .overlay(
+                                    Circle()
+                                        .trim(from: 0, to: CGFloat((Double(Double(self.collected) / Double(route.mapRoute.crumbs.count)) * 100) * (0.01)))
+                                        .stroke(style: StrokeStyle(lineWidth: 10, lineCap: .round, lineJoin: .round))
+                                        .fill(Color.red)
+                            )
+                            
+                        }.padding(.bottom, (UIScreen.main.bounds.size.height/100) * 68)
+                            .padding(.trailing, (UIScreen.main.bounds.size.width/100) * 75)
+                    } else {
+                        Button(action: {
+                            self.readDataFromDB()
+                            self.showMap = true
+                        }) {
+                            Text("Avvia Monitoraggio")
+                                .foregroundColor(.white)
+                        }
+                        .padding()
+                        .background(Color.blue.opacity(0.85))
+                        .font(.body)
+                        .cornerRadius(12)
+                        //.clipShape(Circle())
+                        /*.padding(.top, (UIScreen.main.bounds.size.height/100) * 65)
+                        .padding(.leading, (UIScreen.main.bounds.size.width/100) * 77)*/
+                    }
                 }
             }.onAppear(perform: {
                 self.readDataFromDB()
             })
-                .navigationBarTitle(Text("\(self.route.routeName)"), displayMode: .inline)
+            .navigationBarTitle(Text("\(self.route.routeName)"), displayMode: .inline)
             
         }.onDisappear(perform: {
             self.locations = []
             self.showMap = false
         })
-    }
-    
-    func getRouteDataFromDB() {
-        let dbRef = Database.database().reference()
-        
-        if self.route.routeName == "" {
-            dbRef.child("Routes").child("\(self.route.id)").observeSingleEvent(of: .value, with: { (snapshot) in
-                let value = snapshot.value as? [String : Any]
-                print("value \n \(value ?? ["result" : ["error" : "cannot retrive values from DB"]])")
-                var crumbs = [Crumb]()
-                //print(value!["crumbs"]!)
-                for crumb in value?["crumbs"] as! [[String : Any]] {
-                    //print(crumb["audio"])
-                    crumbs.append(Crumb(location: CLLocation(latitude: crumb["latitude"] as! Double, longitude: crumb["longitude"] as! Double), audio: URL(fileURLWithPath: crumb["audio"] as! String)))
-                }
-                let routeTmp = Route(id: self.route.id,
-                                     routeName: value!["routeName"] as! String,
-                                     startName: value!["startName"] as! String,
-                                     finishName: value!["finishName"] as! String,
-                                     caregiver: CaregiverFactory().caregivers[0],
-                                     mapRoute: MapRoute(crumbs: crumbs)
-                )
-                self.route = routeTmp
-            }) { (error) in
-                print(error.localizedDescription)
-            }
-        }
-        
     }
     
     func readDataFromDB() {
@@ -103,12 +77,13 @@ struct AssistedView: View {
             // Get user position value
             let value = snapshot.value as? NSDictionary
             print("value \n \(value ?? ["error" : "cannot retrive values from DB"])")
-            self.route.id = value?["id"] as? String ?? "err"
+            self.isExecuting = (value?["isExecuting"] as? Bool)!
+            let id = value?["id"] as? String ?? "err"
             let lat = value?["latitude"] as? Double ?? 0.0
             let lon = value?["longitude"] as? Double ?? 0.0
             let collected = value?["collected"] as? Int ?? -1
             
-            ref.child("Routes").child("\(self.route.id)").observe(.value, with: { (snapshot) in
+            ref.child("Routes").child("\(id)").observe(.value, with: { (snapshot) in
                 let value = snapshot.value as? [String : Any]
                 print("value \n \(value ?? ["result" : ["error" : "cannot retrive values from DB"]])")
                 var crumbs = [Crumb]()
@@ -117,7 +92,7 @@ struct AssistedView: View {
                     //print(crumb["audio"])
                     crumbs.append(Crumb(location: CLLocation(latitude: crumb["latitude"] as! Double, longitude: crumb["longitude"] as! Double), audio: URL(fileURLWithPath: crumb["audio"] as! String)))
                 }
-                let routeTmp = Route(id: self.route.id,
+                let routeTmp = Route(id: id,
                                      routeName: value!["routeName"] as! String,
                                      startName: value!["startName"] as! String,
                                      finishName: value!["finishName"] as! String,
@@ -125,6 +100,7 @@ struct AssistedView: View {
                                      mapRoute: MapRoute(crumbs: crumbs)
                 )
                 self.route = routeTmp
+                self.locations = []
                 
                 if self.route.mapRoute.crumbs.count > 1 {
                     let startAnnotation = MKPointAnnotation()
