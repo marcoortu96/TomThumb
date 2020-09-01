@@ -106,9 +106,9 @@ struct ARView: View {
                 }
                 .alert(isPresented: self.$showingEndARAlert) {
                     Alert(title: Text("Termina"), message: Text("Vuoi terminare questo test?"), primaryButton: Alert.Button.default(Text("OK"), action: {
-                        if !self.debug {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                             let dbRef = Database.database().reference()
-                            dbRef.child("Assisted").child("isExecuting").setValue(false)
+                            dbRef.child("Assisted").updateChildValues(["isExecuting" : false])
                         }
                         self.presentationMode.wrappedValue.dismiss() //back to previous page
                     }),
