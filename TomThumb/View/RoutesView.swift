@@ -24,12 +24,12 @@ struct RoutesView: View {
     @State var routes = [Route]()
     @State var isShowing = true
     var body: some View {
-        LoadingView(isShowing: $isShowing, string: "Scarico i percorsi") {
+        LoadingView(isShowing: $isShowing, string: "Caricamento") {
             NavigationView {
                 VStack {
                     SearchBar(searchText: self.$searchText)
                     List {
-                        ForEach(self.routes.filter {
+                        ForEach(self.routes.sorted(by: {$0.routeName < $1.routeName}).filter {
                             self.searchText == "" ? true : $0.routeName.localizedCaseInsensitiveContains(self.searchText)
                         }, id: \.self) { route in
                             NavigationLink(destination: RouteDetail(route: route)) {

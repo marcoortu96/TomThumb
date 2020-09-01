@@ -227,15 +227,12 @@ extension ARViewController: ARSCNViewDelegate {
             
             let routeData = [
                 "id" : self.route.id as String,
+                "isExecuting" : true,
                 "latitude" : userLocation.coordinate.latitude,
                 "longitude" : userLocation.coordinate.longitude,
                 "collected" : self.actualCrumb
                 ] as [String : Any]
             db.child(isTesting ? "Test" : "Assisted").setValue(routeData)
-            
-            if !isTesting {
-                db.child("Assisted").updateChildValues(["isExecuting": true])
-            }
             
             // Controllo se viene visualizzata la crumb, in caso contrario mostro le frecce
             DispatchQueue.main.async {

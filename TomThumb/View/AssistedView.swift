@@ -19,7 +19,10 @@ struct AssistedView: View {
     @State var collected = 0
     @State var isExecuting = false
     
+    @State var isShowing = true
+    
     var body: some View {
+        
         NavigationView {
             ZStack {
                 if !showMap && isExecuting == false {
@@ -27,7 +30,9 @@ struct AssistedView: View {
                 }
                 if isExecuting == true {
                     if showMap {
-                        LiveMapView(route: route, annotations: locations, collected: $collected).edgesIgnoringSafeArea(.all)
+                        LoadingView(isShowing: $isShowing, string: "Caricamento") {
+                            LiveMapView(route: self.route, annotations: self.locations, collected: self.$collected).edgesIgnoringSafeArea(.all)
+                        }
                         ZStack {
                             Text("\(self.collected)/\(route.mapRoute.crumbs.count)")
                             Circle()
@@ -54,19 +59,17 @@ struct AssistedView: View {
                         .background(Color.blue.opacity(0.85))
                         .font(.body)
                         .cornerRadius(12)
-                        //.clipShape(Circle())
-                        /*.padding(.top, (UIScreen.main.bounds.size.height/100) * 65)
-                        .padding(.leading, (UIScreen.main.bounds.size.width/100) * 77)*/
                     }
                 }
             }.onAppear(perform: {
                 self.readDataFromDB()
             })
-            .navigationBarTitle(Text("\(self.route.routeName)"), displayMode: .inline)
+                .navigationBarTitle(Text(self.isExecuting ? "\(self.route.routeName)" : "Esecuzione"), displayMode: .inline)
             
         }.onDisappear(perform: {
             self.locations = []
             self.showMap = false
+            self.isShowing = true
         })
     }
     
@@ -130,6 +133,8 @@ struct AssistedView: View {
                 assistedAnnotation.subtitle = "\(lat.short),\(lon.short)"
                 self.locations.append(assistedAnnotation)
                 self.collected = collected
+                
+                self.isShowing = false
             }) { (error) in
                 print(error.localizedDescription)
             }
