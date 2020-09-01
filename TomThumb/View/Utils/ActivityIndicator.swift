@@ -24,7 +24,6 @@ struct ActivityIndicator: UIViewRepresentable {
 }
 
 struct LoadingView<Content>: View where Content: View {
-    
     @Binding var isShowing: Bool
     @State var string: String
     var content: () -> Content
