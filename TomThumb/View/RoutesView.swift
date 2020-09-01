@@ -22,31 +22,33 @@ struct RoutesView: View {
     @State var currentCrumb = Crumb(location: CLLocation())
     @State var crumbs = [Crumb]()
     @State var routes = [Route]()
+    @State var isShowing = true
     var body: some View {
-        NavigationView {
-            VStack {
-                SearchBar(searchText: $searchText)
-                List {
-                    ForEach(routes.filter {
-                    self.searchText == "" ? true : $0.routeName.localizedCaseInsensitiveContains(searchText)
-                    }, id: \.self) { route in
-                        NavigationLink(destination: RouteDetail(route: route)) {
-                              Text("\(route.routeName)")
+        LoadingView(isShowing: $isShowing, string: "Scarico i percorsi") {
+            NavigationView {
+                VStack {
+                    SearchBar(searchText: self.$searchText)
+                    List {
+                        ForEach(self.routes.filter {
+                            self.searchText == "" ? true : $0.routeName.localizedCaseInsensitiveContains(self.searchText)
+                        }, id: \.self) { route in
+                            NavigationLink(destination: RouteDetail(route: route)) {
+                                Text("\(route.routeName)")
+                            }
                         }
+                        .onDelete(perform: self.deleteRoute)
                     }
-                    .onDelete(perform: deleteRoute)
                 }
+                .navigationBarTitle("Percorsi")
+                .navigationBarItems(leading: EditButton(), trailing:
+                    Button(action: {
+                        self.showAddRouteView.toggle()
+                    }) {
+                        Image(systemName: "plus.circle").font(.largeTitle)
+                    }
+                )
             }
-            .navigationBarTitle("Percorsi")
-            .navigationBarItems(leading: EditButton(), trailing:
-                Button(action: {
-                    self.showAddRouteView.toggle()
-                }) {
-                    Image(systemName: "plus.circle").font(.largeTitle)
-                }
-            )
-        }
-        .onAppear {
+        }.onAppear {
             Database.database().reference().child("Routes").observe(DataEventType.value, with: { (snapshot) in
                 if snapshot.childrenCount > 0 {
                     self.getRoutesFromDb()
@@ -57,7 +59,7 @@ struct RoutesView: View {
             
         }
         .accentColor(InterfaceConstants.genericLinkForegroundColor)
-        .sheet(isPresented: $showAddRouteView) {
+        .sheet(isPresented: self.$showAddRouteView) {
             //add new route view (load sheet)
             AddRouteView(showSheetView: self.$showAddRouteView, centerCoordinate: locationManager.location!.coordinate, audioRecorder: self.audioRecorder, crumbAudio: self.crumbAudio, currentCrumb: self.currentCrumb, crumbs: self.crumbs)
         }
@@ -97,13 +99,14 @@ struct RoutesView: View {
                                   routeName: value["routeName"] as! String,
                                   startName: value["startName"] as! String,
                                   finishName: value["finishName"] as! String,
-                           caregiver: CaregiverFactory().caregivers[0],
-                           mapRoute: MapRoute(crumbs: crumbs)
+                                  caregiver: CaregiverFactory().caregivers[0],
+                                  mapRoute: MapRoute(crumbs: crumbs)
                 )
                 if !self.routes.contains(route) {
                     self.routes.append(route)   
                 }
             }
+            self.isShowing = false
         }) { (error) in
             print(error.localizedDescription)
         }
@@ -113,9 +116,10 @@ struct RoutesView: View {
 }
 
 
+
 /*struct RoutesView_Previews: PreviewProvider {
-    static var previews: some View {
-        RoutesView()
-    }
-}*/
+ static var previews: some View {
+ RoutesView()
+ }
+ }*/
 
