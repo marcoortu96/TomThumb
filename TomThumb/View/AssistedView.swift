@@ -19,7 +19,7 @@ struct AssistedView: View {
     @State var collected = 0
     @State var isExecuting = false
     
-    @State var isShowing = true
+    @State var showingActivityIndicator = true
     
     var body: some View {
         
@@ -30,7 +30,7 @@ struct AssistedView: View {
                 }
                 if isExecuting == true {
                     if showMap {
-                        LoadingView(isShowing: $isShowing, string: "Caricamento") {
+                        LoadingView(isShowing: $showingActivityIndicator, string: "Connessione") {
                             LiveMapView(route: self.route, annotations: self.locations, collected: self.$collected).edgesIgnoringSafeArea(.all)
                         }
                         ZStack {
@@ -62,6 +62,7 @@ struct AssistedView: View {
                     }
                 }
             }.onAppear(perform: {
+                self.checkConnection()
                 self.readDataFromDB()
             })
                 .navigationBarTitle(Text(self.isExecuting ? "\(self.route.routeName)" : "Esecuzione"), displayMode: .inline)
@@ -69,7 +70,18 @@ struct AssistedView: View {
         }.onDisappear(perform: {
             self.locations = []
             self.showMap = false
-            self.isShowing = true
+            self.showingActivityIndicator = true
+        })
+    }
+    
+    func checkConnection() {
+        let connectedRef = Database.database().reference(withPath: ".info/connected")
+        connectedRef.observe(.value, with: { snapshot in
+            if let connected = snapshot.value as? Bool, connected {
+                self.showingActivityIndicator = false
+            } else {
+                self.showingActivityIndicator = true
+            }
         })
     }
     
@@ -134,7 +146,7 @@ struct AssistedView: View {
                 self.locations.append(assistedAnnotation)
                 self.collected = collected
                 
-                self.isShowing = false
+                self.showingActivityIndicator = false
             }) { (error) in
                 print(error.localizedDescription)
             }

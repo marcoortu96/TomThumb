@@ -22,9 +22,10 @@ struct RoutesView: View {
     @State var currentCrumb = Crumb(location: CLLocation())
     @State var crumbs = [Crumb]()
     @State var routes = [Route]()
-    @State var isShowing = true
+    @State var showingActivityIndicator = true
+    
     var body: some View {
-        LoadingView(isShowing: $isShowing, string: "Caricamento") {
+        LoadingView(isShowing: $showingActivityIndicator, string: "Connessione") {
             NavigationView {
                 VStack {
                     SearchBar(searchText: self.$searchText)
@@ -49,6 +50,7 @@ struct RoutesView: View {
                 )
             }
         }.onAppear {
+            self.checkConnection()
             Database.database().reference().child("Routes").observe(DataEventType.value, with: { (snapshot) in
                 if snapshot.childrenCount > 0 {
                     self.getRoutesFromDb()
@@ -57,11 +59,15 @@ struct RoutesView: View {
                 }
             })
             
+        }.onDisappear {
+            self.showingActivityIndicator = true
         }
         .accentColor(InterfaceConstants.genericLinkForegroundColor)
         .sheet(isPresented: self.$showAddRouteView) {
             //add new route view (load sheet)
-            AddRouteView(showSheetView: self.$showAddRouteView, centerCoordinate: locationManager.location!.coordinate, audioRecorder: self.audioRecorder, crumbAudio: self.crumbAudio, currentCrumb: self.currentCrumb, crumbs: self.crumbs)
+            LoadingView(isShowing: self.$showingActivityIndicator, string: "Connessione") {
+                AddRouteView(showSheetView: self.$showAddRouteView, centerCoordinate: locationManager.location!.coordinate, audioRecorder: self.audioRecorder, crumbAudio: self.crumbAudio, currentCrumb: self.currentCrumb, crumbs: self.crumbs)
+            }
         }
     }
     
@@ -79,6 +85,17 @@ struct RoutesView: View {
         // Rimozione della route dalla lista delle route mostrate nella view
         self.routes.remove(atOffsets: offsets)
         
+    }
+    
+    func checkConnection() {
+        let connectedRef = Database.database().reference(withPath: ".info/connected")
+        connectedRef.observe(.value, with: { snapshot in
+            if let connected = snapshot.value as? Bool, connected {
+                self.showingActivityIndicator = false
+            } else {
+                self.showingActivityIndicator = true
+            }
+        })
     }
     
     // Func per scaricare i percorsi dal DB
@@ -106,7 +123,7 @@ struct RoutesView: View {
                     self.routes.append(route)   
                 }
             }
-            self.isShowing = false
+            self.showingActivityIndicator = false
         }) { (error) in
             print(error.localizedDescription)
         }

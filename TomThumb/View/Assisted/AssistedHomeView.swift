@@ -17,24 +17,28 @@ struct AssistedHomeView: View {
     @State var isNavigationBarHidden = true
     @EnvironmentObject var navBarPrefs: NavBarPreferences
     var body: some View {
-        
+        NavigationView{
         TabView {
             if !isExecuting {
-                Button(action: {
-                    self.isExecuting.toggle()
-                }) {
-                    Text("Avvia percorso")
-                }
+                Text("Non ci sono percorsi da avviare")
+                
             }
             if isExecuting {
-                ARView(route: route, debug: false)
+                
+                    NavigationLink(destination: ARView(route: route, debug: false)
+                        .navigationBarTitle("")
+                        .navigationBarHidden(true)
+                        .navigationBarBackButtonHidden(true)) {
+                        Text("Avvia percorso")
+                    }
                     .tabItem {
                         VStack {
                             Image(systemName: "location")
                             Text("Percorso")
                                 .navigationBarBackButtonHidden(true)
                         }
-                }
+                    }
+                
                 .tag(0)
                 .onAppear {
                     self.navBarPrefs.navBarIsHidden = true
@@ -56,6 +60,7 @@ struct AssistedHomeView: View {
         }.onAppear{
             self.fetchNewRoute()
         }
+        }
         
     }
     
@@ -66,6 +71,7 @@ struct AssistedHomeView: View {
             let value = snapshot.value as? NSDictionary
             let isExecuting = value?["isExecuting"] as! Bool
             let id = value?["id"] as! String
+            self.isExecuting = isExecuting
             
             if isExecuting {
                 ref.child("Routes").child("\(id)").observe(.value, with: { (snapshot) in
@@ -85,7 +91,6 @@ struct AssistedHomeView: View {
                                          mapRoute: MapRoute(crumbs: crumbs)
                     )
                     self.route = routeTmp
-                    print(self.route.id)
                 })
             }
             
