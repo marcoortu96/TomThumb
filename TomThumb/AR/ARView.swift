@@ -11,16 +11,19 @@ import MapKit
 import ARCL
 import Firebase
 import AVFoundation
+import FirebaseDatabase
 import FirebaseStorage
 
 
 struct ARView: View {
     @ObservedObject var locationManager = LocationManager()
-    @State var actualCrumb = 0
+    @State var actualCrumb = 0 
     @State var lookAt = 0
     @State var nPlays = 0
     @State var prevCrumb = LocationNode(location: CLLocation())
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    
+    @State var showAnimation = false
     
     var route: Route
     @State var debug: Bool
@@ -29,18 +32,54 @@ struct ARView: View {
     @State var showingCallAlert = true
     @State var showingHelpAlert = false
     
-    @State var size: CGFloat = 0.7
+    @State var arrowSize: CGFloat = 0.7
+    @State var thumbSize: CGFloat = 0.7
     var repeatingAnimation: Animation {
         Animation
-            .linear(duration: 0.8)
+            .linear(duration: 3.0)
             .repeatForever()
     }
     
     var body: some View {
         ZStack {
-            ARViewController(route: route, actualCrumb: $actualCrumb, lookAt: $lookAt, prevCrumb: $prevCrumb, nPlays: $nPlays, isTesting: debug)
+            ARViewController(route: route, actualCrumb: $actualCrumb, lookAt: $lookAt, prevCrumb: $prevCrumb, nPlays: $nPlays, animation: $showAnimation, isTesting: debug)
             
             //Directional arrows section
+            
+            if showAnimation {
+                Image(systemName: "hand.thumbsup.fill")
+                .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .clipped()
+                    .rotationEffect(.degrees(0))
+                    .frame(width: 30, height: 30)
+                    .foregroundColor(.yellow)
+                    .padding(.bottom, (UIScreen.main.bounds.size.height/100) * 25)
+                    .padding(.leading, (UIScreen.main.bounds.size.width/100) * 20)
+                    .scaleEffect(thumbSize)
+                    .onAppear() {
+                        withAnimation(self.repeatingAnimation) { self.thumbSize = 3.8 }
+                }
+                .onDisappear() {
+                    self.thumbSize = 0.7
+                }
+                Image(systemName: "hand.thumbsup.fill")
+                .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .clipped()
+                    .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
+                    .frame(width: 30, height: 30)
+                    .foregroundColor(.yellow)
+                    .padding(.bottom, (UIScreen.main.bounds.size.height/100) * 25)
+                    .padding(.trailing, (UIScreen.main.bounds.size.width/100) * 20)
+                    .scaleEffect(thumbSize)
+                    .onAppear() {
+                        withAnimation(self.repeatingAnimation) { self.thumbSize = 3.8 }
+                }
+                .onDisappear() {
+                    self.thumbSize = 0.7
+                }
+            }
             
             if lookAt == 1 {
                 //look left
@@ -53,12 +92,12 @@ struct ARView: View {
                     .foregroundColor(InterfaceConstants.genericLinkForegroundColor)
                     .padding(.bottom, (UIScreen.main.bounds.size.height/100) * 45)
                     .padding(.trailing, (UIScreen.main.bounds.size.width/100) * 99)
-                    .scaleEffect(size)
+                    .scaleEffect(arrowSize)
                     .onAppear() {
-                        withAnimation(self.repeatingAnimation) { self.size = 0.8 }
+                        withAnimation(self.repeatingAnimation) { self.arrowSize = 0.8 }
                 }
                 .onDisappear() {
-                    self.size = 0.7
+                    self.arrowSize = 0.7
                 }
                 
             } else if lookAt == 2 {
@@ -72,12 +111,12 @@ struct ARView: View {
                     .foregroundColor(InterfaceConstants.genericLinkForegroundColor)
                     .padding(.bottom, (UIScreen.main.bounds.size.height/100) * 45)
                     .padding(.leading, (UIScreen.main.bounds.size.width/100) * 99)
-                    .scaleEffect(size)
+                    .scaleEffect(arrowSize)
                     .onAppear() {
-                        withAnimation(self.repeatingAnimation) { self.size = 0.8 }
+                        withAnimation(self.repeatingAnimation) { self.arrowSize = 0.8 }
                 }
                 .onDisappear() {
-                    self.size = 0.7
+                    self.arrowSize = 0.7
                 }
             }
             
@@ -160,9 +199,7 @@ struct ARView: View {
                     .padding(.top, (UIScreen.main.bounds.size.height/100) * 70)
                     .padding(.leading, (UIScreen.main.bounds.size.width/100) * 77)
                 }
-                
             }
-            
             if self.showingHelpAlert {
                 GeometryReader { _ in
                     PopUpHelp(caregiver: self.route.caregiver, isShowing: self.$showingHelpAlert)
@@ -189,6 +226,7 @@ struct ARView: View {
         }
         
     }
+
 }
 
 struct PopUpTerminated: View {
@@ -281,12 +319,6 @@ struct PopUpHelp: View {
                             }
                         }
                     }
-                    
-                    
-                    
-                    
-                    
-                    
                     self.isShowing = false
                 }) {
                     Image(systemName: "person.fill")

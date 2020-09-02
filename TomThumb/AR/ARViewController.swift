@@ -38,6 +38,8 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     private var isPlaying = false
     @Binding var nPlays: Int
     
+    @Binding var animation: Bool
+    
     @State var isTesting: Bool
     
     var route: Route
@@ -47,12 +49,13 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     @Binding var lookAt: Int
     var locationManager = LocationManager()
     
-    init(route: Route, actualCrumb: Binding<Int>, lookAt: Binding<Int>, prevCrumb: Binding<LocationNode>, nPlays: Binding<Int>, isTesting: Bool) {
+    init(route: Route, actualCrumb: Binding<Int>, lookAt: Binding<Int>, prevCrumb: Binding<LocationNode>, nPlays: Binding<Int>, animation: Binding<Bool>, isTesting: Bool) {
         self.route = route
         self._actualCrumb = actualCrumb
         self._lookAt = lookAt
         self._prevCrumb = prevCrumb
         self._nPlays = nPlays
+        self._animation = animation
         self.isTesting = isTesting
         super.init(nibName: nil, bundle: nil)
     }
@@ -174,7 +177,7 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     }
     
     func makeUIViewController(context: UIViewControllerRepresentableContext<ARViewController>) -> ARViewController {
-        return ARViewController(route: self.route, actualCrumb: self.$actualCrumb, lookAt: self.$lookAt, prevCrumb: self.$prevCrumb, nPlays: self.$nPlays, isTesting: self.isTesting)
+        return ARViewController(route: self.route, actualCrumb: self.$actualCrumb, lookAt: self.$lookAt, prevCrumb: self.$prevCrumb, nPlays: self.$nPlays, animation: self.$animation, isTesting: self.isTesting)
     }
     
     func updateUIViewController(_ uiViewController: ARViewController.UIViewControllerType, context: UIViewControllerRepresentableContext<ARViewController>) {
@@ -295,6 +298,8 @@ extension ARViewController: ARSCNViewDelegate {
                 // Salvo la crumb per caricare il prossimo segmento crumb[n] crumb[n + 1]
                 prevCrumb = locationNodes[0]
                 
+                locationNodes[0].childNodes[0].geometry?.firstMaterial?.diffuse.contents = UIColor.yellow
+                
                 // Faccio vibrare il telefono
                 UIDevice.vibrate()
                 
@@ -313,19 +318,19 @@ extension ARViewController: ARSCNViewDelegate {
                 let directoryContents = try! FileManager.default.contentsOfDirectory(at: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0], includingPropertiesForKeys: nil)
                 print(directoryContents)
         
-                
+                self.animation = true
                 if !directoryContents.contains(check!) {
                     print("Scarico il file dallo storage")
                     let downloadTask = storageRef.write(toFile: fileUrl)
                     downloadTask.observe(.success) { _ in
                         AudioPlayer.player.startPlayback(audio: fileUrl)
-                        self.isColliding = false
-                        self.actualCrumb = self.actualCrumb + 1
-                        self.addJustOneNode()
                     }
                 } else {
                     print("Il file è gia in locale")
                     AudioPlayer.player.startPlayback(audio: fileUrl)
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                    self.animation = false
                     self.isColliding = false
                     self.actualCrumb = self.actualCrumb + 1
                     self.addJustOneNode()
