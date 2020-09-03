@@ -72,7 +72,8 @@ struct RouteDetail: View {
                         .foregroundColor(InterfaceConstants.genericLinkForegroundColor)
                 }
             }
-        }.navigationBarTitle(Text("Dati percorso"), displayMode: .inline)
+        }
+        .navigationBarTitle(Text("Dati percorso"), displayMode: .inline)
     
     }
     
