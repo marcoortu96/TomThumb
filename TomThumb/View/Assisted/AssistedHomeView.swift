@@ -18,18 +18,30 @@ struct AssistedHomeView: View {
     @EnvironmentObject var navBarPrefs: NavBarPreferences
     var body: some View {
         NavigationView{
-        TabView {
-            if !isExecuting {
-                Text("Non ci sono percorsi da avviare")
-                
-            }
-            if isExecuting {
-                
+            TabView {
+                if !isExecuting {
+                    Text("Non ci sono percorsi da avviare")
+                        .navigationBarTitle("Percorso")
+                        .tabItem {
+                            VStack {
+                                Image(systemName: "location")
+                                Text("Percorso")
+                                    .navigationBarBackButtonHidden(true)
+                            }
+                            .navigationBarTitle("Percorso")
+                    }
+                        
+                    .tag(0)
+                    .onAppear {
+                        self.navBarPrefs.navBarIsHidden = true
+                    }
+                }
+                if isExecuting {
                     NavigationLink(destination: ARView(route: route, debug: false)
                         .navigationBarTitle("")
                         .navigationBarHidden(true)
                         .navigationBarBackButtonHidden(true)) {
-                        Text("Avvia percorso")
+                            Text("Avvia percorso")
                     }
                     .tabItem {
                         VStack {
@@ -38,28 +50,32 @@ struct AssistedHomeView: View {
                                 .navigationBarBackButtonHidden(true)
                         }
                     }
-                
-                .tag(0)
+                        
+                    .tag(0)
+                    .onAppear {
+                        self.navBarPrefs.navBarIsHidden = true
+                    }
+                }
+                RecentRoutes()
+                    .navigationBarTitle("")
+                    .navigationBarHidden(true)
+                    .navigationBarBackButtonHidden(true)
+                    .tabItem {
+                        VStack {
+                            Image(systemName: "clock")
+                            Text("Recenti")
+                                .navigationBarBackButtonHidden(true)
+                        }
+                }
+                .tag(1)
                 .onAppear {
                     self.navBarPrefs.navBarIsHidden = true
+                    
                 }
             }
-            RecentRoutes()
-                .tabItem {
-                    VStack {
-                        Image(systemName: "clock")
-                        Text("Recenti")
-                            .navigationBarBackButtonHidden(true)
-                    }
+            .onAppear{
+                self.fetchNewRoute()
             }
-            .tag(1)
-            .onAppear {
-                self.navBarPrefs.navBarIsHidden = true
-                
-            }
-        }.onAppear{
-            self.fetchNewRoute()
-        }
         }
         
     }
@@ -88,6 +104,7 @@ struct AssistedHomeView: View {
                                          startName: value!["startName"] as! String,
                                          finishName: value!["finishName"] as! String,
                                          caregiver: CaregiverFactory().caregivers[0],
+                                         lastExecution: value!["lastExecution"] as! String,
                                          mapRoute: MapRoute(crumbs: crumbs)
                     )
                     self.route = routeTmp

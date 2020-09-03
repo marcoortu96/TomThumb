@@ -9,10 +9,10 @@
 import SwiftUI
 import MapKit
 import Firebase
-
+import FirebaseDatabase
+import FirebaseStorage
 
 var locationManager = CLLocationManager()
-
 
 struct AddRouteView: View {
     
@@ -109,7 +109,7 @@ struct AddRouteView: View {
                                 let fullName = self.routeName.components(separatedBy: "%")
                                 let startName = fullName[0]
                                 let finishName = fullName[1]
-                                let newRoute = Route(routeName: "da \(startName) a \(finishName)", startName: startName, finishName: finishName, caregiver: CaregiverFactory().caregivers[0], mapRoute: mapRoute)
+                                let newRoute = Route(routeName: "da \(startName) a \(finishName)", startName: startName, finishName: finishName, caregiver: CaregiverFactory().caregivers[0], lastExecution: "", mapRoute: mapRoute)
                                 
                                 // Insert di un nuovo percorso nel db e store dell'audio nell storage
                                 let db = Database.database().reference()
@@ -121,19 +121,20 @@ struct AddRouteView: View {
                                 
                                 var routeData = [String : Any]()
                                 routeData = [
-                                                                "routeName" : "da \(startName) a \(finishName)",
-                                                                "startName" : startName,
-                                                                "finishName" : finishName
-                                                              ] as [String : Any]
+                                    "routeName" : "da \(startName) a \(finishName)",
+                                    "startName" : startName,
+                                    "finishName" : finishName,
+                                    "lastExecution" : ""
+                                    ] as [String : Any]
                                 
                                 var crumbData = [String : Any]()
                                 
                                 for (index, crumb) in self.crumbs.enumerated() {
                                     crumbData["\(index)"] = [
-                                                             "audio" : crumb.audio!.lastPathComponent as String,
-                                                             "latitude" : crumb.location.coordinate.latitude,
-                                                             "longitude" : crumb.location.coordinate.longitude
-                                                            ]
+                                        "audio" : crumb.audio!.lastPathComponent as String,
+                                        "latitude" : crumb.location.coordinate.latitude,
+                                        "longitude" : crumb.location.coordinate.longitude
+                                    ]
                                     
                                     let audio = crumb.audio
                                     let storeRef = store.reference().child("audio/\(audio!.lastPathComponent)")
@@ -146,7 +147,7 @@ struct AddRouteView: View {
                                         }
                                     }
                                 }
-
+                                
                                 let child = db.child("Routes").child("\(newRoute.id)")
                                 child.setValue(routeData)
                                 child.child("crumbs").setValue(crumbData)
@@ -155,7 +156,7 @@ struct AddRouteView: View {
                             }
                         }),
                               secondaryButton: Alert.Button.cancel(Text("Annulla"), action: {
-                        }))
+                              }))
                     }
                     .padding()
                     .disabled(self.showingAudioAlert || self.locations.count <= 2)

@@ -112,6 +112,7 @@ struct AssistedView: View {
                                      startName: value!["startName"] as! String,
                                      finishName: value!["finishName"] as! String,
                                      caregiver: CaregiverFactory().caregivers[0],
+                                     lastExecution: value!["lastExecution"] as! String,
                                      mapRoute: MapRoute(crumbs: crumbs)
                 )
                 self.route = routeTmp

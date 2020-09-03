@@ -85,6 +85,12 @@ struct RouteDetail: View {
                 "id" : self.route.id
         ])
         
+        ref.child("Routes").child(self.route.id).updateChildValues(
+            [
+                "lastExecution" : Date().toString(dateFormat: "dd.MM.yyyy HH:mm:ss")
+            ]
+        )
+        
     }
     
     struct ChangeRouteName: View {

@@ -16,6 +16,7 @@ class Route : Hashable, ObservableObject {
     var finishName : String
     var crumbs: Int
     var distance: Double
+    var lastExecution: String
     var caregiver: Caregiver
     @Published var mapRoute: MapRoute
     
@@ -27,10 +28,11 @@ class Route : Hashable, ObservableObject {
         self.crumbs = 0
         self.distance = 0.0
         self.caregiver = CaregiverFactory().caregivers[0]
+        self.lastExecution = ""
         self.mapRoute = MapRoute()
     }
     
-    init(routeName: String, startName: String, finishName: String, caregiver: Caregiver, mapRoute: MapRoute) {
+    init(routeName: String, startName: String, finishName: String, caregiver: Caregiver, lastExecution: String, mapRoute: MapRoute) {
         self.id = UUID().uuidString
         self.routeName = routeName
         self.startName = startName
@@ -44,10 +46,11 @@ class Route : Hashable, ObservableObject {
         }
         
         self.distance = totalDistance
+        self.lastExecution = lastExecution
         self.mapRoute = mapRoute
     }
     
-    init(id: String, routeName: String, startName: String, finishName: String, caregiver: Caregiver, mapRoute: MapRoute) {
+    init(id: String, routeName: String, startName: String, finishName: String, caregiver: Caregiver, lastExecution: String, mapRoute: MapRoute) {
         self.id = id
         self.routeName = routeName
         self.startName = startName
@@ -61,6 +64,7 @@ class Route : Hashable, ObservableObject {
         }
         
         self.distance = totalDistance
+        self.lastExecution = lastExecution
         self.mapRoute = mapRoute
     }
     
@@ -83,7 +87,7 @@ class RoutesFactory: ObservableObject {
     private static var instance : RoutesFactory?
     @Published var routes: [Route]! = []
     
-    init() {
+    /*init() {
         routes.append(Route(routeName: "Prima", startName: "Via X", finishName: "Via Y", caregiver: CaregiverFactory().caregivers[0],
                             mapRoute: MapRoutesFactory().mapRoutes[0]))
         routes.append(Route(routeName: "Seconda", startName: "Via X", finishName: "Via Y", caregiver: CaregiverFactory().caregivers[0],
@@ -92,7 +96,7 @@ class RoutesFactory: ObservableObject {
                             mapRoute: MapRoutesFactory().mapRoutes[2]))
         routes.append(Route(routeName: "Quarta", startName: "Via X", finishName: "Via Y", caregiver: CaregiverFactory().caregivers[0],
                             mapRoute: MapRoutesFactory().mapRoutes[1]))
-    }
+    }*/
     
     public static func getInstance() -> RoutesFactory {
         if (RoutesFactory.instance == nil) {

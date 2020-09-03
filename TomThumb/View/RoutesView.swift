@@ -16,7 +16,6 @@ import FirebaseDatabase
 struct RoutesView: View {
     @State private var searchText = ""
     @State var showAddRouteView = false
-    @ObservedObject var routesFactory = RoutesFactory.getInstance()
     @State var audioRecorder = AudioRecorder()
     @State var crumbAudio = URL(fileURLWithPath: "")
     @State var currentCrumb = Crumb(location: CLLocation())
@@ -117,6 +116,7 @@ struct RoutesView: View {
                                   startName: value["startName"] as! String,
                                   finishName: value["finishName"] as! String,
                                   caregiver: CaregiverFactory().caregivers[0],
+                                  lastExecution: value["lastExecution"] as! String,
                                   mapRoute: MapRoute(crumbs: crumbs)
                 )
                 if !self.routes.contains(route) {
