@@ -17,54 +17,50 @@ struct AssistedHomeView: View {
     @State var isNavigationBarHidden = true
     @EnvironmentObject var navBarPrefs: NavBarPreferences
     var body: some View {
-        NavigationView{
             TabView {
                 if !isExecuting {
                     Text("Non ci sono percorsi da avviare")
-                        .navigationBarTitle("Percorso")
+                    .navigationBarBackButtonHidden(true)
                         .tabItem {
                             VStack {
                                 Image(systemName: "location")
                                 Text("Percorso")
-                                    .navigationBarBackButtonHidden(true)
                             }
-                            .navigationBarTitle("Percorso")
+                        .navigationBarTitle("Percorso", displayMode: .large)
+                        .navigationBarBackButtonHidden(true)
                     }
                         
                     .tag(0)
                     .onAppear {
-                        self.navBarPrefs.navBarIsHidden = true
+                        self.navBarPrefs.navBarIsHidden = false
                     }
                 }
-                if isExecuting {
+                else {
                     NavigationLink(destination: ARView(route: route, debug: false)
-                        .navigationBarTitle("")
-                        .navigationBarHidden(true)
-                        .navigationBarBackButtonHidden(true)) {
+                    .navigationBarBackButtonHidden(true)){
                             Text("Avvia percorso")
                     }
                     .tabItem {
                         VStack {
                             Image(systemName: "location")
                             Text("Percorso")
-                                .navigationBarBackButtonHidden(true)
-                        }
+                        }.navigationBarTitle("Percorso", displayMode: .large)
+                        .navigationBarBackButtonHidden(true)
                     }
                         
                     .tag(0)
                     .onAppear {
-                        self.navBarPrefs.navBarIsHidden = true
+                        self.navBarPrefs.navBarIsHidden = false
                     }
                 }
                 RecentRoutes()
-                    .navigationBarTitle("")
-                    .navigationBarHidden(true)
-                    .navigationBarBackButtonHidden(true)
+                .navigationBarTitle("")
+                .navigationBarHidden(false)
+                .navigationBarBackButtonHidden(true)
                     .tabItem {
                         VStack {
                             Image(systemName: "clock")
                             Text("Recenti")
-                                .navigationBarBackButtonHidden(true)
                         }
                 }
                 .tag(1)
@@ -72,11 +68,10 @@ struct AssistedHomeView: View {
                     self.navBarPrefs.navBarIsHidden = true
                     
                 }
-            }
+                }
             .onAppear{
                 self.fetchNewRoute()
             }
-        }
         
     }
     

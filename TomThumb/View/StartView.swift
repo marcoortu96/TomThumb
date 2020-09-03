@@ -38,7 +38,7 @@ struct StartView: View {
                 .onAppear {
                      self.navBarPrefs.navBarIsHidden = true
                 }
-                NavigationLink(destination: AssistedHomeView()) {
+                NavigationLink(destination: AssistedHomeView().navigationBarHidden(true)) {
                     HStack {
                         Image(systemName: "person.fill")
                             .accentColor(.black)
@@ -56,9 +56,9 @@ struct StartView: View {
                     .background(Color.blue)
                     .edgesIgnoringSafeArea(.all)
                 }
-                .navigationBarTitle(Text(""), displayMode: .inline)
-                .navigationBarHidden(navBarPrefs.navBarIsHidden)
-                .navigationBarBackButtonHidden(navBarPrefs.navBarIsHidden)
+                .navigationBarTitle("")
+                //.navigationBarHidden(true)
+                .navigationBarBackButtonHidden(true)
                 .onAppear {
                      self.navBarPrefs.navBarIsHidden = true
                 }

@@ -15,25 +15,44 @@ struct RecentRoutes: View {
     @State private var searchText = ""
     @State var routes = [Route]()
     @State var showingActivityIndicator = true
+    @State var presentAlert = false
+    
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    @EnvironmentObject var navBarPrefs: NavBarPreferences
     
     var body: some View {
         LoadingView(isShowing: $showingActivityIndicator, string: "Connessione") {
-            NavigationView {
-                VStack {
+            VStack(alignment: .leading) {
+                Spacer(minLength: (UIScreen.main.bounds.size.height / 100) * 8.2)
+                    Text("Percorsi recenti")
+                        .font(.largeTitle).fontWeight(.bold)
+                        .padding(.leading, (UIScreen.main.bounds.size.width / 100) * 5)
+                    
                     SearchBar(searchText: self.$searchText)
                     List {
                         ForEach(self.routes.sorted(by: {$0.routeName < $1.routeName}).filter {
                             self.searchText == "" ? true : $0.routeName.localizedCaseInsensitiveContains(self.searchText)
                         }, id: \.self) { route in
-                            NavigationLink(destination: RouteDetail(route: route)) {
+                            NavigationLink(destination: ARView(route: route, debug: false).navigationBarTitle("").navigationBarHidden(self.navBarPrefs.navBarIsHidden)
+                                .navigationBarBackButtonHidden(self.navBarPrefs.navBarIsHidden)
+                            .onDisappear {
+                                self.navBarPrefs.navBarIsHidden = true
+                            }) {
                                 Text("\(route.routeName)")
                             }
+                            .onTapGesture {
+                                self.presentAlert = true
+                            }
+                            /*.alert(isPresented: self.$presentAlert) {
+                                Alert(title: Text("Avvia \(route.routeName)"), message: Text("Vuoi avviare questo percorso?"), primaryButton: Alert.Button.default(Text("Avvia"), action: {
+                                    
+                                }), secondaryButton: Alert.Button.cancel(Text("Annulla"), action: {
+                                    self.presentationMode.wrappedValue.dismiss()
+                                }))
+                            }*/
                         }
                     }
                 }
-                .navigationBarTitle("Percorsi recenti")
-                
-            }
         }.onAppear {
             self.checkConnection()
             Database.database().reference().child("Routes").observe(DataEventType.value, with: { (snapshot) in
