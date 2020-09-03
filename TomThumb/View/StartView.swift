@@ -32,7 +32,7 @@ struct StartView: View {
                     .background(Color.green)
                     .edgesIgnoringSafeArea(.all)
                 }
-                .navigationBarTitle("", displayMode: .inline)
+                .navigationBarTitle("")
                 .navigationBarHidden(self.navBarPrefs.navBarIsHidden)
                 .navigationBarBackButtonHidden(self.navBarPrefs.navBarIsHidden)
                 .onAppear {
@@ -63,7 +63,7 @@ struct StartView: View {
                      self.navBarPrefs.navBarIsHidden = false
                 }
 
-            }
+            }.navigationBarTitle(Text("TomThumb"), displayMode: .inline)
         }
     }
 }
