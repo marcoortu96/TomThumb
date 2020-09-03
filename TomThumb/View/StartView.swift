@@ -32,13 +32,13 @@ struct StartView: View {
                     .background(Color.green)
                     .edgesIgnoringSafeArea(.all)
                 }
-                .navigationBarTitle(Text(""), displayMode: .inline)
-                .navigationBarHidden(navBarPrefs.navBarIsHidden)
-                .navigationBarBackButtonHidden(navBarPrefs.navBarIsHidden)
+                .navigationBarTitle("", displayMode: .inline)
+                .navigationBarHidden(self.navBarPrefs.navBarIsHidden)
+                .navigationBarBackButtonHidden(self.navBarPrefs.navBarIsHidden)
                 .onAppear {
                      self.navBarPrefs.navBarIsHidden = true
                 }
-                NavigationLink(destination: AssistedHomeView().navigationBarHidden(true)) {
+                NavigationLink(destination: AssistedHomeView()) {
                     HStack {
                         Image(systemName: "person.fill")
                             .accentColor(.black)
@@ -56,11 +56,11 @@ struct StartView: View {
                     .background(Color.blue)
                     .edgesIgnoringSafeArea(.all)
                 }
-                .navigationBarTitle("")
-                //.navigationBarHidden(true)
-                .navigationBarBackButtonHidden(true)
+                .navigationBarTitle("", displayMode: .inline)
+                .navigationBarHidden(false)
+                .navigationBarBackButtonHidden(false)
                 .onAppear {
-                     self.navBarPrefs.navBarIsHidden = true
+                     self.navBarPrefs.navBarIsHidden = false
                 }
 
             }

@@ -12,6 +12,7 @@ import MapKit
 struct CaregiverHomeView: View {
     @State var route = Route()
     @EnvironmentObject var navBarPrefs: NavBarPreferences
+    @State var navBarTitle = "Percorsi"
     var body: some View {
         TabView {
             RoutesView().tabItem {
@@ -23,8 +24,11 @@ struct CaregiverHomeView: View {
             }
             .tag(0)
             .onAppear {
+                print("\n\nAPPEAR\n\n")
+                self.navBarTitle = "Percorsi"
                 self.navBarPrefs.navBarIsHidden = true
             }
+            
             AssistedView(route: route).tabItem {
                 VStack {
                     Image(systemName: "goforward")
@@ -34,8 +38,10 @@ struct CaregiverHomeView: View {
             }
             .tag(1)
             .onAppear {
-                self.navBarPrefs.navBarIsHidden = true
+                self.navBarTitle = "Esecuzione"
+                self.navBarPrefs.navBarIsHidden = false
             }
+            
             SettingsView().tabItem {
                 VStack {
                     Image(systemName: "gear")
@@ -45,8 +51,11 @@ struct CaregiverHomeView: View {
             }
             .tag(2)
             .onAppear {
-                self.navBarPrefs.navBarIsHidden = true
+                self.navBarTitle = "Impostazioni"
+                self.navBarPrefs.navBarIsHidden = false
             }
         }
+        .navigationBarTitle(navBarTitle != "Percorsi" ? "\(navBarTitle)" : "", displayMode: (navBarTitle == "Percorsi" || navBarTitle == "Impostazioni") ? .large : .inline)
+   
     }
 }

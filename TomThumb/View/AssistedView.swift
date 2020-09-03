@@ -22,8 +22,6 @@ struct AssistedView: View {
     @State var showingActivityIndicator = true
     
     var body: some View {
-        
-        NavigationView {
             ZStack {
                 if !showMap && isExecuting == false {
                     Text("Non ci sono percorsi in esecuzione")
@@ -67,7 +65,7 @@ struct AssistedView: View {
             })
                 .navigationBarTitle(Text(self.isExecuting ? "\(self.route.routeName)" : "Esecuzione"), displayMode: .inline)
             
-        }.onDisappear(perform: {
+        .onDisappear(perform: {
             self.locations = []
             self.showMap = false
             self.showingActivityIndicator = true

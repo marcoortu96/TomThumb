@@ -23,18 +23,14 @@ struct RecentRoutes: View {
     var body: some View {
         LoadingView(isShowing: $showingActivityIndicator, string: "Connessione") {
             VStack(alignment: .leading) {
-                Spacer(minLength: (UIScreen.main.bounds.size.height / 100) * 8.2)
-                    Text("Percorsi recenti")
-                        .font(.largeTitle).fontWeight(.bold)
-                        .padding(.leading, (UIScreen.main.bounds.size.width / 100) * 5)
                     
                     SearchBar(searchText: self.$searchText)
                     List {
                         ForEach(self.routes.sorted(by: {$0.routeName < $1.routeName}).filter {
                             self.searchText == "" ? true : $0.routeName.localizedCaseInsensitiveContains(self.searchText)
                         }, id: \.self) { route in
-                            NavigationLink(destination: ARView(route: route, debug: false).navigationBarTitle("").navigationBarHidden(self.navBarPrefs.navBarIsHidden)
-                                .navigationBarBackButtonHidden(self.navBarPrefs.navBarIsHidden)
+                            NavigationLink(destination: ARView(route: route, debug: false).navigationBarTitle("").navigationBarHidden(true)
+                                .navigationBarBackButtonHidden(true)
                             .onDisappear {
                                 self.navBarPrefs.navBarIsHidden = true
                             }) {

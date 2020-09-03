@@ -107,6 +107,7 @@ struct AddRouteView: View {
                             self.showingConfirmRoute = true
                             if self.canSave {
                                 let fullName = self.routeName.components(separatedBy: "%")
+                                print(fullName)
                                 let startName = fullName[0]
                                 let finishName = fullName[1]
                                 let newRoute = Route(routeName: "da \(startName) a \(finishName)", startName: startName, finishName: finishName, caregiver: CaregiverFactory().caregivers[0], lastExecution: "", mapRoute: mapRoute)
@@ -187,15 +188,12 @@ struct AddRouteView: View {
             } else {
                 partial = "Begin"
             }
-            print(partial)
-            
+        
             if let streetNum = placeMark.subThoroughfare {
                 partial = partial + " \(streetNum)%"
             } else {
                 partial = partial + " snc.%"
             }
-            
-            print(partial)
             
             geocoder.reverseGeocodeLocation(route.crumbs[route.crumbs.count - 1].location, completionHandler: {(placemarks, error) -> Void in
                 // Place details
@@ -209,15 +207,12 @@ struct AddRouteView: View {
                     partial = partial + "End"
                 }
                 
-                print(partial)
-                
                 if let streetNum = placeMark.subThoroughfare {
                     partial = partial + " \(streetNum)"
                 } else {
                     partial = partial + " snc."
                 }
                 
-                print(partial)
                 
                 self.routeName = partial
                 self.canSave = true

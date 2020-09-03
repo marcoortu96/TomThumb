@@ -10,7 +10,6 @@ import SwiftUI
 
 struct SettingsView: View {
     var body: some View {
-        NavigationView {
                 Form {
                     Section(header: Text("Profilo")) {
                         NavigationLink(destination: ProfileDetail(caregiver: CaregiverFactory().caregivers[1])) {
@@ -39,9 +38,9 @@ struct SettingsView: View {
                         }
                     }
                 }
-                .navigationBarTitle("Impostazioni")
+                .navigationBarTitle("Impostazioni", displayMode: .large)
                 .accentColor(InterfaceConstants.genericLinkForegroundColor)
-        }
+        
     }
 }
 

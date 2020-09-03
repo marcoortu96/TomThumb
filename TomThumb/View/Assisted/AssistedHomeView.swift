@@ -16,62 +16,56 @@ struct AssistedHomeView: View {
     @State var isExecuting = false
     @State var isNavigationBarHidden = true
     @EnvironmentObject var navBarPrefs: NavBarPreferences
+    @State var selected = 0
     var body: some View {
-            TabView {
-                if !isExecuting {
-                    Text("Non ci sono percorsi da avviare")
+        TabView {
+            if !isExecuting {
+                Text("Non ci sono percorsi da avviare")
                     .navigationBarBackButtonHidden(true)
-                        .tabItem {
-                            VStack {
-                                Image(systemName: "location")
-                                Text("Percorso")
-                            }
-                        .navigationBarTitle("Percorso", displayMode: .large)
-                        .navigationBarBackButtonHidden(true)
-                    }
-                        
-                    .tag(0)
-                    .onAppear {
-                        self.navBarPrefs.navBarIsHidden = false
-                    }
-                }
-                else {
-                    NavigationLink(destination: ARView(route: route, debug: false)
-                    .navigationBarBackButtonHidden(true)){
-                            Text("Avvia percorso")
-                    }
                     .tabItem {
                         VStack {
                             Image(systemName: "location")
                             Text("Percorso")
-                        }.navigationBarTitle("Percorso", displayMode: .large)
-                        .navigationBarBackButtonHidden(true)
-                    }
-                        
-                    .tag(0)
-                    .onAppear {
-                        self.navBarPrefs.navBarIsHidden = false
-                    }
-                }
-                RecentRoutes()
-                .navigationBarTitle("")
-                .navigationBarHidden(false)
-                .navigationBarBackButtonHidden(true)
-                    .tabItem {
-                        VStack {
-                            Image(systemName: "clock")
-                            Text("Recenti")
                         }
                 }
-                .tag(1)
+                .tag(0)
+                    .onAppear {
+                        self.selected = 0
+                }
+            }
+            else {
+                NavigationLink(destination: ARView(route: route, debug: false)
+                    .navigationBarBackButtonHidden(true)){
+                        Text("Avvia percorso")
+                }
+                .tabItem {
+                    VStack {
+                        Image(systemName: "location")
+                        Text("Percorso")
+                    }
+                }
+                .tag(0)
+                    .onAppear {
+                        self.selected = 0
+                }
+            }
+            RecentRoutes()
+                .tabItem {
+                    VStack {
+                        Image(systemName: "clock")
+                        Text("Recenti")
+                    }
+            }
+            .tag(1)
                 .onAppear {
-                    self.navBarPrefs.navBarIsHidden = true
+                    self.selected = 1
                     
-                }
-                }
+            }
+        }.navigationBarTitle(Text(selected == 0 ? "Percorso" : "Recenti"), displayMode: .large)
+            .navigationBarBackButtonHidden(true)
             .onAppear{
                 self.fetchNewRoute()
-            }
+        }
         
     }
     
