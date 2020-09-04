@@ -34,7 +34,7 @@ struct AssistedHomeView: View {
                 }
             }
             else {
-                NavigationLink(destination: ARView(route: route, debug: false)
+                NavigationLink(destination: ARView(route: route, debug: false).navigationBarTitle("").navigationBarHidden(true)
                     .navigationBarBackButtonHidden(true)){
                         Text("Avvia percorso")
                 }
@@ -46,7 +46,8 @@ struct AssistedHomeView: View {
                 }
                 .tag(0)
                 .onAppear {
-                    self.navBarTitle = "Percorso"
+                    self.navBarTitle = "Nuovo percorso"
+                    self.navBarPrefs.navBarIsHidden = true
                 }
             }
             RecentRoutes()

@@ -32,7 +32,7 @@ struct StartView: View {
                     .background(Color.green)
                     .edgesIgnoringSafeArea(.all)
                 }
-                .navigationBarTitle("")
+                .navigationBarTitle("", displayMode: .automatic)
                 .navigationBarHidden(false)
                 .navigationBarBackButtonHidden(false)
                 .onAppear {

@@ -67,6 +67,7 @@ struct AssistedView: View {
             })
             
         .onDisappear(perform: {
+            self.routeName = "Percorsi"
             self.locations = []
             self.showMap = false
             self.showingActivityIndicator = true
@@ -119,7 +120,11 @@ struct AssistedView: View {
                     self.route = routeTmp
                     self.locations = []
                     
-                    self.routeName = self.route.routeName
+                    if self.isExecuting {
+                        self.routeName = self.route.routeName
+                    } else {
+                        self.routeName = "Esecuzione"
+                    }
                     
                     if self.route.mapRoute.crumbs.count > 1 {
                         let startAnnotation = MKPointAnnotation()
