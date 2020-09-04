@@ -96,7 +96,7 @@ struct RoutesView: View {
         
         db.child("Routes").observeSingleEvent(of: .value, with: { (snapshot) in
             let snapValue = snapshot.value as? [String : [String : Any]]
-            print("value BBBBBBBBBBB \n \(snapValue ?? ["result" : ["error" : "cannot retrive values from DB"]])")
+            //print("value BBBBBBBBBBB \n \(snapValue ?? ["result" : ["error" : "cannot retrive values from DB"]])")
             self.routes = []
             for (key, value) in snapValue! {
                 var crumbs = [Crumb]()

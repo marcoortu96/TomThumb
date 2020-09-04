@@ -33,10 +33,10 @@ struct StartView: View {
                     .edgesIgnoringSafeArea(.all)
                 }
                 .navigationBarTitle("")
-                .navigationBarHidden(self.navBarPrefs.navBarIsHidden)
-                .navigationBarBackButtonHidden(self.navBarPrefs.navBarIsHidden)
+                .navigationBarHidden(false)
+                .navigationBarBackButtonHidden(false)
                 .onAppear {
-                     self.navBarPrefs.navBarIsHidden = true
+                     self.navBarPrefs.navBarIsHidden = false
                 }
                 NavigationLink(destination: AssistedHomeView()) {
                     HStack {
@@ -56,7 +56,7 @@ struct StartView: View {
                     .background(Color.blue)
                     .edgesIgnoringSafeArea(.all)
                 }
-                .navigationBarTitle("", displayMode: .inline)
+                .navigationBarTitle("")
                 .navigationBarHidden(false)
                 .navigationBarBackButtonHidden(false)
                 .onAppear {

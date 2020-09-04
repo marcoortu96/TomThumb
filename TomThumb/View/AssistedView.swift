@@ -19,6 +19,8 @@ struct AssistedView: View {
     @State var collected = 0
     @State var isExecuting = false
     
+    @Binding var routeName: String
+    
     @State var showingActivityIndicator = true
     
     var body: some View {
@@ -63,7 +65,6 @@ struct AssistedView: View {
                 self.checkConnection()
                 self.readDataFromDB()
             })
-                .navigationBarTitle(Text(self.isExecuting ? "\(self.route.routeName)" : "Esecuzione"), displayMode: .inline)
             
         .onDisappear(perform: {
             self.locations = []
@@ -89,7 +90,7 @@ struct AssistedView: View {
             
             // Get user position value
             let value = snapshot.value as? NSDictionary
-            print("value \n \(value ?? ["error" : "cannot retrive values from DB"])")
+           // print("value \n \(value ?? ["error" : "cannot retrive values from DB"])")
             self.isExecuting = (value?["isExecuting"] as? Bool)!
             let id = value?["id"] as? String ?? "err"
             let lat = value?["latitude"] as? Double ?? 0.0
@@ -98,7 +99,7 @@ struct AssistedView: View {
             
             ref.child("Routes").child("\(id)").observe(.value, with: { (snapshot) in
                 let value = snapshot.value as? [String : Any]
-                print("value \n \(value ?? ["result" : ["error" : "cannot retrive values from DB"]])")
+                //print("value \n \(value ?? ["result" : ["error" : "cannot retrive values from DB"]])")
                 
                 if value != nil {
                     var crumbs = [Crumb]()
@@ -117,6 +118,8 @@ struct AssistedView: View {
                     )
                     self.route = routeTmp
                     self.locations = []
+                    
+                    self.routeName = self.route.routeName
                     
                     if self.route.mapRoute.crumbs.count > 1 {
                         let startAnnotation = MKPointAnnotation()

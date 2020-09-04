@@ -34,12 +34,10 @@ struct CaregiverHomeView: View {
             }
             .tag(0)
             .onAppear {
-                print("\n\nAPPEAR\n\n")
                 self.navBarTitle = "Percorsi"
-                self.navBarPrefs.navBarIsHidden = false
             }
             
-            AssistedView(route: route).tabItem {
+            AssistedView(route: route, routeName: $navBarTitle).tabItem {
                 VStack {
                     Image(systemName: "goforward")
                     Text("Esecuzione")
@@ -49,7 +47,6 @@ struct CaregiverHomeView: View {
             .tag(1)
             .onAppear {
                 self.navBarTitle = "Esecuzione"
-                self.navBarPrefs.navBarIsHidden = false
             }
             
             SettingsView().tabItem {
@@ -62,7 +59,6 @@ struct CaregiverHomeView: View {
             .tag(2)
             .onAppear {
                 self.navBarTitle = "Impostazioni"
-                self.navBarPrefs.navBarIsHidden = false
             }
         }
         .navigationBarTitle("\(navBarTitle)", displayMode: (navBarTitle == "Percorsi" || navBarTitle == "Impostazioni") ? .large : .inline)
