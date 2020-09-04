@@ -62,6 +62,9 @@ struct AssistedHomeView: View {
                 self.navBarTitle = "Recenti"
                 
             }
+            .onDisappear {
+                self.navBarTitle = "Percorso"
+            }
         }.navigationBarTitle("\(navBarTitle)", displayMode: .large)
             .navigationBarBackButtonHidden(true)
             .onAppear{

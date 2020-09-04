@@ -25,11 +25,11 @@ struct RoutesView: View {
     
     var body: some View {
         LoadingView(isShowing: $showingActivityIndicator, string: "Connessione") {
-            
-                VStack {
+            VStack(alignment: .leading) {
+                    Spacer()
                     SearchBar(searchText: self.$searchText)
                     List {
-                        ForEach(self.routes.sorted(by: {$0.routeName < $1.routeName}).filter {
+                        ForEach(self.routes.filter {
                             self.searchText == "" ? true : $0.routeName.localizedCaseInsensitiveContains(self.searchText)
                         }, id: \.self) { route in
                             NavigationLink(destination: RouteDetail(route: route)) {
@@ -116,6 +116,8 @@ struct RoutesView: View {
                 if !self.routes.contains(route) {
                     self.routes.append(route)   
                 }
+                
+                 self.routes.sort(by: {$0.routeName < $1.routeName})
             }
             self.showingActivityIndicator = false
         }) { (error) in

@@ -28,15 +28,9 @@ struct StartView: View {
                     .padding(.bottom, 50)
                     .padding(.trailing, (UIScreen.main.bounds.size.width/100)*20)
                     .padding(.leading, (UIScreen.main.bounds.size.width/100)*20)
-                    .cornerRadius(12)
+                    .cornerRadius(200)
                     .background(Color.green)
-                    .edgesIgnoringSafeArea(.all)
-                }
-                .navigationBarTitle("", displayMode: .automatic)
-                .navigationBarHidden(false)
-                .navigationBarBackButtonHidden(false)
-                .onAppear {
-                     self.navBarPrefs.navBarIsHidden = false
+                    .opacity(1)
                 }
                 NavigationLink(destination: AssistedHomeView()) {
                     HStack {
@@ -52,15 +46,9 @@ struct StartView: View {
                     .padding(.bottom, 50)
                     .padding(.trailing, (UIScreen.main.bounds.size.width/100)*22)
                     .padding(.leading, (UIScreen.main.bounds.size.width/100)*22)
-                    .cornerRadius(12)
+                    .cornerRadius(200)
                     .background(Color.blue)
-                    .edgesIgnoringSafeArea(.all)
-                }
-                .navigationBarTitle("")
-                .navigationBarHidden(false)
-                .navigationBarBackButtonHidden(false)
-                .onAppear {
-                     self.navBarPrefs.navBarIsHidden = false
+                    .opacity(1)
                 }
 
             }.navigationBarTitle(Text("TomThumb"), displayMode: .inline)

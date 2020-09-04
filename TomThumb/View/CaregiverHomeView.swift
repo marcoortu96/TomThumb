@@ -23,18 +23,21 @@ struct CaregiverHomeView: View {
                     VStack {
                         Image(systemName: "list.bullet")
                         Text("Percorsi")
-                            .navigationBarBackButtonHidden(false)
-                    }.navigationBarItems(leading: EditButton().opacity(self.navBarTitle == "Percorsi" ? 1.0 : 0.0), trailing:
+                            .navigationBarBackButtonHidden(true)
+                    }.navigationBarItems(trailing:
                         Button(action: {
                             self.showAddRouteView.toggle()
                         }) {
-                            Image(systemName: "plus.circle").font(.largeTitle)
+                            Image(systemName: "plus.circle").font(.title)
                         }.opacity(self.navBarTitle == "Percorsi" ? 1.0 : 0.0)
                     )
             }
             .tag(0)
             .onAppear {
                 self.navBarTitle = "Percorsi"
+            }
+            .onDisappear {
+                self.navBarTitle = "Impostazioni"
             }
             
             AssistedView(route: route, routeName: $navBarTitle).tabItem {
@@ -60,6 +63,7 @@ struct CaregiverHomeView: View {
             .onAppear {
                 self.navBarTitle = "Impostazioni"
             }
+            
         }
         .navigationBarTitle("\(navBarTitle)", displayMode: (navBarTitle == "Percorsi" || navBarTitle == "Impostazioni") ? .large : .inline)
         

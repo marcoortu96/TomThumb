@@ -16,6 +16,9 @@ import FirebaseStorage
 
 struct RouteDetail: View {
     @ObservedObject var route: Route
+    @State var showingDeleteAlert = false
+    @State var showingSendedAlert = false
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     
     var body: some View {
         Form {
@@ -64,12 +67,37 @@ struct RouteDetail: View {
             Section(header: Text("Condivisione")) {
                 Button(action: {
                     //Send route to user
-                    print("Share tapped!")
+                    self.showingSendedAlert = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                        self.showingSendedAlert = false
+                    }
                     self.sendRoute()
                 }) {
                     Text("Invia percorso")
                         .frame(minWidth: 0, maxWidth: .infinity)
                         .foregroundColor(InterfaceConstants.genericLinkForegroundColor)
+                }.alert(isPresented: self.$showingSendedAlert) {
+                    Alert(title: Text("Condivisione"),
+                          message: Text("Il percorso è stato inviato"), dismissButton: .none)
+                }
+            }
+            Section(header: Text("Elimina percorso")) {
+                Button(action: {
+                    self.showingDeleteAlert = true
+                }) {
+                    Text("Elimina")
+                        .frame(minWidth: 0, maxWidth: .infinity)
+                        .foregroundColor(InterfaceConstants.negativeLinkForegroundColor)
+                }.alert(isPresented: self.$showingDeleteAlert) {
+                    Alert(title: Text("Eliminazione"),
+                          message: Text("Vuoi eliminare questo percorso?"),
+                          primaryButton: Alert.Button.destructive(
+                            Text("Elimina"), action: {
+                        self.deleteRoute()
+                        self.presentationMode.wrappedValue.dismiss()
+                    }),
+                          secondaryButton: Alert.Button.cancel(Text("Annulla"), action: {
+                          }))
                 }
             }
         }
@@ -91,6 +119,22 @@ struct RouteDetail: View {
                 "lastExecution" : Date().toString(dateFormat: "dd.MM.yyyy HH:mm:ss")
             ]
         )
+        
+    }
+    
+    func deleteRoute() {
+        let db = Database.database().reference()
+        
+        // Rimozione della route dal db
+        
+        db.child("Routes").child(self.route.id).removeValue() { (error, ref) in
+            if error != nil {
+                print("error \(error.debugDescription)")
+            }
+        }
+        
+        // Rimozione della route dalla lista delle route mostrate nella view
+        //self.routes.remove(atOffsets: offsets)
         
     }
     

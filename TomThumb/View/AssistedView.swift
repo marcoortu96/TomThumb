@@ -61,7 +61,8 @@ struct AssistedView: View {
                         .cornerRadius(12)
                     }
                 }
-            }.onAppear(perform: {
+            }.navigationBarTitle("Esecuzione", displayMode: .inline)
+            .onAppear(perform: {
                 self.checkConnection()
                 self.readDataFromDB()
             })

@@ -82,7 +82,7 @@ struct RecentRoutes: View {
         
         db.child("Routes").observe(.value, with: { (snapshot) in
             let snapValue = snapshot.value as? [String : [String : Any]]
-            print("value \n \(snapValue ?? ["result" : ["error" : "cannot retrive values from DB"]])")
+            //print("value \n \(snapValue ?? ["result" : ["error" : "cannot retrive values from DB"]])")
             for (key, value) in snapValue! {
                 var crumbs = [Crumb]()
                 if value["lastExecution"] as! String != "" {

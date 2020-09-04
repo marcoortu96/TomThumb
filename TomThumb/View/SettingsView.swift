@@ -9,38 +9,42 @@
 import SwiftUI
 
 struct SettingsView: View {
+    @State private var searchText = ""
+    
     var body: some View {
-                Form {
-                    Section(header: Text("Profilo")) {
-                        NavigationLink(destination: ProfileDetail(caregiver: CaregiverFactory().caregivers[1])) {
-                            HStack {
-                                Image(uiImage: CaregiverFactory().caregivers[1].img)
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 70, height: 70, alignment: .center)
-                                    .clipped()
-                                    .clipShape(Circle())
-                                    .shadow(radius: 1)
+        VStack {
+            Spacer()
+            Form {
+                Section(header: Text("Profilo")) {
+                    NavigationLink(destination: ProfileDetail(caregiver: CaregiverFactory().caregivers[1])) {
+                        HStack {
+                            Image(uiImage: CaregiverFactory().caregivers[1].img)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 70, height: 70, alignment: .center)
+                                .clipped()
+                                .clipShape(Circle())
+                                .shadow(radius: 1)
+                            
+                            VStack {
+                                Text(CaregiverFactory().caregivers[1].username).font(.title)
                                 
-                                VStack {
-                                    Text(CaregiverFactory().caregivers[1].username).font(.title)
-                                        
-                                    Text(CaregiverFactory().caregivers[1].name).font(.caption)
-                                }
+                                Text(CaregiverFactory().caregivers[1].name).font(.caption)
                             }
                         }
                     }
-                    Section {
-                        Button(action: {
-                            print("Perform an action here...")
-                        }) {
-                            Text("Logout").frame(minWidth: 0, maxWidth: .infinity).accentColor(InterfaceConstants.negativeLinkForegroundColor)
-                        }
+                }
+                Section {
+                    Button(action: {
+                        print("Perform an action here...")
+                    }) {
+                        Text("Logout").frame(minWidth: 0, maxWidth: .infinity).accentColor(InterfaceConstants.negativeLinkForegroundColor)
                     }
                 }
-                .navigationBarTitle("Impostazioni", displayMode: .large)
-                .accentColor(InterfaceConstants.genericLinkForegroundColor)
-        
+            }
+            
+        } .navigationBarTitle("Impostazioni", displayMode: .large)
+            .accentColor(InterfaceConstants.genericLinkForegroundColor)
     }
 }
 
