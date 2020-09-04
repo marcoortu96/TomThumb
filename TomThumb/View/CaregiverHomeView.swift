@@ -13,20 +13,30 @@ struct CaregiverHomeView: View {
     @State var route = Route()
     @EnvironmentObject var navBarPrefs: NavBarPreferences
     @State var navBarTitle = "Percorsi"
+    
+    @State var showAddRouteView = false
+    
     var body: some View {
         TabView {
-            RoutesView().tabItem {
-                VStack {
-                    Image(systemName: "list.bullet")
-                    Text("Percorsi")
-                        .navigationBarBackButtonHidden(true)
-                }
+            RoutesView(showAddRouteView: $showAddRouteView)
+                .tabItem {
+                    VStack {
+                        Image(systemName: "list.bullet")
+                        Text("Percorsi")
+                            .navigationBarBackButtonHidden(false)
+                    }.navigationBarItems(leading: EditButton().opacity(self.navBarTitle == "Percorsi" ? 1.0 : 0.0), trailing:
+                        Button(action: {
+                            self.showAddRouteView.toggle()
+                        }) {
+                            Image(systemName: "plus.circle").font(.largeTitle)
+                        }.opacity(self.navBarTitle == "Percorsi" ? 1.0 : 0.0)
+                    )
             }
             .tag(0)
             .onAppear {
                 print("\n\nAPPEAR\n\n")
                 self.navBarTitle = "Percorsi"
-                self.navBarPrefs.navBarIsHidden = true
+                self.navBarPrefs.navBarIsHidden = false
             }
             
             AssistedView(route: route).tabItem {
@@ -55,7 +65,8 @@ struct CaregiverHomeView: View {
                 self.navBarPrefs.navBarIsHidden = false
             }
         }
-        .navigationBarTitle(navBarTitle != "Percorsi" ? "\(navBarTitle)" : "", displayMode: (navBarTitle == "Percorsi" || navBarTitle == "Impostazioni") ? .large : .inline)
-   
+        .navigationBarTitle("\(navBarTitle)", displayMode: (navBarTitle == "Percorsi" || navBarTitle == "Impostazioni") ? .large : .inline)
+        
+        
     }
 }

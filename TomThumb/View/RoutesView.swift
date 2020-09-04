@@ -15,7 +15,7 @@ import FirebaseDatabase
 
 struct RoutesView: View {
     @State private var searchText = ""
-    @State var showAddRouteView = false
+    @Binding var showAddRouteView: Bool
     @State var audioRecorder = AudioRecorder()
     @State var crumbAudio = URL(fileURLWithPath: "")
     @State var currentCrumb = Crumb(location: CLLocation())
@@ -25,7 +25,7 @@ struct RoutesView: View {
     
     var body: some View {
         LoadingView(isShowing: $showingActivityIndicator, string: "Connessione") {
-            NavigationView {
+            
                 VStack {
                     SearchBar(searchText: self.$searchText)
                     List {
@@ -40,14 +40,7 @@ struct RoutesView: View {
                     }
                 }
                 .navigationBarTitle("Percorsi")
-                .navigationBarItems(leading: EditButton(), trailing:
-                    Button(action: {
-                        self.showAddRouteView.toggle()
-                    }) {
-                        Image(systemName: "plus.circle").font(.largeTitle)
-                    }
-                )
-            }
+            
         }.onAppear {
             self.checkConnection()
             Database.database().reference().child("Routes").observe(DataEventType.value, with: { (snapshot) in

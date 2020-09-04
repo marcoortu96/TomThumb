@@ -16,7 +16,7 @@ struct AssistedHomeView: View {
     @State var isExecuting = false
     @State var isNavigationBarHidden = true
     @EnvironmentObject var navBarPrefs: NavBarPreferences
-    @State var selected = 0
+    @State var navBarTitle = "Percorso"
     var body: some View {
         TabView {
             if !isExecuting {
@@ -29,8 +29,8 @@ struct AssistedHomeView: View {
                         }
                 }
                 .tag(0)
-                    .onAppear {
-                        self.selected = 0
+                .onAppear {
+                    self.navBarTitle = "Percorso"
                 }
             }
             else {
@@ -45,8 +45,8 @@ struct AssistedHomeView: View {
                     }
                 }
                 .tag(0)
-                    .onAppear {
-                        self.selected = 0
+                .onAppear {
+                    self.navBarTitle = "Percorso"
                 }
             }
             RecentRoutes()
@@ -57,11 +57,11 @@ struct AssistedHomeView: View {
                     }
             }
             .tag(1)
-                .onAppear {
-                    self.selected = 1
-                    
+            .onAppear {
+                self.navBarTitle = "Recenti"
+                
             }
-        }.navigationBarTitle(Text(selected == 0 ? "Percorso" : "Recenti"), displayMode: .large)
+        }.navigationBarTitle("\(navBarTitle)", displayMode: .large)
             .navigationBarBackButtonHidden(true)
             .onAppear{
                 self.fetchNewRoute()
