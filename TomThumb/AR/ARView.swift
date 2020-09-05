@@ -168,7 +168,7 @@ struct ARView: View {
                     .background(Color.red.opacity(0.85))
                     .font(.title)
                     .clipShape(Circle())
-                    .padding(.bottom, (UIScreen.main.bounds.size.height/100) * (self.debug ? 70 : 85))
+                    .padding(.bottom, (UIScreen.main.bounds.size.height/100) * (self.debug ? 70 : 83))
                     .padding(.leading, (UIScreen.main.bounds.size.width/100) * 77)
                 }
                 
@@ -188,7 +188,7 @@ struct ARView: View {
                         .background(Color.green.opacity(0.85))
                         .font(.title)
                         .clipShape(Circle())
-                        .padding(.top, (UIScreen.main.bounds.size.height/100) * 85)
+                        .padding(.top, (UIScreen.main.bounds.size.height/100) * 83)
                         .padding(.trailing, (UIScreen.main.bounds.size.width/100) * 77)
                     }
                     
@@ -206,7 +206,7 @@ struct ARView: View {
                         .background(Color.yellow.opacity(0.85))
                         .font(.title)
                         .clipShape(Circle())
-                        .padding(.top, (UIScreen.main.bounds.size.height/100) * 85)
+                        .padding(.top, (UIScreen.main.bounds.size.height/100) * 83)
                         .padding(.leading, (UIScreen.main.bounds.size.width/100) * 77)
                     }
                 }
