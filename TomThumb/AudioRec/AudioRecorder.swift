@@ -10,6 +10,7 @@ import Foundation
 import SwiftUI
 import AVFoundation
 import Combine
+import Firebase
 
 // Model for audio recorder
 class AudioRecorder: NSObject, ObservableObject {
@@ -18,7 +19,8 @@ class AudioRecorder: NSObject, ObservableObject {
     var recordings = [Recording]()
     let defaultRecordings = [Recording(fileURL: URL(fileURLWithPath: Bundle.main.path(forResource: "start1.m4a", ofType: nil)!), createDate: Date(timeIntervalSince1970: TimeInterval(exactly: 0)!)),
                              Recording(fileURL: URL(fileURLWithPath: Bundle.main.path(forResource: "crumb1.m4a", ofType: nil)!), createDate: Date(timeIntervalSince1970: TimeInterval(exactly: 1)!)),
-                             Recording(fileURL: URL(fileURLWithPath: Bundle.main.path(forResource: "finish1.m4a", ofType: nil)!), createDate: Date(timeIntervalSince1970: TimeInterval(exactly: 2)!))]
+                             Recording(fileURL: URL(fileURLWithPath: Bundle.main.path(forResource: "finish1.m4a", ofType: nil)!), createDate: Date(timeIntervalSince1970: TimeInterval(exactly: 2)!)),
+                             Recording(fileURL: URL(fileURLWithPath: Bundle.main.path(forResource: "farFromCrumb.m4a", ofType: nil)!), createDate: Date(timeIntervalSince1970: TimeInterval(exactly: 3)!))]
     var recording = false {
         didSet {
             objectWillChange.send(self)
@@ -78,6 +80,25 @@ class AudioRecorder: NSObject, ObservableObject {
         
         recordings.sort(by: {$0.createDate.compare($1.createDate) == .orderedDescending})
         recordings = defaultRecordings + recordings
+        
+        // Store degli audio presenti in recordings nello storage
+        let store = Storage.storage()
+        
+        //init metadata per storage
+        let metadata = StorageMetadata()
+        metadata.contentType = "audio/x-m4a"
+        
+        for record in recordings {
+            let storeRef = store.reference().child("audio/\(record.fileURL.lastPathComponent)")
+            // Upload audio
+            let _ = storeRef.putFile(from: record.fileURL, metadata: metadata) { (metadata, error) in
+                guard let _ = metadata else {
+                    print("error occurred: \(error.debugDescription)")
+                    return
+                }
+            }
+        }
+        
         objectWillChange.send(self)
     }
     
@@ -85,7 +106,22 @@ class AudioRecorder: NSObject, ObservableObject {
         for url in urlsToDelete {
             print("urlRec: \(url)")
             do {
+                // elimino audio in locale
                 try FileManager.default.removeItem(at: url)
+                
+                // elimina audio da storage
+                let store = Storage.storage()
+                let storeRef = store.reference().child("audio/\(url.lastPathComponent)")
+                
+                //Elimino vecchio audio
+                storeRef.delete { error in
+                    if let error = error {
+                        print(error.localizedDescription)
+                    } else {
+                        // File eliminato
+                    }
+                }
+                
             } catch {
                 print("il file non può essere cancellato")
             }

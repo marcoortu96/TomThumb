@@ -14,6 +14,9 @@ struct SettingsView: View {
     @ObservedObject var audioRecorder = AudioRecorder()
     @State var selectedAudio = URL(fileURLWithPath: "")
     @State var audioName = ""
+    @ObservedObject var audioPlayer = AudioPlayer()
+    @State private var selectedFarAudio = 0
+    @State private var selectedUnexpectedAudio = 0
     
     var body: some View {
         VStack {
@@ -44,12 +47,23 @@ struct SettingsView: View {
                     }
                 }
                 Section(header: Text("Audio emergenze")) {
-                    NavigationLink(destination: Audio(showingAudioAlert: self.$showingAudioAlert, audioRecorder: self.audioRecorder, selectedAudio: self.selectedAudio, audioName: self.selectedAudio.lastPathComponent)) {
+                    /*NavigationLink(destination: Audio(showingAudioAlert: self.$showingAudioAlert, audioRecorder: self.audioRecorder, selectedAudio: self.selectedAudio, audioName: self.selectedAudio.lastPathComponent)) {
                         Text("Allonatanamento dal percorso")
                     }
                     NavigationLink(destination: Audio(showingAudioAlert: self.$showingAudioAlert, audioRecorder: self.audioRecorder, selectedAudio: self.selectedAudio, audioName: self.selectedAudio.lastPathComponent)) {
                         Text("Imprevisti")
+                    }*/
+                    Picker(selection: $selectedFarAudio, label: Text("Allonatanamento dal percorso")) {
+                        ForEach(0 ..< audioRecorder.recordings.count) {
+                               Text("\(self.audioRecorder.recordings[$0].fileURL.lastPathComponent)")
+                        }
                     }
+                    Picker(selection: $selectedUnexpectedAudio, label: Text("Imprevisti")) {
+                        ForEach(0 ..< audioRecorder.recordings.count) {
+                            Text("\(self.audioRecorder.recordings[$0].fileURL.lastPathComponent)")
+                        }
+                    }
+
                 }
                 Section {
                     Button(action: {

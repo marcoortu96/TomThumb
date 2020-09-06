@@ -85,6 +85,7 @@ struct RecordingsListSettings: View {
     }
     
     func delete(at offsets: IndexSet) {
+        // elimina audio in locale
         var urlsToDelete = [URL]()
         self.selectedAudio = URL(fileURLWithPath: "")
         for index in offsets {
@@ -182,9 +183,10 @@ struct ChangeAudioName: View {
             return
         }
         let audioRenamed = URL(string: "file:///private/\(fileUrl.absoluteString.dropFirst(8))")
-
+        print("AUDIO RENAMED: \(audioRenamed!)")
+        let storeRefNew = store.reference().child("audio/\(audioURL.lastPathComponent)")
         // Upload audio rinominato
-        let _ = storeRef.putFile(from: audioRenamed!, metadata: metadata) { (metadata, error) in
+        let _ = storeRefNew.putFile(from: audioURL, metadata: metadata) { (metadata, error) in
             guard let _ = metadata else {
                 print("error occurred: \(error.debugDescription)")
                 return

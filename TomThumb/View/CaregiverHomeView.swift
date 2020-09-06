@@ -37,7 +37,7 @@ struct CaregiverHomeView: View {
                 self.navBarTitle = "Percorsi"
             }
             .onDisappear {
-                //self.navBarTitle = "Impostazioni"
+                self.navBarTitle = ""
             }
             
             AssistedView(route: route, routeName: $navBarTitle)
