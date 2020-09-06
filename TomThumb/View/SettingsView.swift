@@ -17,7 +17,7 @@ struct SettingsView: View {
     
     var body: some View {
         VStack {
-            Spacer()
+            PreventCollapseView()
             Form {
                 Section(header: Text("Profilo")) {
                     NavigationLink(destination: ProfileDetail(caregiver: CaregiverFactory().caregivers[1])) {
@@ -105,6 +105,17 @@ struct Audio: View {
             Text("\(infoRec)")
         }
         .navigationBarTitle(Text("Gestisci audio"))
+    }
+}
+
+struct PreventCollapseView: View {
+
+    private var mostlyClear = Color(UIColor(white: 0.0, alpha: 0.0005))
+
+    var body: some View {
+        Rectangle()
+            .fill(mostlyClear)
+            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: 1)
     }
 }
 

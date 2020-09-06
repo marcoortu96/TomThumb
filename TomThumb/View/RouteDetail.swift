@@ -110,6 +110,7 @@ struct RouteDetail: View {
         
         ref.child("Assisted").updateChildValues(
             [
+                "collected" : 0,
                 "isExecuting" : true,
                 "id" : self.route.id
         ])

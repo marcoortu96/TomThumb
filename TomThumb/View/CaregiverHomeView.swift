@@ -37,27 +37,29 @@ struct CaregiverHomeView: View {
                 self.navBarTitle = "Percorsi"
             }
             .onDisappear {
-                self.navBarTitle = "Impostazioni"
+                //self.navBarTitle = "Impostazioni"
             }
             
-            AssistedView(route: route, routeName: $navBarTitle).tabItem {
-                VStack {
-                    Image(systemName: "goforward")
-                    Text("Esecuzione")
-                        .navigationBarBackButtonHidden(true)
-                }
+            AssistedView(route: route, routeName: $navBarTitle)
+                .tabItem {
+                    VStack {
+                        Image(systemName: "goforward")
+                        Text("Esecuzione")
+                            .navigationBarBackButtonHidden(true)
+                    }
             }
             .tag(1)
             .onAppear {
                 self.navBarTitle = "Esecuzione"
             }
             
-            SettingsView().tabItem {
-                VStack {
-                    Image(systemName: "gear")
-                    Text("Impostazioni")
-                        .navigationBarBackButtonHidden(true)
-                }
+            SettingsView()
+                .tabItem {
+                    VStack {
+                        Image(systemName: "gear")
+                        Text("Impostazioni")
+                            .navigationBarBackButtonHidden(true)
+                    }
             }
             .tag(2)
             .onAppear {
@@ -65,7 +67,7 @@ struct CaregiverHomeView: View {
             }
             
         }
-        .navigationBarTitle("\(navBarTitle)", displayMode: (navBarTitle == "Percorsi" || navBarTitle == "Impostazioni") ? .large : .inline)
+        .navigationBarTitle("\(navBarTitle)", displayMode: (navBarTitle == "Percorsi" || navBarTitle == "Impostazioni" || navBarTitle == "Esecuzione") ? .large : .inline)
         
         
     }
