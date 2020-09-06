@@ -11,16 +11,18 @@ import SwiftUI
 import AVFoundation
 import Combine
 import Firebase
+import FirebaseStorage
 
 // Model for audio recorder
 class AudioRecorder: NSObject, ObservableObject {
     let objectWillChange = PassthroughSubject<AudioRecorder, Never>()
-    var audioRecorder: AVAudioRecorder!
-    var recordings = [Recording]()
-    let defaultRecordings = [Recording(fileURL: URL(fileURLWithPath: Bundle.main.path(forResource: "start1.m4a", ofType: nil)!), createDate: Date(timeIntervalSince1970: TimeInterval(exactly: 0)!)),
+    @Published var audioRecorder: AVAudioRecorder!
+    static var recordings = [Recording]()
+    /*let defaultRecordings = [Recording(fileURL: URL(fileURLWithPath: Bundle.main.path(forResource: "start1.m4a", ofType: nil)!), createDate: Date(timeIntervalSince1970: TimeInterval(exactly: 0)!)),
                              Recording(fileURL: URL(fileURLWithPath: Bundle.main.path(forResource: "crumb1.m4a", ofType: nil)!), createDate: Date(timeIntervalSince1970: TimeInterval(exactly: 1)!)),
                              Recording(fileURL: URL(fileURLWithPath: Bundle.main.path(forResource: "finish1.m4a", ofType: nil)!), createDate: Date(timeIntervalSince1970: TimeInterval(exactly: 2)!)),
                              Recording(fileURL: URL(fileURLWithPath: Bundle.main.path(forResource: "farFromCrumb.m4a", ofType: nil)!), createDate: Date(timeIntervalSince1970: TimeInterval(exactly: 3)!))]
+ */
     var recording = false {
         didSet {
             objectWillChange.send(self)
@@ -67,7 +69,7 @@ class AudioRecorder: NSObject, ObservableObject {
     }
     
     func fetchRecordings() {
-        recordings.removeAll()
+        AudioRecorder.recordings.removeAll()
         
         let fileManager = FileManager.default
         let documentDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
@@ -75,11 +77,11 @@ class AudioRecorder: NSObject, ObservableObject {
         
         for audio in directoryContents {
             let recording = Recording(fileURL: audio, createDate: getCreationDate(for: audio))
-            recordings.append(recording)
+            AudioRecorder.recordings.append(recording)
         }
         
-        recordings.sort(by: {$0.createDate.compare($1.createDate) == .orderedDescending})
-        recordings = defaultRecordings + recordings
+        AudioRecorder.recordings.sort(by: {$0.createDate.compare($1.createDate) == .orderedDescending})
+        //recordings = defaultRecordings + recordings
         
         // Store degli audio presenti in recordings nello storage
         let store = Storage.storage()
@@ -88,7 +90,7 @@ class AudioRecorder: NSObject, ObservableObject {
         let metadata = StorageMetadata()
         metadata.contentType = "audio/x-m4a"
         
-        for record in recordings {
+        for record in AudioRecorder.recordings {
             let storeRef = store.reference().child("audio/\(record.fileURL.lastPathComponent)")
             // Upload audio
             let _ = storeRef.putFile(from: record.fileURL, metadata: metadata) { (metadata, error) in
@@ -131,9 +133,15 @@ class AudioRecorder: NSObject, ObservableObject {
 }
 
 // Struct of a recording object
-struct Recording {
-    let fileURL: URL
-    let createDate: Date
+class Recording: ObservableObject{
+    @Published var fileURL: URL
+    var createDate: Date
+    
+    init(fileURL: URL, createDate: Date) {
+        self.fileURL = fileURL
+        self.createDate = createDate
+    }
+    
 }
 
 func getCreationDate(for file: URL) -> Date {

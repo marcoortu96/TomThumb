@@ -255,7 +255,7 @@ extension ARViewController: ARSCNViewDelegate {
                 
                 // Se la distanza punto segmento è superiore ai 60 metri
                 if distUserCrumbs > 60 {
-                    // Scarico l'audio, lo riproduco l'audio 1 volta, dopo di che, in ARView, mostro il pop-up per chiamare il caregiver
+                    // Scarico l'audio, lo riproduco 1 volta, dopo di che, in ARView, mostro il pop-up per chiamare il caregiver
                     
                     if !self.isPlaying && self.nPlays < 1 {
                         let storage = Storage.storage()
