@@ -14,11 +14,10 @@ struct SettingsView: View {
     @State private var searchText = ""
     @State var showingAudioAlert = false
     @ObservedObject var audioRecorder = AudioRecorder()
-    @State var selectedAudio = URL(fileURLWithPath: "")
     @State var audioName = ""
     @ObservedObject var audioPlayer = AudioPlayer()
-    @State private var selectedFarAudio = 0
-    @State private var selectedUnexpectedAudio = 0
+    @State private var selectedFarFromCrumb = URL(fileURLWithPath: "")
+    @State private var selectedUnforseen = URL(fileURLWithPath: "")
     
     var body: some View {
         VStack {
@@ -44,25 +43,26 @@ struct SettingsView: View {
                     }
                 }
                 Section(header: Text("Audio")) {
-                    NavigationLink(destination: Audio(showingAudioAlert: self.$showingAudioAlert, audioRecorder: self.audioRecorder, selectedAudio: self.selectedAudio, audioName: self.$audioName)) {
+                    NavigationLink(destination: Audio(showingAudioAlert: self.$showingAudioAlert, audioRecorder: self.audioRecorder, audioName: self.$audioName)) {
                         Text("Gestisci audio")
                     }
                 }
                 //selectedAudio.lastPathComponent
                 Section(header: Text("Audio emergenze")) {
                     
-                    NavigationLink(destination: AudioPickerFarFromCrumb(audioRecorder: audioRecorder)) {
+                    NavigationLink(destination: AudioPickerFarFromCrumb(audioRecorder: audioRecorder, selectedAudio: self.$selectedFarFromCrumb)) {
                         HStack {
                             Text("Allontanamento")
                             Spacer()
-                            Text("\(AudioRecorder.farFromCrumbURL.lastPathComponent)").foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
+                            Text("\(self.selectedFarFromCrumb.lastPathComponent)").frame(width: UIScreen.main.bounds.width / 2, height: 20, alignment: .trailing).foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
                         }
                     }
-                    NavigationLink(destination: AudioPickerUnforseen(audioRecorder: audioRecorder)) {
+                    NavigationLink(destination: AudioPickerUnforseen(audioRecorder: audioRecorder, selectedAudio: self.$selectedUnforseen)) {
                         HStack {
                             Text("Imprevisti")
                             Spacer()
-                            Text("\(AudioRecorder.unforseenURL.lastPathComponent)").foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
+                            Text("\(self.selectedUnforseen.lastPathComponent)").frame(width: UIScreen.main.bounds.width / 2, height: 20, alignment: .trailing)
+                                .foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
                         }
                     }
                 }
@@ -78,6 +78,8 @@ struct SettingsView: View {
         } .navigationBarTitle("Impostazioni", displayMode: .large)
             .accentColor(InterfaceConstants.genericLinkForegroundColor)
             .onAppear {
+                self.selectedUnforseen = AudioRecorder.unforseenURL
+                self.selectedFarFromCrumb = AudioRecorder.farFromCrumbURL
                 //print("FETCH AUDIO")
                 //fetchAudios()
         }
@@ -87,32 +89,35 @@ struct SettingsView: View {
 
 struct AudioPickerFarFromCrumb: View {
     @ObservedObject var audioRecorder: AudioRecorder
+    @Binding var selectedAudio: URL
     
     var body: some View {
         List {
             ForEach(AudioRecorder.recordings, id: \.createDate) { recording in
-                AudioRowFarFromCrumb(audioURL: recording.fileURL)
+                AudioRowFarFromCrumb(audioURL: recording.fileURL, selectedAudio: self.$selectedAudio)
                     .onTapGesture {
                         AudioRecorder.farFromCrumbURL = recording.fileURL
+                        self.selectedAudio = recording.fileURL
                         if AudioPlayer.player.isPlaying{
                             AudioPlayer.player.stopPlayback()
                         }
                         AudioPlayer.player.startPlayback(audio: recording.fileURL)
                 }
             }
-        }
+        }.navigationBarTitle("Allontanamento", displayMode: .inline)
     }
 }
 
 struct AudioRowFarFromCrumb: View {
     @ObservedObject var audioPlayer = AudioPlayer()
     @State var audioURL: URL
+    @Binding var selectedAudio: URL
     
     var body: some View {
         HStack {
             Text(audioURL.lastPathComponent)
             Spacer()
-            if AudioRecorder.farFromCrumbURL == audioURL {
+            if selectedAudio == audioURL {
                 Image(systemName: "checkmark").foregroundColor(InterfaceConstants.genericLinkForegroundColor)
             }
         }
@@ -121,32 +126,35 @@ struct AudioRowFarFromCrumb: View {
 
 struct AudioPickerUnforseen: View {
     @ObservedObject var audioRecorder: AudioRecorder
+    @Binding var selectedAudio: URL
     
     var body: some View {
         List {
             ForEach(AudioRecorder.recordings, id: \.createDate) { recording in
-                AudioRowUnforseen(audioURL: recording.fileURL)
+                AudioRowUnforseen(audioURL: recording.fileURL, selectedAudio: self.$selectedAudio)
                     .onTapGesture {
                         AudioRecorder.unforseenURL = recording.fileURL
+                        self.selectedAudio = recording.fileURL
                         if AudioPlayer.player.isPlaying{
                             AudioPlayer.player.stopPlayback()
                         }
                         AudioPlayer.player.startPlayback(audio: recording.fileURL)
                 }
             }
-        }
+        }.navigationBarTitle("Imprevisto", displayMode: .inline)
     }
 }
 
 struct AudioRowUnforseen: View {
     @ObservedObject var audioPlayer = AudioPlayer()
     @State var audioURL: URL
+    @Binding var selectedAudio: URL
     
     var body: some View {
         HStack {
             Text(audioURL.lastPathComponent)
             Spacer()
-            if AudioRecorder.unforseenURL == audioURL {
+            if selectedAudio == audioURL {
                 Image(systemName: "checkmark").foregroundColor(InterfaceConstants.genericLinkForegroundColor)
             }
         }
@@ -157,7 +165,7 @@ struct AudioRowUnforseen: View {
 struct Audio: View {
     @Binding var showingAudioAlert: Bool
     @ObservedObject var audioRecorder: AudioRecorder
-    @State var selectedAudio: URL
+    @State var selectedAudio = URL(fileURLWithPath: "")
     @Binding var audioName: String
     @State var infoRec = "Registra"
     
