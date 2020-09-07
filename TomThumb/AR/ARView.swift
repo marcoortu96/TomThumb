@@ -315,33 +315,36 @@ struct PopUpHelp: View {
                 Button(action: {
                     //MARK: - Aggiungere riproduzione audio in caso di sconosciuti
                     print("Stranger")
-                    let store = Storage.storage()
-                    let ref = store.reference()
+                    let storage = Storage.storage()
+                    let pathString = "\(AudioRecorder.unforseenURL)"
+                    let storageRef = storage.reference().child("audio/\(AudioRecorder.unforseenURL.lastPathComponent)")
+                    print("ref far from crumb: \(storageRef)")
+                    let fileUrls = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
                     
-                    let audio = ref.child("audio/start1.m4a")
+                    guard let fileUrl = fileUrls.first?.appendingPathComponent(pathString) else {
+                        return
+                    }
                     
-                    let path = audio.fullPath.split(separator: "/")[1]
+                    let check = URL(string: "file:///private/\(fileUrl.absoluteString.dropFirst(8))")
+                    print("check: \(check!)")
                     
-                    print(path)
+                    let directoryContents = try! FileManager.default.contentsOfDirectory(at: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0], includingPropertiesForKeys: nil)
                     
-                    let fileUrl = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent(String(path))
+                    //print(directoryContents)
                     
-                    var player = AVAudioPlayer()
-                    
-                    audio.getData(maxSize: 3 * 1024 * 1024) { (data, error) in
-                        if let error = error {
-                            print("error \(error)")       
-                        } else {
-                            if let d = data {
-                                do {
-                                    try d.write(to: fileUrl)
-                                    player = try AVAudioPlayer(contentsOf: fileUrl)
-                                    player.play()
-                                } catch {
-                                    print("error")
-                                }
+                    if !directoryContents.contains(check!) {
+                        let downloadTask = storageRef.write(toFile: fileUrl)
+                        downloadTask.observe(.success) { _ in
+                            if AudioPlayer.player.isPlaying {
+                                AudioPlayer.player.stopPlayback()
                             }
+                            AudioPlayer.player.startPlayback(audio: fileUrl)
                         }
+                    } else {
+                        if AudioPlayer.player.isPlaying {
+                            AudioPlayer.player.stopPlayback()
+                        }
+                        AudioPlayer.player.startPlayback(audio: fileUrl)
                     }
                     self.isShowing = false
                 }) {

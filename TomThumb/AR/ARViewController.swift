@@ -32,7 +32,7 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     public var annotationHeightAdjustmentFactor = 1.0
     
     public var renderTime: TimeInterval = 0
-    private let distanceThreshold: Double = 20.0
+    private let distanceThreshold: Double = 10.0
     private var isColliding = false
     
     private var isPlaying = false
@@ -254,7 +254,7 @@ extension ARViewController: ARSCNViewDelegate {
                 print("DEBUG - point-segment distance: \(distUserCrumbs)")
                 
                 // Se la distanza punto segmento è superiore ai 60 metri
-                if distUserCrumbs > 5 {
+                if distUserCrumbs > 60 {
                     // Scarico l'audio, lo riproduco 1 volta, dopo di che, in ARView, mostro il pop-up per chiamare il caregiver
                     
                     if !self.isPlaying && self.nPlays < 1 {

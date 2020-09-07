@@ -235,6 +235,11 @@ func fetchAudios() {
                 AudioRecorder.farFromCrumbURL = check!
             }
             
+            // Assegno audio di default a imprevisti
+            if r.name == "stranger.m4a" {
+                AudioRecorder.unforseenURL = check!
+            }
+            
             if !directoryContents.contains(check!) {
                 let downloadTask = storageRef.child(r.name).write(toFile: fileUrl)
                 AudioRecorder.recordings.append(Recording(fileURL: fileUrl, createDate: getCreationDate(for: fileUrl)))
