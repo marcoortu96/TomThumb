@@ -18,6 +18,8 @@ class AudioRecorder: NSObject, ObservableObject {
     let objectWillChange = PassthroughSubject<AudioRecorder, Never>()
     @Published var audioRecorder: AVAudioRecorder!
     static var recordings = [Recording]()
+    static var farFromCrumbURL = URL(fileURLWithPath: "")
+    static var unforseenURL = URL(fileURLWithPath: "")
     /*let defaultRecordings = [Recording(fileURL: URL(fileURLWithPath: Bundle.main.path(forResource: "start1.m4a", ofType: nil)!), createDate: Date(timeIntervalSince1970: TimeInterval(exactly: 0)!)),
                              Recording(fileURL: URL(fileURLWithPath: Bundle.main.path(forResource: "crumb1.m4a", ofType: nil)!), createDate: Date(timeIntervalSince1970: TimeInterval(exactly: 1)!)),
                              Recording(fileURL: URL(fileURLWithPath: Bundle.main.path(forResource: "finish1.m4a", ofType: nil)!), createDate: Date(timeIntervalSince1970: TimeInterval(exactly: 2)!)),

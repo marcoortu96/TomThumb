@@ -32,7 +32,7 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     public var annotationHeightAdjustmentFactor = 1.0
     
     public var renderTime: TimeInterval = 0
-    private let distanceThreshold: Double = 10.0
+    private let distanceThreshold: Double = 20.0
     private var isColliding = false
     
     private var isPlaying = false
@@ -254,33 +254,43 @@ extension ARViewController: ARSCNViewDelegate {
                 print("DEBUG - point-segment distance: \(distUserCrumbs)")
                 
                 // Se la distanza punto segmento è superiore ai 60 metri
-                if distUserCrumbs > 60 {
+                if distUserCrumbs > 5 {
                     // Scarico l'audio, lo riproduco 1 volta, dopo di che, in ARView, mostro il pop-up per chiamare il caregiver
                     
                     if !self.isPlaying && self.nPlays < 1 {
                         let storage = Storage.storage()
                         let pathString = "\(self.route.mapRoute.crumbs[actualCrumb].audio!.lastPathComponent)"
-                        let storageRef = storage.reference().child("audio/farFromCrumb.m4a")
+                        let storageRef = storage.reference().child("audio/\(AudioRecorder.farFromCrumbURL.lastPathComponent)")
+                        print("ref far from crumb: \(storageRef)")
                         let fileUrls = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
                         
                         guard let fileUrl = fileUrls.first?.appendingPathComponent(pathString) else {
                             return
                         }
                         
+                        let check = URL(string: "file:///private/\(fileUrl.absoluteString.dropFirst(8))")
+                        print("check: \(check!)")
+                        
                         let directoryContents = try! FileManager.default.contentsOfDirectory(at: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0], includingPropertiesForKeys: nil)
                         
-                        print(directoryContents)
+                        //print(directoryContents)
                         
-                        if !directoryContents.contains(fileUrl) {
+                        if !directoryContents.contains(check!) {
                             print("Scarico il file dallo storage")
                             let downloadTask = storageRef.write(toFile: fileUrl)
                             downloadTask.observe(.success) { _ in
                                 self.isPlaying = true
+                                if AudioPlayer.player.isPlaying {
+                                    AudioPlayer.player.stopPlayback()
+                                }
                                 AudioPlayer.player.startPlayback(audio: fileUrl)
                             }
                         } else {
                             print("Il file è gia in locale")
                             self.isPlaying = true
+                            if AudioPlayer.player.isPlaying {
+                                AudioPlayer.player.stopPlayback()
+                            }
                             AudioPlayer.player.startPlayback(audio: fileUrl)
                         }
                         self.nPlays = self.nPlays + 1
@@ -320,13 +330,13 @@ extension ARViewController: ARSCNViewDelegate {
         
                 self.animation = true
                 if !directoryContents.contains(check!) {
-                    print("Scarico il file dallo storage")
+                    // print("Scarico il file dallo storage")
                     let downloadTask = storageRef.write(toFile: fileUrl)
                     downloadTask.observe(.success) { _ in
                         AudioPlayer.player.startPlayback(audio: fileUrl)
                     }
                 } else {
-                    print("Il file è gia in locale")
+                    //print("Il file è gia in locale")
                     AudioPlayer.player.startPlayback(audio: fileUrl)
                 }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {

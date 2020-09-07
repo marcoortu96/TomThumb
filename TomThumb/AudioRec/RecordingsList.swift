@@ -166,7 +166,7 @@ struct ChangeAudioName: View {
         }
     }
     
-    // TEST non funziona la rinomina di un audio 
+    // Rinomina degli audio
     func updateAudio() {
         let store = Storage.storage()
         //init metadata per storage
@@ -188,24 +188,8 @@ struct ChangeAudioName: View {
             let documentPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
             let documentDirectory = URL(fileURLWithPath: documentPath)
             let originPath = documentDirectory.appendingPathComponent(audioURL.lastPathComponent)
-            let destinationPath = documentDirectory.appendingPathComponent(self.audioName + ".m4a")
+            let destinationPath = documentDirectory.appendingPathComponent(self.audioName)
             try FileManager.default.moveItem(at: originPath, to: destinationPath)
-            
-            print(originPath)
-            print(destinationPath)
-            /*
-             //self.audioURL = documentPath.appendingPathComponent(self.audioName)
-             let fileUrls = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-             guard let fileUrl = fileUrls.first?.appendingPathComponent(self.audioName) else {
-             return
-             }
-             
-             let audioRenamed = URL(string: "file:///private/\(fileUrl.absoluteString.dropFirst(8))")
-             
-             FileManager.moveItem(<#T##self: FileManager##FileManager#>)
-             
-             print("SiAMO QUI \(fileUrl.absoluteString.dropLast(fileUrl.lastPathComponent.count) + audioRenamed!.lastPathComponent)")
-             //print("AUDIO RENAMED: \(audioRenamed!)") */
             let storeRefNew = store.reference().child("audio/\(destinationPath.lastPathComponent)")
             // Upload audio rinominato
             let uploadTask = storeRefNew.putFile(from: destinationPath, metadata: metadata) { (metadata, error) in
@@ -223,15 +207,44 @@ struct ChangeAudioName: View {
             uploadTask.observe(.success) { snapshot in
                 print("uploadTask success")
             }
-            //var audioRecorder = AudioRecorder()
-            //AudioRecorder.recordings = []
+            fetchAudios()
             
         } catch {
             print(error.localizedDescription)
         }
-        
-        print("Audio name: \(self.audioName)")
-        print("Audio settings: \(self.audioURL)")
+    }
+}
+
+// Fetch degli audio
+func fetchAudios() {
+    let storage = Storage.storage()
+    let storageRef = storage.reference().child("audio")
+    let fileUrls = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+    
+    let directoryContents = try! FileManager.default.contentsOfDirectory(at: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0], includingPropertiesForKeys: nil)
+    
+    storageRef.listAll { (result, error) in
+        for r in result.items {
+            guard let fileUrl = fileUrls.first?.appendingPathComponent(r.name) else {
+                return
+            }
+            let check = URL(string: "file:///private/\(fileUrl.absoluteString.dropFirst(8))")
+            
+            // Assegno audio di default a farFromCrumb
+            if r.name == "farFromCrumb.m4a" {
+                AudioRecorder.farFromCrumbURL = check!
+            }
+            
+            if !directoryContents.contains(check!) {
+                let downloadTask = storageRef.child(r.name).write(toFile: fileUrl)
+                AudioRecorder.recordings.append(Recording(fileURL: fileUrl, createDate: getCreationDate(for: fileUrl)))
+                downloadTask.observe(.success) { _ in
+                    print("file scaricato")
+                    AudioRecorder.recordings.append(Recording(fileURL: fileUrl, createDate: getCreationDate(for: fileUrl)))
+                }
+            }
+            
+        }
     }
 }
 

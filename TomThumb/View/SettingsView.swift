@@ -51,21 +51,20 @@ struct SettingsView: View {
                 //selectedAudio.lastPathComponent
                 Section(header: Text("Audio emergenze")) {
                     
-                    NavigationLink(destination: AudioPicker(audioRecorder: audioRecorder, selectedAudio: $selectedAudio)) {
+                    NavigationLink(destination: AudioPickerFarFromCrumb(audioRecorder: audioRecorder)) {
                         HStack {
-                            Text("Allonamento")
+                            Text("Allontanamento")
                             Spacer()
-                            Text("\(self.selectedAudio.lastPathComponent)").foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
+                            Text("\(AudioRecorder.farFromCrumbURL.lastPathComponent)").foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
                         }
                     }
-                    
-                    
-                    Picker(selection: $selectedUnexpectedAudio, label: Text("Imprevisti")) {
-                        ForEach(0 ..< AudioRecorder.recordings.count) {
-                            Text("\(AudioRecorder.recordings[$0].fileURL.lastPathComponent)")
+                    NavigationLink(destination: AudioPickerUnforseen(audioRecorder: audioRecorder)) {
+                        HStack {
+                            Text("Imprevisti")
+                            Spacer()
+                            Text("\(AudioRecorder.unforseenURL.lastPathComponent)").foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
                         }
                     }
-                    
                 }
                 Section {
                     Button(action: {
@@ -79,49 +78,22 @@ struct SettingsView: View {
         } .navigationBarTitle("Impostazioni", displayMode: .large)
             .accentColor(InterfaceConstants.genericLinkForegroundColor)
             .onAppear {
-                print("FETCH AUDIO")
-                self.fetchAudios()
+                //print("FETCH AUDIO")
+                //fetchAudios()
         }
     }
     
-
-    func fetchAudios() {
-        let storage = Storage.storage()
-        let storageRef = storage.reference().child("audio")
-        let fileUrls = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-        
-        var directoryContents = try! FileManager.default.contentsOfDirectory(at: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0], includingPropertiesForKeys: nil)
-        
-        storageRef.listAll { (result, error) in
-            for r in result.items {
-                guard let fileUrl = fileUrls.first?.appendingPathComponent(r.name) else {
-                    return
-                }
-                let check = URL(string: "file:///private/\(fileUrl.absoluteString.dropFirst(8))")
-                if !directoryContents.contains(check!) {
-                    let downloadTask = storageRef.child(r.name).write(toFile: fileUrl)
-                    AudioRecorder.recordings.append(Recording(fileURL: fileUrl, createDate: getCreationDate(for: fileUrl)))
-                   downloadTask.observe(.success) { _ in
-                        print("file scaricato")
-                        AudioRecorder.recordings.append(Recording(fileURL: fileUrl, createDate: getCreationDate(for: fileUrl)))
-                   }
-                }
-                
-            }
-        }
-    }
 }
 
-struct AudioPicker: View {
+struct AudioPickerFarFromCrumb: View {
     @ObservedObject var audioRecorder: AudioRecorder
-    @Binding var selectedAudio: URL
     
     var body: some View {
         List {
             ForEach(AudioRecorder.recordings, id: \.createDate) { recording in
-                AudioRow(audioURL: recording.fileURL, selectedAudio: self.$selectedAudio)
+                AudioRowFarFromCrumb(audioURL: recording.fileURL)
                     .onTapGesture {
-                        self.selectedAudio = recording.fileURL
+                        AudioRecorder.farFromCrumbURL = recording.fileURL
                         if AudioPlayer.player.isPlaying{
                             AudioPlayer.player.stopPlayback()
                         }
@@ -132,22 +104,55 @@ struct AudioPicker: View {
     }
 }
 
-struct AudioRow: View {
+struct AudioRowFarFromCrumb: View {
     @ObservedObject var audioPlayer = AudioPlayer()
     @State var audioURL: URL
-    @State var checked = false
-    @Binding var selectedAudio: URL
     
     var body: some View {
         HStack {
             Text(audioURL.lastPathComponent)
             Spacer()
-            if selectedAudio == audioURL {
+            if AudioRecorder.farFromCrumbURL == audioURL {
                 Image(systemName: "checkmark").foregroundColor(InterfaceConstants.genericLinkForegroundColor)
             }
         }
     }
 }
+
+struct AudioPickerUnforseen: View {
+    @ObservedObject var audioRecorder: AudioRecorder
+    
+    var body: some View {
+        List {
+            ForEach(AudioRecorder.recordings, id: \.createDate) { recording in
+                AudioRowUnforseen(audioURL: recording.fileURL)
+                    .onTapGesture {
+                        AudioRecorder.unforseenURL = recording.fileURL
+                        if AudioPlayer.player.isPlaying{
+                            AudioPlayer.player.stopPlayback()
+                        }
+                        AudioPlayer.player.startPlayback(audio: recording.fileURL)
+                }
+            }
+        }
+    }
+}
+
+struct AudioRowUnforseen: View {
+    @ObservedObject var audioPlayer = AudioPlayer()
+    @State var audioURL: URL
+    
+    var body: some View {
+        HStack {
+            Text(audioURL.lastPathComponent)
+            Spacer()
+            if AudioRecorder.unforseenURL == audioURL {
+                Image(systemName: "checkmark").foregroundColor(InterfaceConstants.genericLinkForegroundColor)
+            }
+        }
+    }
+}
+
 
 struct Audio: View {
     @Binding var showingAudioAlert: Bool
