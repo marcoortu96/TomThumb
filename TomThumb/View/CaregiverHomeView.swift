@@ -52,6 +52,9 @@ struct CaregiverHomeView: View {
             .onAppear {
                 self.navBarTitle = "Esecuzione"
             }
+            .onDisappear {
+                self.navBarTitle = ""
+            }
             
             SettingsView()
                 .tabItem {
@@ -67,7 +70,7 @@ struct CaregiverHomeView: View {
             }
             
         }
-        .navigationBarTitle("\(navBarTitle)", displayMode: (navBarTitle == "Percorsi" || navBarTitle == "Impostazioni" || navBarTitle == "Esecuzione") ? .large : .inline)
+        .navigationBarTitle("\(navBarTitle)", displayMode: (navBarTitle == "Percorsi" || navBarTitle == "Impostazioni") ? .large : .inline)
         
         
     }

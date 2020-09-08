@@ -22,29 +22,30 @@ struct RoutesView: View {
     @State var crumbs = [Crumb]()
     @State var routes = [Route]()
     @State var showingActivityIndicator = true
+    @State var gridRoutes = [[Route]]()
+    
     
     var body: some View {
         LoadingView(isShowing: $showingActivityIndicator, string: "Connessione") {
             VStack(alignment: .leading) {
-                    Spacer()
-                    SearchBar(searchText: self.$searchText)
-                    List {
-                        ForEach(self.routes.filter {
-                            self.searchText == "" ? true : $0.routeName.localizedCaseInsensitiveContains(self.searchText)
-                        }, id: \.self) { route in
-                            HStack {
-                                Image(systemName: "\(route.routeName.lowercased().substring(toIndex: route.routeName.length - (route.routeName.length-1))).circle.fill").foregroundColor(Color.orange).font(.title)
-                                NavigationLink(destination: RouteDetail(route: route)) {
-                                    Text("\(route.routeName)")
-                                }
+                Spacer()
+                SearchBar(searchText: self.$searchText)
+                List {
+                    ForEach(self.routes.filter {
+                        self.searchText == "" ? true : $0.routeName.localizedCaseInsensitiveContains(self.searchText)
+                    }, id: \.self) { route in
+                        HStack {
+                            Image(systemName: "\(route.routeName.lowercased().substring(toIndex: route.routeName.length - (route.routeName.length-1))).circle.fill").foregroundColor(Color.orange).font(.title)
+                            NavigationLink(destination: RouteDetail(route: route)) {
+                                Text("\(route.routeName)")
                             }
                         }
-                        .onDelete(perform: self.deleteRoute)
                     }
-                    .listStyle(GroupedListStyle())
-                    .environment(\.horizontalSizeClass, .regular)
                 }
-                .navigationBarTitle("Percorsi")
+                .listStyle(GroupedListStyle())
+                .environment(\.horizontalSizeClass, .regular)
+            }
+            .navigationBarTitle("Percorsi")
             
         }.onAppear {
             self.checkConnection()
@@ -122,7 +123,7 @@ struct RoutesView: View {
                     self.routes.append(route)   
                 }
                 
-                 self.routes.sort(by: {$0.routeName < $1.routeName})
+                self.routes.sort(by: {$0.routeName < $1.routeName})
             }
             self.showingActivityIndicator = false
         }) { (error) in

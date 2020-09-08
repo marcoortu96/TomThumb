@@ -29,23 +29,27 @@ struct RecentRoutes: View {
                         ForEach(self.routes.sorted(by: {$0.routeName < $1.routeName}).filter {
                             self.searchText == "" ? true : $0.routeName.localizedCaseInsensitiveContains(self.searchText)
                         }, id: \.self) { route in
-                            NavigationLink(destination: ARView(route: route, debug: false).navigationBarTitle("").navigationBarHidden(true)
-                                .navigationBarBackButtonHidden(true)
-                            .onDisappear {
-                                self.navBarPrefs.navBarIsHidden = true
-                            }) {
-                                Text("\(route.routeName)")
+                            HStack {
+                                Image(systemName: "\(route.routeName.lowercased().substring(toIndex: route.routeName.length - (route.routeName.length-1))).circle.fill").foregroundColor(Color.green).font(.title)
+                                NavigationLink(destination: ARView(route: route, debug: false).navigationBarTitle("").navigationBarHidden(true)
+                                    .navigationBarBackButtonHidden(true)
+                                .onDisappear {
+                                    self.navBarPrefs.navBarIsHidden = true
+                                }
+                                ) {
+                                    Text("\(route.routeName)")
+                                }
+                                .onTapGesture {
+                                    self.presentAlert = true
+                                }
+                                /*.alert(isPresented: self.$presentAlert) {
+                                    Alert(title: Text("Avvia \(route.routeName)"), message: Text("Vuoi avviare questo percorso?"), primaryButton: Alert.Button.default(Text("Avvia"), action: {
+                                        
+                                    }), secondaryButton: Alert.Button.cancel(Text("Annulla"), action: {
+                                        self.presentationMode.wrappedValue.dismiss()
+                                    }))
+                                }*/
                             }
-                            .onTapGesture {
-                                self.presentAlert = true
-                            }
-                            /*.alert(isPresented: self.$presentAlert) {
-                                Alert(title: Text("Avvia \(route.routeName)"), message: Text("Vuoi avviare questo percorso?"), primaryButton: Alert.Button.default(Text("Avvia"), action: {
-                                    
-                                }), secondaryButton: Alert.Button.cancel(Text("Annulla"), action: {
-                                    self.presentationMode.wrappedValue.dismiss()
-                                }))
-                            }*/
                         }
                     }
                     .listStyle(GroupedListStyle())

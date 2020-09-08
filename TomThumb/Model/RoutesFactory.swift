@@ -9,7 +9,7 @@
 import Foundation
 import MapKit
 
-class Route : Hashable, ObservableObject {
+class Route : Identifiable, Hashable, ObservableObject {
     var id : String
     @Published var routeName: String
     var startName: String
