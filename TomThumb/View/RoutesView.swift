@@ -32,12 +32,17 @@ struct RoutesView: View {
                         ForEach(self.routes.filter {
                             self.searchText == "" ? true : $0.routeName.localizedCaseInsensitiveContains(self.searchText)
                         }, id: \.self) { route in
-                            NavigationLink(destination: RouteDetail(route: route)) {
-                                Text("\(route.routeName)")
+                            HStack {
+                                Image(systemName: "\(route.routeName.lowercased().substring(toIndex: route.routeName.length - (route.routeName.length-1))).circle.fill").foregroundColor(Color.orange).font(.title)
+                                NavigationLink(destination: RouteDetail(route: route)) {
+                                    Text("\(route.routeName)")
+                                }
                             }
                         }
                         .onDelete(perform: self.deleteRoute)
                     }
+                    .listStyle(GroupedListStyle())
+                    .environment(\.horizontalSizeClass, .regular)
                 }
                 .navigationBarTitle("Percorsi")
             

@@ -21,40 +21,49 @@ struct ProfileDetail: View {
                 .clipShape(Circle())
                 .shadow(radius: 1)
             Form {
-                Section(header: Text("Nome")) {
-                    NavigationLink(destination: ChangeName(name: caregiver.name)) {
-                        VStack {
-                            Text(caregiver.name)
+                Section(header: Text("Nome").font(.body).bold()) {
+                    HStack {
+                        Image(systemName: "pencil.circle.fill").foregroundColor(Color.yellow).font(.title)
+                        NavigationLink(destination: ChangeName(name: caregiver.name)) {
+                            VStack {
+                                Text(caregiver.name)
+                            }
                         }
                     }
                 }
-                Section(header: Text("Username")) {
-                    NavigationLink(destination: ChangeUsername(username: caregiver.username)) {
-                        VStack {
-                            Text(caregiver.username)
+                Section(header: Text("Username").font(.body).bold()) {
+                    HStack {
+                        Image(systemName: "pencil.circle.fill").foregroundColor(Color.green).font(.title)
+                        NavigationLink(destination: ChangeUsername(username: caregiver.username)) {
+                            VStack {
+                                Text(caregiver.username)
+                            }
                         }
                     }
                 }
-                Section(header: Text("Email")) {
-                    NavigationLink(destination: ChangeEmail(email: caregiver.email)) {
-                        VStack {
-                            Text(caregiver.email)
+                Section(header: Text("Email").font(.body).bold()) {
+                    HStack {
+                        Image(systemName: "pencil.circle.fill").foregroundColor(Color.orange).font(.title)
+                        NavigationLink(destination: ChangeEmail(email: caregiver.email)) {
+                            VStack {
+                                Text(caregiver.email)
+                            }
                         }
                     }
                 }
-                Section(header: Text("Numero di telefono")) {
-                    NavigationLink(destination: ChangeNum(num: caregiver.phoneNumber)) {
-                        VStack {
-                            Text(caregiver.phoneNumber)
+                Section(header: Text("Numero di telefono").font(.body).bold()) {
+                    HStack {
+                        Image(systemName: "pencil.circle.fill").foregroundColor(Color.blue).font(.title)
+                        NavigationLink(destination: ChangeNum(num: caregiver.phoneNumber)) {
+                            VStack {
+                                Text(caregiver.phoneNumber)
+                            }
                         }
-                    }
-                }
-                Section(header: Text("Bambini")) {
-                    List(CaregiverFactory().caregivers[1].children) { child in
-                        ChildRow(child: child)
                     }
                 }
             }
+            .listStyle(GroupedListStyle())
+            .environment(\.horizontalSizeClass, .regular)
         }
         .navigationBarTitle("Profilo", displayMode: .inline)
     }
@@ -64,7 +73,7 @@ struct ChangeName: View {
     @State var name: String
     var body: some View {
         Form {
-            Section(header: Text("Modifica nome")) {
+            Section(header: Text("Modifica nome").font(.body).bold()) {
                 VStack {
                     TextField("Name", text: $name)
                 }
@@ -77,7 +86,7 @@ struct ChangeUsername: View {
     @State var username: String
     var body: some View {
         Form {
-            Section(header: Text("Modifica username")) {
+            Section(header: Text("Modifica username").font(.body).bold()) {
                 VStack {
                     TextField("Username", text: $username)
                 }
@@ -90,7 +99,7 @@ struct ChangeEmail: View {
     @State var email: String
     var body: some View {
         Form {
-            Section(header: Text("Modifica email")) {
+            Section(header: Text("Modifica email").font(.body).bold()) {
                 VStack {
                     TextField("Email", text: $email)
                 }
@@ -103,7 +112,7 @@ struct ChangeNum: View {
     @State var num: String
     var body: some View {
         Form {
-            Section(header: Text("Modifica numero")) {
+            Section(header: Text("Modifica numero").font(.body).bold()) {
                 VStack {
                     TextField("Numero", text: $num).keyboardType(.numberPad)
                 }
@@ -111,14 +120,6 @@ struct ChangeNum: View {
         }.navigationBarTitle(Text("Telefono"), displayMode: .inline)
     }
 }
-
-struct ChildRow: View {
-    var child: Child
-    var body: some View {
-        Text(child.name)
-    }
-}
-
 
 struct ProfileDetail_Previews: PreviewProvider {
     static var previews: some View {

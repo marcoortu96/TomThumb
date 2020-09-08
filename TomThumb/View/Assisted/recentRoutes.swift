@@ -48,6 +48,8 @@ struct RecentRoutes: View {
                             }*/
                         }
                     }
+                    .listStyle(GroupedListStyle())
+                    .environment(\.horizontalSizeClass, .regular)
                 }
         }.onAppear {
             self.checkConnection()

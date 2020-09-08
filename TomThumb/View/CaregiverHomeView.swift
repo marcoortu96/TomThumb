@@ -28,7 +28,7 @@ struct CaregiverHomeView: View {
                         Button(action: {
                             self.showAddRouteView.toggle()
                         }) {
-                            Image(systemName: "plus.circle").font(.title)
+                            Image(systemName: "plus.circle.fill").font(.title)
                         }.opacity(self.navBarTitle == "Percorsi" ? 1.0 : 0.0)
                     )
             }

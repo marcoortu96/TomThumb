@@ -22,10 +22,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let dbRef = Database.database().reference()
         dbRef.child("Assisted").child("isExecuting").setValue(false)
         
-        // Download audio dallo storage
-        //if UIApplication.isFirstLaunch() {
+        // Download audio dallo storage al primo lancio dell'app
+        if UIApplication.isFirstLaunch() {
             fetchAudios()
-        //}
+        }
         
         return true
     }

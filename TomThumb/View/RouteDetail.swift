@@ -22,87 +22,110 @@ struct RouteDetail: View {
     
     var body: some View {
         Form {
-            Section(header: Text("Nome")) {
-                NavigationLink(destination: ChangeRouteName(route: route)) {
-                    VStack {
-                        Text(route.routeName)
+            Section(header: Text("Nome").font(.body).bold()) {
+                HStack {
+                    Image(systemName: "pencil.circle.fill").foregroundColor(Color.yellow).font(.title)
+                    NavigationLink(destination: ChangeRouteName(route: route)) {
+                        VStack {
+                            Text(route.routeName)
+                        }
                     }
                 }
             }
-            Section(header: Text("Dettagli")) {
+            Section(header: Text("Dettagli").font(.body).bold()) {
                 HStack {
+                    Image(systemName: "mappin.circle.fill").foregroundColor(Color.red).font(.title)
                     Text("Inizio")
                     Spacer()
                     Text("\(route.startName)").foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
                 }
                 HStack {
+                    Image(systemName: "mappin.circle.fill").foregroundColor(Color.green).font(.title)
                     Text("Fine")
                     Spacer()
                     Text("\(route.finishName)").foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
                 }
                 HStack {
-                    Text("#Molliche")
+                    Image(systemName: "number.circle.fill").foregroundColor(Color.gray).font(.title)
+                    Text("Molliche")
                     Spacer()
                     Text("\(route.crumbs)").foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
                 }
                 HStack {
+                    Image(systemName: "equal.circle.fill").foregroundColor(Color.orange).font(.title)
                     Text("Distanza")
                     Spacer()
                     Text("\(route.distance.short)m").foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
                 }
             }
-            Section(header: Text("Mappa")) {
-                NavigationLink(destination: MapView(mapRoute: route.mapRoute)) {
-                    Text("Visualizza il percorso")
-                }.accentColor(InterfaceConstants.genericLinkForegroundColor)
+            Section(header: Text("Mappa").font(.body).bold()) {
+                HStack {
+                    Image(systemName: "location.circle.fill").foregroundColor(Color.yellow).font(.title)
+                    NavigationLink(destination: MapView(mapRoute: route.mapRoute)) {
+                        Text("Visualizza il percorso")
+                    }.accentColor(InterfaceConstants.genericLinkForegroundColor)
+                }
             }
-            Section(header: Text("Prova")) {
-                NavigationLink(destination: ARView(route: route, debug: true)) {
-                    Text("Avvia il test del percorso")
-                        .frame(minWidth: 0, maxWidth: .infinity)
-                        .foregroundColor(InterfaceConstants.positiveLinkForegroundColor)
+            Section(header: Text("Prova").font(.body).bold()) {
+                HStack {
+                    Image(systemName: "play.circle.fill").foregroundColor(Color.green).font(.title)
+                    NavigationLink(destination: ARView(route: route, debug: true)) {
+                        Text("Avvia il test del percorso")
+                            .frame(minWidth: 0, maxWidth: .infinity)
+                            .foregroundColor(InterfaceConstants.positiveLinkForegroundColor)
+                    }
+                    
                 }
             }
             
-            Section(header: Text("Condivisione")) {
-                Button(action: {
-                    //Send route to user
-                    self.showingSendedAlert = true
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                        self.showingSendedAlert = false
+            Section(header: Text("Condivisione").font(.body).bold()) {
+                HStack {
+                    Image(systemName: "arrowshape.turn.up.right.circle.fill").foregroundColor(Color.blue).font(.title)
+                    Button(action: {
+                        //Send route to user
+                        self.showingSendedAlert = true
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                            self.showingSendedAlert = false
+                        }
+                        self.sendRoute()
+                    }) {
+                        Text("Invia percorso")
+                            .frame(minWidth: 0, maxWidth: .infinity)
+                            .foregroundColor(InterfaceConstants.genericLinkForegroundColor)
+                    }.alert(isPresented: self.$showingSendedAlert) {
+                        Alert(title: Text("Condivisione"),
+                              message: Text("Il percorso è stato inviato"), dismissButton: .none)
                     }
-                    self.sendRoute()
-                }) {
-                    Text("Invia percorso")
-                        .frame(minWidth: 0, maxWidth: .infinity)
-                        .foregroundColor(InterfaceConstants.genericLinkForegroundColor)
-                }.alert(isPresented: self.$showingSendedAlert) {
-                    Alert(title: Text("Condivisione"),
-                          message: Text("Il percorso è stato inviato"), dismissButton: .none)
                 }
+                
             }
-            Section(header: Text("Elimina percorso")) {
-                Button(action: {
-                    self.showingDeleteAlert = true
-                }) {
-                    Text("Elimina")
-                        .frame(minWidth: 0, maxWidth: .infinity)
-                        .foregroundColor(InterfaceConstants.negativeLinkForegroundColor)
-                }.alert(isPresented: self.$showingDeleteAlert) {
-                    Alert(title: Text("Eliminazione"),
-                          message: Text("Vuoi eliminare questo percorso?"),
-                          primaryButton: Alert.Button.destructive(
-                            Text("Elimina"), action: {
-                        self.deleteRoute()
-                        self.presentationMode.wrappedValue.dismiss()
-                    }),
-                          secondaryButton: Alert.Button.cancel(Text("Annulla"), action: {
-                          }))
+            Section(header: Text("Elimina percorso").font(.body).bold()) {
+                HStack {
+                    Image(systemName: "trash.circle.fill").foregroundColor(Color.red).font(.title)
+                    Button(action: {
+                        self.showingDeleteAlert = true
+                    }) {
+                        Text("Elimina")
+                            .frame(minWidth: 0, maxWidth: .infinity)
+                            .foregroundColor(InterfaceConstants.negativeLinkForegroundColor)
+                    }.alert(isPresented: self.$showingDeleteAlert) {
+                        Alert(title: Text("Eliminazione"),
+                              message: Text("Vuoi eliminare questo percorso?"),
+                              primaryButton: Alert.Button.destructive(
+                                Text("Elimina"), action: {
+                                    self.deleteRoute()
+                                    self.presentationMode.wrappedValue.dismiss()
+                              }),
+                              secondaryButton: Alert.Button.cancel(Text("Annulla"), action: {
+                              }))
+                    }
                 }
             }
         }
+        .listStyle(GroupedListStyle())
+        .environment(\.horizontalSizeClass, .regular)
         .navigationBarTitle(Text("Dati percorso"), displayMode: .inline)
-    
+        
     }
     
     func sendRoute() {

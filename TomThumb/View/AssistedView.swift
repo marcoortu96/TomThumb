@@ -52,8 +52,10 @@ struct AssistedView: View {
                             self.readDataFromDB()
                             self.showMap = true
                         }) {
-                            Text("Avvia Monitoraggio")
-                                .foregroundColor(.white)
+                            HStack {
+                                Image(systemName: "play.circle").foregroundColor(.white).font(.title)
+                                Text("Avvia Monitoraggio").foregroundColor(.white)
+                            }
                         }
                         .padding()
                         .background(Color.blue.opacity(0.85))
