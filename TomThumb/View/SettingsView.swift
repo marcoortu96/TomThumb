@@ -16,14 +16,14 @@ struct SettingsView: View {
     @ObservedObject var audioRecorder = AudioRecorder()
     @State var audioName = ""
     @ObservedObject var audioPlayer = AudioPlayer()
-    @State private var selectedFarFromCrumb = URL(fileURLWithPath: "")
-    @State private var selectedUnforseen = URL(fileURLWithPath: "")
+    @State var selectedFarFromCrumb = URL(fileURLWithPath: "")
+    @State var selectedUnforseen = URL(fileURLWithPath: "")
     
     var body: some View {
         VStack {
             PreventCollapseView()
             Form {
-                Section(header: Text("Profilo")) {
+                Section(header: Text("Profilo").font(.body).bold()) {
                     NavigationLink(destination: ProfileDetail(caregiver: CaregiverFactory().caregivers[1])) {
                         HStack {
                             Image(uiImage: CaregiverFactory().caregivers[1].img)
@@ -42,26 +42,31 @@ struct SettingsView: View {
                         }
                     }
                 }
-                Section(header: Text("Audio")) {
-                    NavigationLink(destination: Audio(showingAudioAlert: self.$showingAudioAlert, audioRecorder: self.audioRecorder, audioName: self.$audioName)) {
-                        Text("Gestisci audio")
-                    }
-                }
-                //selectedAudio.lastPathComponent
-                Section(header: Text("Audio emergenze")) {
-                    
-                    NavigationLink(destination: AudioPickerFarFromCrumb(audioRecorder: audioRecorder, selectedAudio: self.$selectedFarFromCrumb)) {
-                        HStack {
-                            Text("Allontanamento")
-                            Spacer()
-                            Text("\(self.selectedFarFromCrumb.lastPathComponent)").frame(width: UIScreen.main.bounds.width / 2, height: 20, alignment: .trailing).foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
+                Section(header: Text("Audio").font(.body).bold()) {
+                    HStack {
+                        Image(systemName: "pencil.circle.fill").foregroundColor(Color.blue).font(.title)
+                        NavigationLink(destination: Audio(showingAudioAlert: self.$showingAudioAlert, audioRecorder: self.audioRecorder, audioName: self.$audioName)) {
+                            Text("Gestisci audio")
                         }
                     }
+                }
+                Section(header: Text("Audio emergenze").font(.body).bold()) {
+
+                    NavigationLink(destination: AudioPickerFarFromCrumb(audioRecorder: audioRecorder, selectedAudio: self.$selectedFarFromCrumb)) {
+                        HStack {
+                            Image(systemName: "arrowtriangle.up.circle.fill").foregroundColor(Color.red).font(.title)
+                            Text("Allontanamento")
+                            Spacer()
+                            Text("\(self.selectedFarFromCrumb.lastPathComponent)").frame(width: UIScreen.main.bounds.width / 4, height: 20, alignment: .trailing).foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
+                        }
+                    }
+
                     NavigationLink(destination: AudioPickerUnforseen(audioRecorder: audioRecorder, selectedAudio: self.$selectedUnforseen)) {
                         HStack {
+                            Image(systemName: "person.circle.fill").foregroundColor(Color.yellow).font(.title)
                             Text("Imprevisti")
                             Spacer()
-                            Text("\(self.selectedUnforseen.lastPathComponent)").frame(width: UIScreen.main.bounds.width / 2, height: 20, alignment: .trailing)
+                            Text("\(self.selectedUnforseen.lastPathComponent)").frame(width: UIScreen.main.bounds.width / 4, height: 20, alignment: .trailing)
                                 .foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
                         }
                     }
@@ -74,14 +79,14 @@ struct SettingsView: View {
                     }
                 }
             }
+            .listStyle(GroupedListStyle())
+            .environment(\.horizontalSizeClass, .regular)
             
         } .navigationBarTitle("Impostazioni", displayMode: .large)
             .accentColor(InterfaceConstants.genericLinkForegroundColor)
             .onAppear {
                 self.selectedUnforseen = AudioRecorder.unforseenURL
                 self.selectedFarFromCrumb = AudioRecorder.farFromCrumbURL
-                //print("FETCH AUDIO")
-                //fetchAudios()
         }
     }
     
@@ -92,18 +97,24 @@ struct AudioPickerFarFromCrumb: View {
     @Binding var selectedAudio: URL
     
     var body: some View {
-        List {
-            ForEach(AudioRecorder.recordings, id: \.createDate) { recording in
-                AudioRowFarFromCrumb(audioURL: recording.fileURL, selectedAudio: self.$selectedAudio)
-                    .onTapGesture {
-                        AudioRecorder.farFromCrumbURL = recording.fileURL
-                        self.selectedAudio = recording.fileURL
-                        if AudioPlayer.player.isPlaying{
-                            AudioPlayer.player.stopPlayback()
-                        }
-                        AudioPlayer.player.startPlayback(audio: recording.fileURL)
+        VStack {
+            List {
+                ForEach(AudioRecorder.recordings, id: \.createDate) { recording in
+                    AudioRowFarFromCrumb(audioURL: recording.fileURL, selectedAudio: self.$selectedAudio)
+                        .onTapGesture {
+                            AudioRecorder.farFromCrumbURL = recording.fileURL
+                            self.selectedAudio = recording.fileURL
+                            if AudioPlayer.player.isPlaying{
+                                AudioPlayer.player.stopPlayback()
+                            }
+                            AudioPlayer.player.startPlayback(audio: recording.fileURL)
+                    }
                 }
             }
+            Text("Seleziona un audio da riprodurre quando l'assistito si allontana dal percorso")
+                .foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
+            .multilineTextAlignment(.center)
+            .padding(.bottom, 15)
         }.navigationBarTitle("Allontanamento", displayMode: .inline)
     }
 }
@@ -129,18 +140,24 @@ struct AudioPickerUnforseen: View {
     @Binding var selectedAudio: URL
     
     var body: some View {
-        List {
-            ForEach(AudioRecorder.recordings, id: \.createDate) { recording in
-                AudioRowUnforseen(audioURL: recording.fileURL, selectedAudio: self.$selectedAudio)
-                    .onTapGesture {
-                        AudioRecorder.unforseenURL = recording.fileURL
-                        self.selectedAudio = recording.fileURL
-                        if AudioPlayer.player.isPlaying{
-                            AudioPlayer.player.stopPlayback()
-                        }
-                        AudioPlayer.player.startPlayback(audio: recording.fileURL)
+        VStack {
+            List {
+                ForEach(AudioRecorder.recordings, id: \.createDate) { recording in
+                    AudioRowUnforseen(audioURL: recording.fileURL, selectedAudio: self.$selectedAudio)
+                        .onTapGesture {
+                            AudioRecorder.unforseenURL = recording.fileURL
+                            self.selectedAudio = recording.fileURL
+                            if AudioPlayer.player.isPlaying{
+                                AudioPlayer.player.stopPlayback()
+                            }
+                            AudioPlayer.player.startPlayback(audio: recording.fileURL)
+                    }
                 }
             }
+            Text("Seleziona un audio da riprodurre quando l'assistito incontra uno sconosciuto")
+                .foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
+            .multilineTextAlignment(.center)
+                .padding(.bottom, 15)
         }.navigationBarTitle("Imprevisto", displayMode: .inline)
     }
 }
@@ -169,9 +186,11 @@ struct Audio: View {
     @Binding var audioName: String
     @State var infoRec = "Registra"
     
+    @State var audios = [Recording]()
+    
     var body: some View {
         VStack(alignment: .center) {
-            RecordingsListSettings(audioRecorder: self.audioRecorder, selectedAudio: self.$selectedAudio, audioName: self.$audioName)
+            RecordingsListSettings(audioRecorder: self.audioRecorder, selectedAudio: self.$selectedAudio, audioName: self.$audioName, audios: self.$audios)
             if self.audioRecorder.recording == false {
                 Button(action: {
                     self.audioRecorder.startRecording()
@@ -188,6 +207,7 @@ struct Audio: View {
             } else {
                 Button(action: {
                     self.audioRecorder.stopRecording()
+                    self.audios.insert(AudioRecorder.recordings.first!, at: 0)
                     self.infoRec = "Registra"
                 }) {
                     Image(systemName: "stop.fill")
@@ -201,7 +221,10 @@ struct Audio: View {
             Divider()
             Text("\(infoRec)")
         }
-        .navigationBarTitle(Text("Gestisci audio"))
+        .navigationBarTitle(Text("Gestisci audio"), displayMode: .inline)
+        .onAppear {
+            self.audios = AudioRecorder.recordings
+        }
     }
 }
 
