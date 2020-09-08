@@ -39,7 +39,7 @@ struct RecordingsList: View {
 
 struct RecordingRow: View {
     var audioURL: URL
-    @ObservedObject var audioPlayer = AudioPlayer()
+    @ObservedObject var audioPlayer = AudioPlayer.player
     @Binding var selectedAudio: URL
     
     var body: some View {
@@ -54,21 +54,28 @@ struct RecordingRow: View {
                     self.selectedAudio = self.audioURL
             }
             Spacer()
-            if audioPlayer.isPlaying == false {
+            if !audioPlayer.isPlaying {
                 Button(action: {
-                    if AudioPlayer.player.isPlaying {
-                        AudioPlayer.player.stopPlayback()
+                    if self.audioPlayer.isPlaying {
+                        self.audioPlayer.stopPlayback()
                     }
-                    AudioPlayer.player.startPlayback(audio: self.audioURL)
+                    self.audioPlayer.startPlayback(audio: self.audioURL)
                 }) {
                     Image(systemName: "play.circle")
+                        .imageScale(.large)
+                }
+            } else if audioPlayer.audioPlayer.url! == self.audioURL {
+                Button(action: {
+                    self.audioPlayer.stopPlayback()
+                }) {
+                    Image(systemName: "stop.circle.fill")
                         .imageScale(.large)
                 }
             } else {
                 Button(action: {
                     self.audioPlayer.stopPlayback()
                 }) {
-                    Image(systemName: "stop.circle.fill")
+                    Image(systemName: "play.circle")
                         .imageScale(.large)
                 }
             }
@@ -86,19 +93,19 @@ struct RecordingsListSettings: View {
     
     var body: some View {
         LoadingView(isShowing: self.$showingLoadingView, string: "Caricamento") {
-        List {
-            ForEach(self.audios, id: \.createDate) { recording in
-                RecordingRowSettings(audioURL: recording.fileURL, selectedAudio: self.$selectedAudio, audioName: self.audioName, audios: self.$audios, showingLoadingView: self.$showingLoadingView)
+            List {
+                ForEach(self.audios, id: \.createDate) { recording in
+                    RecordingRowSettings(audioURL: recording.fileURL, selectedAudio: self.$selectedAudio, audioName: self.audioName, audios: self.$audios, showingLoadingView: self.$showingLoadingView)
+                }
+                .onDelete(perform: self.delete)
             }
-            .onDelete(perform: self.delete)
-        }
             .listStyle(GroupedListStyle())
             .environment(\.horizontalSizeClass, .regular)
         }
         .onAppear {
             self.audios = AudioRecorder.recordings
         }
-            
+        
     }
     
     func delete(at offsets: IndexSet) {
@@ -115,7 +122,7 @@ struct RecordingsListSettings: View {
 
 struct RecordingRowSettings: View {
     @State var audioURL: URL
-    @ObservedObject var audioPlayer = AudioPlayer()
+    @ObservedObject var audioPlayer = AudioPlayer.player
     @Binding var selectedAudio: URL
     @State var audioName: String
     @Binding var audios: [Recording]
@@ -123,18 +130,28 @@ struct RecordingRowSettings: View {
     
     var body: some View {
         HStack {
-            if audioPlayer.isPlaying == false {
+            if !audioPlayer.isPlaying {
                 Button(action: {
+                    if self.audioPlayer.isPlaying {
+                        self.audioPlayer.stopPlayback()
+                    }
                     self.audioPlayer.startPlayback(audio: self.audioURL)
                 }) {
                     Image(systemName: "play.circle")
+                        .imageScale(.large)
+                }.buttonStyle(BorderlessButtonStyle())
+            } else if audioPlayer.audioPlayer.url! == self.audioURL{
+                Button(action: {
+                    self.audioPlayer.stopPlayback()
+                }) {
+                    Image(systemName: "stop.circle.fill")
                         .imageScale(.large)
                 }.buttonStyle(BorderlessButtonStyle())
             } else {
                 Button(action: {
                     self.audioPlayer.stopPlayback()
                 }) {
-                    Image(systemName: "stop.circle.fill")
+                    Image(systemName: "play.circle")
                         .imageScale(.large)
                 }.buttonStyle(BorderlessButtonStyle())
             }
@@ -219,14 +236,14 @@ struct ChangeAudioName: View {
                         let percentComplete = 100.0 * Double(snapshot.progress!.completedUnitCount) / Double(snapshot.progress!.totalUnitCount)
                         print("percentComplete \(percentComplete)")
                     }
-
+                    
                     uploadTask.observe(.success) { snapshot in
                         print("uploadTask success")
                         self.audios = []
                         self.reloadAudios()
                         self.showingLoadingView = false
                     }
-
+                    
                 } catch {
                     print(error.localizedDescription)
                 }
@@ -239,7 +256,7 @@ struct ChangeAudioName: View {
         let storage = Storage.storage()
         let storageRef = storage.reference().child("audio")
         let fileUrls = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-
+        
         
         var directoryContents = try! FileManager.default.contentsOfDirectory(at: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0], includingPropertiesForKeys: nil)
         

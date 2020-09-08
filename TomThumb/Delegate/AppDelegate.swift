@@ -23,9 +23,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         dbRef.child("Assisted").child("isExecuting").setValue(false)
         
         // Download audio dallo storage al primo lancio dell'app
-        if UIApplication.isFirstLaunch() {
+        //if UIApplication.isFirstLaunch() {
             fetchAudios()
-        }
+        //}
         
         return true
     }
