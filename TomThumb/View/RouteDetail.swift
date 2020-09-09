@@ -157,6 +157,18 @@ struct RouteDetail: View {
             }
         }
         
+        db.child("Assisted").observeSingleEvent(of: .value) { snapshot in
+            let value = snapshot.value as? NSDictionary
+            
+           let id = value?["id"] as? String ?? "err"
+            
+            if id == self.route.id {
+                db.child("Assisted").child("id").setValue("null")
+                db.child("Assisted").child("isExecuting").setValue(false)
+            }
+            
+        }
+        
         // Rimozione della route dalla lista delle route mostrate nella view
         //self.routes.remove(atOffsets: offsets)
         

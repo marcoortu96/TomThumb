@@ -27,6 +27,8 @@ extension UIColor {
     static var random: UIColor {
         return .init(hue: .random(in: 0...1), saturation: 1, brightness: 1, alpha: 1)
     }
+    
+    static var colors: [UIColor] = [UIColor(red: 0.97, green: 0.8, blue: 0.58, alpha: 1), UIColor(red: 0.69, green: 0.88, blue: 0.53, alpha: 1), UIColor(red: 0.34, green: 0.67, blue: 0.81, alpha: 1), UIColor(red: 0.7, green: 0.18, blue: 0.58, alpha: 1), UIColor(red: 0.17, green: 0.48, blue: 0.4, alpha: 1), UIColor(red: 0.1, green: 0.28, blue: 0.58, alpha: 1)]
 }
 
 extension String {
@@ -56,18 +58,9 @@ extension String {
 }
 
 extension Array {
-    func chunked(into size:Int) -> [[Element]] {
-        
-        var chunkedArray = [[Element]]()
-        
-        for index in 0...self.count {
-            if index % size == 0 && index != 0 {
-                chunkedArray.append(Array(self[(index - size)..<index]))
-            } else if(index == self.count-1) {
-                chunkedArray.append(Array(self[index - 1..<index]))
-            }
-        }
-        
-        return chunkedArray
-    }
+     func chunked(into size: Int) -> [[Element]] {
+         return stride(from: 0, to: count, by: size).map {
+             Array(self[$0 ..< Swift.min($0 + size, count)])
+         }
+     }
 }

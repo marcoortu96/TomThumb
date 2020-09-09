@@ -22,8 +22,7 @@ struct RoutesView: View {
     @State var crumbs = [Crumb]()
     @State var routes = [Route]()
     @State var showingActivityIndicator = true
-    @State var gridRoutes = [[Route]]()
-    
+    @State var gridRoutes = [[Route]]()    
     
     var body: some View {
         LoadingView(isShowing: $showingActivityIndicator, string: "Connessione") {
@@ -34,22 +33,38 @@ struct RoutesView: View {
                         .font(.headline)
                         .foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
                 } else {
-                    //Spacer()
                     SearchBar(searchText: self.$searchText)
-                    List {
-                        ForEach(self.routes.filter {
-                            self.searchText == "" ? true : $0.routeName.localizedCaseInsensitiveContains(self.searchText)
-                        }, id: \.self) { route in
+                    ScrollView {
+                        ForEach(0..<self.routes.chunked(into: 2).count, id: \.self) { index in
                             HStack {
-                                Image(systemName: "\(route.routeName.lowercased().substring(toIndex: route.routeName.length - (route.routeName.length-1))).circle.fill").foregroundColor(Color.orange).font(.title)
-                                NavigationLink(destination: RouteDetail(route: route)) {
-                                    Text("\(route.routeName)")
+                                ForEach(self.routes.chunked(into: 2)[index]) { route in
+                                    HStack {
+                                    GeometryReader { _ in
+                                        Image(systemName: "map.fill")
+                                            .font(.title)
+                                            .padding(.top)
+                                            .padding(.leading)
+                                        NavigationLink(destination: RouteDetail(route: route)) {
+                                            Text(route.routeName)
+                                                .padding(.top, 60)
+                                                .padding(.horizontal, 5)
+                                            
+                                                .font(Font.system(size: 15, weight: .bold))
+                                    
+                                            
+                                        }.foregroundColor(Color.white)
+                                    }
+                                    .background(Color(UIColor.colors[(index + route.routeName.count) % UIColor.colors.count]))
+                                    .frame(width: (UIScreen.main.bounds.size.width/100) * 45, height: (UIScreen.main.bounds.size.height/100) * 18)
+                                    }.cornerRadius(12)
+
                                 }
+                                
                             }
                         }
                     }
-                    .listStyle(GroupedListStyle())
-                    .environment(\.horizontalSizeClass, .regular)
+                    
+                    
                 }
             }
             .navigationBarTitle("Percorsi")
@@ -64,14 +79,34 @@ struct RoutesView: View {
                 }
             })
             
+            
         }.onDisappear {
             self.showingActivityIndicator = true
         }
         .accentColor(InterfaceConstants.genericLinkForegroundColor)
         .sheet(isPresented: self.$showAddRouteView) {
             //add new route view (load sheet)
-            LoadingView(isShowing: self.$showingActivityIndicator, string: "Connessione") {
-                AddRouteView(showSheetView: self.$showAddRouteView, centerCoordinate: locationManager.location!.coordinate, audioRecorder: self.audioRecorder, crumbAudio: self.crumbAudio, currentCrumb: self.currentCrumb, crumbs: self.crumbs)
+            if CLLocationManager.authorizationStatus() == .authorizedAlways {
+                LoadingView(isShowing: self.$showingActivityIndicator, string: "Connessione") {
+                    AddRouteView(showSheetView: self.$showAddRouteView, centerCoordinate: locationManager.location!.coordinate, audioRecorder: self.audioRecorder, crumbAudio: self.crumbAudio, currentCrumb: self.currentCrumb, crumbs: self.crumbs)
+                }
+            } else {
+                GeometryReader { _ in
+                    VStack {
+                        Text("Imposta la posizione in\n \"consenti sempre\"")
+                        Divider()
+                        Button(action: {
+                            self.showAddRouteView = false
+                            UIApplication.shared.open(URL(string: "\(UIApplication.openSettingsURLString)&path=LOCATION/\(Bundle.main.bundleIdentifier!)")!)
+                        }) {
+                            Text("Impostazioni")
+                        }
+                    }
+                    
+                }
+                .background(Color.gray)
+                .cornerRadius(15)
+                .frame(width: (UIScreen.main.bounds.size.width/100) * 75, height: (UIScreen.main.bounds.size.height/100) * 20)
             }
         }
     }
@@ -131,8 +166,11 @@ struct RoutesView: View {
                 }
                 
                 self.routes.sort(by: {$0.routeName < $1.routeName})
+                
             }
+            print(self.routes.chunked(into: 2))
             self.showingActivityIndicator = false
+            
         }) { (error) in
             print(error.localizedDescription)
         }
