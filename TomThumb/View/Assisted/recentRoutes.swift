@@ -23,7 +23,11 @@ struct RecentRoutes: View {
     var body: some View {
         LoadingView(isShowing: $showingActivityIndicator, string: "Connessione") {
             VStack(alignment: .leading) {
-                    
+                if self.routes.count == 0{
+                    Text("Non ci sono percorsi recenti")
+                    .font(.headline)
+                    .foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
+                } else {
                     SearchBar(searchText: self.$searchText)
                     List {
                         ForEach(self.routes.sorted(by: {$0.routeName < $1.routeName}).filter {
@@ -33,9 +37,9 @@ struct RecentRoutes: View {
                                 Image(systemName: "\(route.routeName.lowercased().substring(toIndex: route.routeName.length - (route.routeName.length-1))).circle.fill").foregroundColor(Color.green).font(.title)
                                 NavigationLink(destination: ARView(route: route, debug: false).navigationBarTitle("").navigationBarHidden(true)
                                     .navigationBarBackButtonHidden(true)
-                                .onDisappear {
-                                    self.navBarPrefs.navBarIsHidden = true
-                                }
+                                    .onDisappear {
+                                        self.navBarPrefs.navBarIsHidden = true
+                                    }
                                 ) {
                                     Text("\(route.routeName)")
                                 }
@@ -43,18 +47,19 @@ struct RecentRoutes: View {
                                     self.presentAlert = true
                                 }
                                 /*.alert(isPresented: self.$presentAlert) {
-                                    Alert(title: Text("Avvia \(route.routeName)"), message: Text("Vuoi avviare questo percorso?"), primaryButton: Alert.Button.default(Text("Avvia"), action: {
-                                        
-                                    }), secondaryButton: Alert.Button.cancel(Text("Annulla"), action: {
-                                        self.presentationMode.wrappedValue.dismiss()
-                                    }))
-                                }*/
+                                 Alert(title: Text("Avvia \(route.routeName)"), message: Text("Vuoi avviare questo percorso?"), primaryButton: Alert.Button.default(Text("Avvia"), action: {
+                                 
+                                 }), secondaryButton: Alert.Button.cancel(Text("Annulla"), action: {
+                                 self.presentationMode.wrappedValue.dismiss()
+                                 }))
+                                 }*/
                             }
                         }
                     }
                     .listStyle(GroupedListStyle())
                     .environment(\.horizontalSizeClass, .regular)
                 }
+            }
         }.onAppear {
             self.checkConnection()
             Database.database().reference().child("Routes").observe(DataEventType.value, with: { (snapshot) in

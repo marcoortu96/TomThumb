@@ -21,6 +21,8 @@ struct AssistedHomeView: View {
         TabView {
             if !isExecuting {
                 Text("Non ci sono percorsi da avviare")
+                    .font(.headline)
+                    .foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
                     .navigationBarBackButtonHidden(true)
                     .tabItem {
                         VStack {

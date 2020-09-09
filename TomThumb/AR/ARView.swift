@@ -154,7 +154,7 @@ struct ARView: View {
                             .foregroundColor(.white)
                     }
                     .alert(isPresented: self.$showingEndARAlert) {
-                        Alert(title: Text("Termina"), message: Text("Vuoi terminare questo test?"), primaryButton: Alert.Button.default(Text("OK"), action: {
+                        Alert(title: Text("Termina"), message: Text(self.debug ? "Vuoi terminare questo test?" : "Vuoi terminare il percorso?"), primaryButton: Alert.Button.default(Text("OK"), action: {
                             self.presentationMode.wrappedValue.dismiss()
                             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                                 let dbRef = Database.database().reference()

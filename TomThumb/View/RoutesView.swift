@@ -28,6 +28,12 @@ struct RoutesView: View {
     var body: some View {
         LoadingView(isShowing: $showingActivityIndicator, string: "Connessione") {
             VStack(alignment: .leading) {
+                if self.routes.count == 0 {
+                    Text("Non ci sono percorsi.\nPremi su '+' per crearne uno.")
+                        .multilineTextAlignment(.center)
+                    .font(.headline)
+                    .foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
+                } else {
                 Spacer()
                 SearchBar(searchText: self.$searchText)
                 List {
@@ -44,6 +50,7 @@ struct RoutesView: View {
                 }
                 .listStyle(GroupedListStyle())
                 .environment(\.horizontalSizeClass, .regular)
+                }
             }
             .navigationBarTitle("Percorsi")
             

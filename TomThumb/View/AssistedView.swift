@@ -27,6 +27,8 @@ struct AssistedView: View {
             ZStack {
                 if !showMap && isExecuting == false {
                     Text("Non ci sono percorsi in esecuzione")
+                    .font(.headline)
+                    .foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
                 }
                 if isExecuting == true {
                     if showMap {
