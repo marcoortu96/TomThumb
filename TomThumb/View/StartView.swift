@@ -28,10 +28,10 @@ struct StartView: View {
                     .padding(.bottom, 50)
                     .padding(.trailing, (UIScreen.main.bounds.size.width/100)*20)
                     .padding(.leading, (UIScreen.main.bounds.size.width/100)*20)
-                    .cornerRadius(200)
+                    
                     .background(Color.green)
                     .opacity(1)
-                }
+                }.cornerRadius(12)
                 NavigationLink(destination: AssistedHomeView()) {
                     HStack {
                         Image(systemName: "person.fill")
@@ -46,10 +46,10 @@ struct StartView: View {
                     .padding(.bottom, 50)
                     .padding(.trailing, (UIScreen.main.bounds.size.width/100)*22)
                     .padding(.leading, (UIScreen.main.bounds.size.width/100)*22)
-                    .cornerRadius(200)
+                    
                     .background(Color.blue)
                     .opacity(1)
-                }
+                }.cornerRadius(12)
 
             }.navigationBarTitle(Text("TomThumb"), displayMode: .inline)
         }

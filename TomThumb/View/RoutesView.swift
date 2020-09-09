@@ -27,29 +27,29 @@ struct RoutesView: View {
     
     var body: some View {
         LoadingView(isShowing: $showingActivityIndicator, string: "Connessione") {
-            VStack(alignment: .leading) {
+            VStack {
                 if self.routes.count == 0 {
                     Text("Non ci sono percorsi.\nPremi su '+' per crearne uno.")
                         .multilineTextAlignment(.center)
-                    .font(.headline)
-                    .foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
+                        .font(.headline)
+                        .foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
                 } else {
-                Spacer()
-                SearchBar(searchText: self.$searchText)
-                List {
-                    ForEach(self.routes.filter {
-                        self.searchText == "" ? true : $0.routeName.localizedCaseInsensitiveContains(self.searchText)
-                    }, id: \.self) { route in
-                        HStack {
-                            Image(systemName: "\(route.routeName.lowercased().substring(toIndex: route.routeName.length - (route.routeName.length-1))).circle.fill").foregroundColor(Color.orange).font(.title)
-                            NavigationLink(destination: RouteDetail(route: route)) {
-                                Text("\(route.routeName)")
+                    //Spacer()
+                    SearchBar(searchText: self.$searchText)
+                    List {
+                        ForEach(self.routes.filter {
+                            self.searchText == "" ? true : $0.routeName.localizedCaseInsensitiveContains(self.searchText)
+                        }, id: \.self) { route in
+                            HStack {
+                                Image(systemName: "\(route.routeName.lowercased().substring(toIndex: route.routeName.length - (route.routeName.length-1))).circle.fill").foregroundColor(Color.orange).font(.title)
+                                NavigationLink(destination: RouteDetail(route: route)) {
+                                    Text("\(route.routeName)")
+                                }
                             }
                         }
                     }
-                }
-                .listStyle(GroupedListStyle())
-                .environment(\.horizontalSizeClass, .regular)
+                    .listStyle(GroupedListStyle())
+                    .environment(\.horizontalSizeClass, .regular)
                 }
             }
             .navigationBarTitle("Percorsi")
@@ -140,12 +140,3 @@ struct RoutesView: View {
     }
     
 }
-
-
-
-/*struct RoutesView_Previews: PreviewProvider {
- static var previews: some View {
- RoutesView()
- }
- }*/
-
