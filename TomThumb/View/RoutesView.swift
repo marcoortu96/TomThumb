@@ -37,7 +37,9 @@ struct RoutesView: View {
                     ScrollView {
                         ForEach(0..<self.routes.chunked(into: 2).count, id: \.self) { index in
                             HStack {
-                                ForEach(self.routes.chunked(into: 2)[index]) { route in
+                                ForEach(self.routes.chunked(into: 2)[index].filter {
+                                    self.searchText == "" ? true : $0.routeName.localizedCaseInsensitiveContains(self.searchText)
+                                }) { route in
                                     HStack {
                                     GeometryReader { _ in
                                         Image(systemName: "map.fill")
@@ -55,7 +57,7 @@ struct RoutesView: View {
                                         }.foregroundColor(Color.white)
                                     }
                                     .background(Color(UIColor.colors[(index + route.routeName.count) % UIColor.colors.count]))
-                                    .frame(width: (UIScreen.main.bounds.size.width/100) * 45, height: (UIScreen.main.bounds.size.height/100) * 18)
+                                    .frame(width: (UIScreen.main.bounds.size.width/100) * 45, height: 100)
                                     }.cornerRadius(12)
 
                                 }
