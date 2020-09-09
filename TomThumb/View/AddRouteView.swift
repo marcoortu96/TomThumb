@@ -12,8 +12,6 @@ import Firebase
 import FirebaseDatabase
 import FirebaseStorage
 
-var locationManager = CLLocationManager()
-
 struct AddRouteView: View {
     
     @Binding var showSheetView: Bool

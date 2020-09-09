@@ -51,7 +51,7 @@ struct ARView: View {
     var body: some View {
         LoadingView(isShowing: self.$showingActivityIndicator, string: "Connessione") {
             ZStack {
-                ARViewController(route: self.route, actualCrumb: self.$actualCrumb, lookAt: self.$lookAt, prevCrumb: self.$prevCrumb, nPlays: self.$nPlays, animation: self.$showAnimation, isTesting: self.debug)
+                ARViewController(route: self.route, actualCrumb: self.$actualCrumb, lookAt: self.$lookAt, prevCrumb: self.$prevCrumb, nPlays: self.$nPlays, animation: self.$showAnimation, isTesting: self.debug).edgesIgnoringSafeArea([.top, .bottom])
                 
                 //Thumbs arrows section
                 
@@ -133,6 +133,7 @@ struct ARView: View {
                 //Route percentage section \(actualCrumb)/\(route.mapRoute.crumbs.count)
                 ZStack {
                     Text("\(self.actualCrumb)/\(self.route.crumbs)")
+                        .foregroundColor(Color.white)
                     Circle()
                         .fill(Color.clear)
                         .frame(width: 50, height: 50)

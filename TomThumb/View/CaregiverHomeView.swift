@@ -52,9 +52,6 @@ struct CaregiverHomeView: View {
             .onAppear {
                 self.navBarTitle = "Esecuzione"
             }
-            .onDisappear {
-                self.navBarTitle = ""
-            }
             
             SettingsView()
                 .tabItem {

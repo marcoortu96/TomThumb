@@ -10,6 +10,7 @@ import SwiftUI
 import MapKit
 
 let mapView = MKMapView()
+var locationManager = CLLocationManager()
 
 struct MapViewAddRoute: UIViewRepresentable {
     @Binding var centerCoordinate: CLLocationCoordinate2D
@@ -19,7 +20,7 @@ struct MapViewAddRoute: UIViewRepresentable {
         
         let status = CLLocationManager.authorizationStatus()
         locationManager.requestAlwaysAuthorization()
-        locationManager.requestWhenInUseAuthorization()
+        //locationManager.requestWhenInUseAuthorization()
         
         //Control if user authorized his position
         if status == .authorizedAlways || status == .authorizedWhenInUse {
@@ -36,6 +37,9 @@ struct MapViewAddRoute: UIViewRepresentable {
             mapView.delegate = context.coordinator
             mapView.subviews[1].isHidden = true //hide 'legal' label from right-lower corner
             mapView.addAnnotation(annotation)
+        }
+        else {
+            locationManager.stopUpdatingLocation()
         }
         return mapView
     }
