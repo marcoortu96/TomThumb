@@ -156,6 +156,8 @@ struct ARView: View {
                     }
                     .alert(isPresented: self.$showingEndARAlert) {
                         Alert(title: Text("Termina"), message: Text(self.debug ? "Vuoi terminare questo test?" : "Vuoi terminare il percorso?"), primaryButton: Alert.Button.default(Text("OK"), action: {
+                            // Riattiva blocco schermo automatico quando termina AR
+                            UIApplication.shared.isIdleTimerDisabled = false
                             self.presentationMode.wrappedValue.dismiss()
                             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                                 let dbRef = Database.database().reference()
@@ -237,6 +239,10 @@ struct ARView: View {
             }.onAppear {
                 self.checkConnection()
             }
+        }
+        .onDisappear {
+            // Riattiva blocco schermo automatico quando si torna alla view precedente
+            UIApplication.shared.isIdleTimerDisabled = false
         }
         
     }

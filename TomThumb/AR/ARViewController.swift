@@ -68,6 +68,8 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        // Disattiva blocco schermo automatico
+        UIApplication.shared.isIdleTimerDisabled = true
         sceneLocationView = SceneLocationView()
         guard let locationService = locationManager.locationManager else { return }
         
@@ -171,6 +173,8 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
         print("DEBUG - Crumb index out of bounds, you might have finished the route!")
         sceneLocationView?.removeAllNodes()
         sceneLocationView?.pause()
+        // Riattiva blocco schermo automatico
+        UIApplication.shared.isIdleTimerDisabled = false
     }
     
     func makeUIViewController(context: UIViewControllerRepresentableContext<ARViewController>) -> ARViewController {

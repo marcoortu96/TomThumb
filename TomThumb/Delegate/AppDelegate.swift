@@ -22,10 +22,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let dbRef = Database.database().reference()
         dbRef.child("Assisted").child("isExecuting").setValue(false)
         
-        // Download audio dallo storage al primo lancio dell'app
-        //if UIApplication.isFirstLaunch() {
-            fetchAudios()
-        //}
+        // Download audio dallo storage al lancio dell'app
+        fetchAudios()
+        
+        // Al lancio dell'app il blocco schermo automatico rimane attivo
+        UIApplication.shared.isIdleTimerDisabled = false
+
         
         return true
     }
