@@ -190,7 +190,9 @@ struct AddRouteView: View {
             if let streetNum = placeMark.subThoroughfare {
                 partial = partial + " \(streetNum)%"
             } else {
-                partial = partial + " snc.%"
+                if partial != "Begin" {
+                    partial = partial + " snc.%"
+                }
             }
             
             geocoder.reverseGeocodeLocation(route.crumbs[route.crumbs.count - 1].location, completionHandler: {(placemarks, error) -> Void in
@@ -210,8 +212,7 @@ struct AddRouteView: View {
                 } else {
                     partial = partial + " snc."
                 }
-                
-                
+                                
                 self.routeName = partial
                 self.canSave = true
             })

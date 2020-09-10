@@ -22,7 +22,8 @@ struct RoutesView: View {
     @State var crumbs = [Crumb]()
     @State var routes = [Route]()
     @State var showingActivityIndicator = true
-    @State var gridRoutes = [[Route]]()    
+    @State var gridRoutes = [[Route]]()
+    @State var colorIndex = 0
     
     var body: some View {
         LoadingView(isShowing: $showingActivityIndicator, string: "Connessione") {
@@ -35,28 +36,26 @@ struct RoutesView: View {
                 } else {
                     SearchBar(searchText: self.$searchText)
                     ScrollView {
-                        ForEach(0..<self.routes.chunked(into: 2).count, id: \.self) { index in
+                        ForEach(0..<self.gridRoutes.count, id: \.self) { index in
                             HStack {
-                                ForEach(self.routes.chunked(into: 2)[index].filter {
+                                ForEach(self.gridRoutes[index].filter {
                                     self.searchText == "" ? true : $0.routeName.localizedCaseInsensitiveContains(self.searchText)
-                                }) { route in
+                                }.indices) { item in
                                     HStack {
                                     GeometryReader { _ in
                                         Image(systemName: "map.fill")
                                             .font(.title)
                                             .padding(.top)
                                             .padding(.leading)
-                                        NavigationLink(destination: RouteDetail(route: route)) {
-                                            Text(route.routeName)
+                                        NavigationLink(destination: RouteDetail(route: self.gridRoutes[index][item])) {
+                                            Text(self.gridRoutes[index][item].routeName)
                                                 .padding(.top, 60)
-                                                .padding(.horizontal, 5)
-                                            
+                                                .padding(.horizontal, 8)
                                                 .font(Font.system(size: 15, weight: .bold))
-                                    
                                             
                                         }.foregroundColor(Color.white)
                                     }
-                                    .background(Color(UIColor.colors[(index + route.routeName.count) % UIColor.colors.count]))
+                                    .background(Color(UIColor.getColor(i: index, j: item)))
                                     .frame(width: (UIScreen.main.bounds.size.width/100) * 45, height: 100)
                                     }.cornerRadius(12)
 
@@ -169,8 +168,9 @@ struct RoutesView: View {
                 
                 self.routes.sort(by: {$0.routeName < $1.routeName})
                 
+                self.gridRoutes = self.routes.chunked(into: 2)
+                
             }
-            print(self.routes.chunked(into: 2))
             self.showingActivityIndicator = false
             
         }) { (error) in
