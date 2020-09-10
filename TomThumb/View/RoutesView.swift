@@ -64,8 +64,6 @@ struct RoutesView: View {
                             }
                         }
                     }
-                    
-                    
                 }
             }
             .navigationBarTitle("Percorsi")
@@ -167,7 +165,6 @@ struct RoutesView: View {
                 }
                 
                 self.routes.sort(by: {$0.routeName < $1.routeName})
-                
                 self.gridRoutes = self.routes.chunked(into: 2)
                 
             }

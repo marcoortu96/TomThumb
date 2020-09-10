@@ -18,6 +18,7 @@ class AudioRecorder: NSObject, ObservableObject {
     let objectWillChange = PassthroughSubject<AudioRecorder, Never>()
     @Published var audioRecorder: AVAudioRecorder!
     static var recordings = [Recording]()
+    static var defaultRecordings = [Recording]()
     static var farFromCrumbURL = URL(fileURLWithPath: "")
     static var unforseenURL = URL(fileURLWithPath: "")
     /*let defaultRecordings = [Recording(fileURL: URL(fileURLWithPath: Bundle.main.path(forResource: "start1.m4a", ofType: nil)!), createDate: Date(timeIntervalSince1970: TimeInterval(exactly: 0)!)),
@@ -47,7 +48,7 @@ class AudioRecorder: NSObject, ObservableObject {
         }
         
         let documentPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        let audioFilename = documentPath.appendingPathComponent("\(Date().toString(dateFormat: "dd-MM-YY'at'_HH:mm:ss"))")
+        let audioFilename = documentPath.appendingPathComponent("\(Date().toString(dateFormat: "dd-MM-YY'at'_HH:mm:ss")).m4a")
         let settings = [
             AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
             AVSampleRateKey: 12000,
@@ -72,6 +73,8 @@ class AudioRecorder: NSObject, ObservableObject {
     
     func fetchRecordings() {
         AudioRecorder.recordings.removeAll()
+        AudioRecorder.defaultRecordings.removeAll()
+        let audioDefaultName = ["Inizio percorso.m4a", "Briciola raccolta.m4a", "Fine percorso.m4a", "Allontanamento.m4a", "Imprevisto.m4a"]
         
         let fileManager = FileManager.default
         let documentDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
@@ -79,9 +82,14 @@ class AudioRecorder: NSObject, ObservableObject {
         
         for audio in directoryContents {
             let recording = Recording(fileURL: audio, createDate: getCreationDate(for: audio))
-            AudioRecorder.recordings.append(recording)
+            if audioDefaultName.contains(audio.lastPathComponent) {
+                AudioRecorder.defaultRecordings.append(recording)
+            } else {
+                AudioRecorder.recordings.append(recording)
+            }
         }
         
+        AudioRecorder.defaultRecordings.sort(by: {$0.fileURL.lastPathComponent.compare($1.fileURL.lastPathComponent) == .orderedDescending})
         AudioRecorder.recordings.sort(by: {$0.createDate.compare($1.createDate) == .orderedDescending})
         //recordings = defaultRecordings + recordings
         

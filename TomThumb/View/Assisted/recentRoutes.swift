@@ -16,48 +16,49 @@ struct RecentRoutes: View {
     @State var routes = [Route]()
     @State var showingActivityIndicator = true
     @State var presentAlert = false
+    @State var gridRoutes = [[Route]]()
     
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @EnvironmentObject var navBarPrefs: NavBarPreferences
     
     var body: some View {
         LoadingView(isShowing: $showingActivityIndicator, string: "Connessione") {
-            VStack(alignment: .leading) {
-                if self.routes.count == 0{
+            VStack {
+                if self.routes.count == 0 {
                     Text("Non ci sono percorsi recenti")
                     .font(.headline)
                     .foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
                 } else {
                     SearchBar(searchText: self.$searchText)
-                    List {
-                        ForEach(self.routes.sorted(by: {$0.routeName < $1.routeName}).filter {
-                            self.searchText == "" ? true : $0.routeName.localizedCaseInsensitiveContains(self.searchText)
-                        }, id: \.self) { route in
+                    ScrollView {
+                        ForEach(0..<self.gridRoutes.count, id: \.self) { index in
                             HStack {
-                                Image(systemName: "\(route.routeName.lowercased().substring(toIndex: route.routeName.length - (route.routeName.length-1))).circle.fill").foregroundColor(Color.green).font(.title)
-                                NavigationLink(destination: ARView(route: route, debug: false).navigationBarTitle("").navigationBarHidden(true)
-                                    .navigationBarBackButtonHidden(true)
-                                    .onDisappear {
-                                        self.navBarPrefs.navBarIsHidden = true
+                                ForEach(self.gridRoutes[index].filter {
+                                    self.searchText == "" ? true : $0.routeName.localizedCaseInsensitiveContains(self.searchText)
+                                }.indices) { item in
+                                    HStack {
+                                    GeometryReader { _ in
+                                        Image(systemName: "map.fill")
+                                            .font(.title)
+                                            .padding(.top)
+                                            .padding(.leading)
+                                        NavigationLink(destination: RouteDetail(route: self.gridRoutes[index][item])) {
+                                            Text(self.gridRoutes[index][item].routeName)
+                                                .padding(.top, 60)
+                                                .padding(.horizontal, 8)
+                                                .font(Font.system(size: 15, weight: .bold))
+                                            
+                                        }.foregroundColor(Color.white)
                                     }
-                                ) {
-                                    Text("\(route.routeName)")
+                                    .background(Color(UIColor.getColor(i: index, j: item)))
+                                    .frame(width: (UIScreen.main.bounds.size.width/100) * 45, height: 100)
+                                    }.cornerRadius(12)
+
                                 }
-                                .onTapGesture {
-                                    self.presentAlert = true
-                                }
-                                /*.alert(isPresented: self.$presentAlert) {
-                                 Alert(title: Text("Avvia \(route.routeName)"), message: Text("Vuoi avviare questo percorso?"), primaryButton: Alert.Button.default(Text("Avvia"), action: {
-                                 
-                                 }), secondaryButton: Alert.Button.cancel(Text("Annulla"), action: {
-                                 self.presentationMode.wrappedValue.dismiss()
-                                 }))
-                                 }*/
+                                
                             }
                         }
                     }
-                    .listStyle(GroupedListStyle())
-                    .environment(\.horizontalSizeClass, .regular)
                 }
             }
         }.onAppear {
@@ -115,6 +116,7 @@ struct RecentRoutes: View {
                     }
                     
                     self.routes.sort(by: {$0.lastExecution < $1.lastExecution})
+                    self.gridRoutes = self.routes.chunked(into: 2)
                 }
             }
             self.showingActivityIndicator = false
