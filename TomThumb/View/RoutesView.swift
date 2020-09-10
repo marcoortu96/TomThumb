@@ -40,7 +40,7 @@ struct RoutesView: View {
                             HStack {
                                 ForEach(self.gridRoutes[index].filter {
                                     self.searchText == "" ? true : $0.routeName.localizedCaseInsensitiveContains(self.searchText)
-                                }.indices) { item in
+                                }.indices, id: \.self) { item in
                                     HStack {
                                     GeometryReader { _ in
                                         Image(systemName: "map.fill")
@@ -110,22 +110,6 @@ struct RoutesView: View {
         }
     }
     
-    func deleteRoute(at offsets: IndexSet) {
-        let db = Database.database().reference()
-        
-        // Rimozione della route dal db
-        
-        db.child("Routes").child(self.routes[offsets.first!].id).removeValue() { (error, ref) in
-            if error != nil {
-                print("error \(error.debugDescription)")
-            }
-        }
-        
-        // Rimozione della route dalla lista delle route mostrate nella view
-        self.routes.remove(atOffsets: offsets)
-        
-    }
-    
     func checkConnection() {
         let connectedRef = Database.database().reference(withPath: ".info/connected")
         connectedRef.observe(.value, with: { snapshot in
@@ -145,6 +129,7 @@ struct RoutesView: View {
             let snapValue = snapshot.value as? [String : [String : Any]]
             //print("value BBBBBBBBBBB \n \(snapValue ?? ["result" : ["error" : "cannot retrive values from DB"]])")
             self.routes = []
+            self.gridRoutes = [[]]
             for (key, value) in snapValue! {
                 var crumbs = [Crumb]()
                 
@@ -163,11 +148,10 @@ struct RoutesView: View {
                 if !self.routes.contains(route) {
                     self.routes.append(route)   
                 }
-                
-                self.routes.sort(by: {$0.routeName < $1.routeName})
-                self.gridRoutes = self.routes.chunked(into: 2)
-                
             }
+            self.routes.sort(by: {$0.routeName < $1.routeName})
+            self.gridRoutes = self.routes.chunked(into: 2)
+            print(self.gridRoutes)
             self.showingActivityIndicator = false
             
         }) { (error) in
