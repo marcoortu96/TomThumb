@@ -163,13 +163,10 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
             "id" : self.route.id as Any,
             "latitude" : userLocation.coordinate.latitude,
             "longitude" : userLocation.coordinate.longitude,
-            "collected" : self.actualCrumb
+            "collected" : self.actualCrumb,
+            "isExecuting" : false
         ]
         db.child(isTesting ? "Test" : "Assisted").setValue(routeData)
-        
-        if !isTesting {
-            db.child("Assisted").updateChildValues(["isExecuting": false])
-        }
         
         print("DEBUG - Crumb index out of bounds, you might have finished the route!")
         sceneLocationView?.removeAllNodes()

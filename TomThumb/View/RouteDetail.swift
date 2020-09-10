@@ -79,8 +79,9 @@ struct RouteDetail: View {
             }
             
             Section(header: Text("Condivisione").font(.body).bold()) {
-                HStack {
+                ZStack {
                     Image(systemName: "arrowshape.turn.up.right.circle.fill").foregroundColor(Color.blue).font(.title)
+                        .padding(.trailing, 250)
                     Button(action: {
                         //Send route to user
                         self.showingSendedAlert = true
@@ -100,8 +101,9 @@ struct RouteDetail: View {
                 
             }
             Section(header: Text("Elimina percorso").font(.body).bold()) {
-                HStack {
+                ZStack {
                     Image(systemName: "trash.circle.fill").foregroundColor(Color.red).font(.title)
+                        .padding(.trailing, 250)
                     Button(action: {
                         self.showingDeleteAlert = true
                     }) {
