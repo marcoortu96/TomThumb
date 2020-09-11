@@ -5,6 +5,7 @@
 //  Created by Marco Ortu on 07/09/2020.
 //  Copyright © 2020 Sora. All rights reserved.
 //
+import SwiftUI
 import UIKit
 
 private var firstLaunch : Bool = false
@@ -45,7 +46,6 @@ extension UIColor {
     }
     
     static var counter = -1
-    
     static var colors: [[UIColor]] = [[UIColor(rgb: 0x194865), UIColor(rgb: 0x6a4ea6)],
                                       [UIColor(rgb: 0xd489b2), UIColor(rgb: 0xdaba95)],
                                       [UIColor(rgb: 0x606d2d), UIColor(rgb: 0x88a050)],
@@ -62,36 +62,52 @@ extension UIColor {
     }
 }
 
-extension String {
-    var length: Int {
-        return count
-    }
-    
-    subscript (i: Int) -> String {
-        return self[i ..< i + 1]
-    }
-    
-    func substring(fromIndex: Int) -> String {
-        return self[min(fromIndex, length) ..< length]
-    }
-    
-    func substring(toIndex: Int) -> String {
-        return self[0 ..< max(0, toIndex)]
-    }
-    
-    subscript (r: Range<Int>) -> String {
-        let range = Range(uncheckedBounds: (lower: max(0, min(length, r.lowerBound)),
-                                            upper: min(length, max(0, r.upperBound))))
-        let start = index(startIndex, offsetBy: range.lowerBound)
-        let end = index(start, offsetBy: range.upperBound - range.lowerBound)
-        return String(self[start ..< end])
-    }
-}
-
+// Estensione di array utilizzata per costruire una matrice di elementi
 extension Array {
     func chunked(into size: Int) -> [[Element]] {
         return stride(from: 0, to: count, by: size).map {
             Array(self[$0 ..< Swift.min($0 + size, count)])
         }
     }
+}
+
+// Estensione per modificare il colore della navigation bar
+struct NavigationBarModifier: ViewModifier {
+    var backgroundColor: UIColor?
+
+    init( backgroundColor: UIColor?) {
+        self.backgroundColor = backgroundColor
+        let coloredAppearance = UINavigationBarAppearance()
+        //coloredAppearance.configureWithTransparentBackground()
+        
+        coloredAppearance.backgroundColor = .systemBackground
+        coloredAppearance.titleTextAttributes = [.foregroundColor: UIColor.label]
+        coloredAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.label]
+        
+        UINavigationBar.appearance().standardAppearance = coloredAppearance
+        UINavigationBar.appearance().compactAppearance = coloredAppearance
+        UINavigationBar.appearance().scrollEdgeAppearance = coloredAppearance
+        UINavigationBar.appearance().tintColor = .systemBlue
+    }
+
+    func body(content: Content) -> some View {
+        ZStack{
+            content
+            VStack {
+                GeometryReader { geometry in
+                    Color(self.backgroundColor!)
+                        .frame(height: geometry.safeAreaInsets.top)
+                        .edgesIgnoringSafeArea(.top)
+                    Spacer()
+                }
+            }
+        }
+    }
+}
+
+extension View {
+    func navigationBarColor(_ backgroundColor: UIColor?) -> some View {
+        self.modifier(NavigationBarModifier(backgroundColor: backgroundColor))
+    }
+
 }

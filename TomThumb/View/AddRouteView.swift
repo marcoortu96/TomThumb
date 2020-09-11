@@ -37,7 +37,7 @@ struct AddRouteView: View {
                 Spacer()
                 SearchBar(searchText: $searchText)
                 ZStack {
-                    MapViewAddRoute(centerCoordinate: $centerCoordinate, annotations: locations)
+                    MapViewAddRoute(centerCoordinate: $centerCoordinate, annotations: locations).edgesIgnoringSafeArea(.all)
                     Image(systemName: "largecircle.fill.circle")
                         .opacity(0.6)
                         .foregroundColor(.blue)

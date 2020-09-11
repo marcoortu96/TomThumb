@@ -13,7 +13,6 @@ struct CaregiverHomeView: View {
     @State var route = Route()
     @EnvironmentObject var navBarPrefs: NavBarPreferences
     @State var navBarTitle = "Percorsi"
-    
     @State var showAddRouteView = false
     
     var body: some View {
@@ -65,7 +64,6 @@ struct CaregiverHomeView: View {
             .onAppear {
                 self.navBarTitle = "Impostazioni"
             }
-            
         }
         .navigationBarTitle("\(navBarTitle)", displayMode: (navBarTitle == "Percorsi" || navBarTitle == "Impostazioni") ? .large : .inline)
         

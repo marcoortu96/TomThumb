@@ -36,6 +36,7 @@ struct RoutesView: View {
                         .font(.headline)
                         .foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
                 } else {
+                    Spacer(minLength: 8)
                     SearchBar(searchText: self.$searchText)
                     ScrollView(showsIndicators: false) {
                         ForEach(0..<self.gridRoutes.count, id: \.self) { index in
@@ -62,7 +63,7 @@ struct RoutesView: View {
                                                 self.showingSendAlert = true
                                                 self.selectedRoute = self.gridRoutes[index][item]
                                             }) {
-                                                Image(systemName: "arrowshape.turn.up.right.circle.fill").foregroundColor(Color.white.opacity(0.5)).font(.system(size: 19.5))
+                                                Image(systemName: "arrowshape.turn.up.right.circle.fill").foregroundColor(Color.white.opacity(0.5)).font(.title)/*font(.system(size: 19.5))*/
                                             }.alert(isPresented: self.$showingSendAlert) {
                                                 Alert(title: Text("Condivisione"),
                                                       message: Text("Vuoi inviare '\(self.selectedRoute.routeName)'?"), primaryButton: Alert.Button.default(
@@ -75,7 +76,7 @@ struct RoutesView: View {
                                                       }))
                                             }
                                             .padding(.top)
-                                            .padding(.leading, 115)
+                                            .padding(.leading, (UIScreen.main.bounds.width/100)*33)
                                             
                                         }
                                         .background(Color(UIColor.getColor(i: index, j: item)))

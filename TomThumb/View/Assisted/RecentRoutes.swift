@@ -29,6 +29,7 @@ struct RecentRoutes: View {
                     .font(.headline)
                     .foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
                 } else {
+                    Spacer(minLength: 8)
                     SearchBar(searchText: self.$searchText)
                     ScrollView {
                         ForEach(0..<self.gridRoutes.count, id: \.self) { index in

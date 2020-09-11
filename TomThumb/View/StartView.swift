@@ -14,6 +14,13 @@ struct StartView: View {
     var body: some View {
         NavigationView {
             VStack {
+                Image(uiImage: UIImage(named: "tomThumbIconFront")!)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 220, height: 220, alignment: .top)
+                    .clipped()
+                    .padding(.bottom, 20)
+        
                 NavigationLink(destination: CaregiverHomeView()) {
                     HStack {
                         Image(systemName: "person.fill")
@@ -22,7 +29,6 @@ struct StartView: View {
                         Text("Caregiver")
                             .accentColor(.black)
                             .font(.system(size: (UIScreen.main.bounds.size.width/100)*7))
-                            
                     }
                     .padding(.top, 50)
                     .padding(.bottom, 50)
@@ -51,8 +57,12 @@ struct StartView: View {
                     .opacity(1)
                 }.cornerRadius(12)
 
-            }.navigationBarTitle(Text("TomThumb"), displayMode: .inline)
+            }
+            .padding(.bottom, (UIScreen.main.bounds.height/100)*20)
+            .navigationBarTitle(Text(""), displayMode: .inline)
+            .navigationBarColor(UIColor.systemBackground)   
         }
+        
     }
 }
 

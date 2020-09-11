@@ -98,7 +98,6 @@ struct RecordingsListSettings: View {
                 
             }
         }
-        .padding(.top, 10)
         .listStyle(GroupedListStyle())
         .environment(\.horizontalSizeClass, .regular)
         .onAppear {

@@ -77,7 +77,6 @@ struct AssistedHomeView: View {
     
     func fetchNewRoute() {
         let ref = Database.database().reference()
-        
         ref.child("Assisted").observe(.value, with: { (snapshot) in
             let value = snapshot.value as? NSDictionary
             let isExecuting = value?["isExecuting"] as! Bool

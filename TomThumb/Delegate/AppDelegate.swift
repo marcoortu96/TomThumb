@@ -31,7 +31,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Al lancio dell'app il blocco schermo automatico rimane attivo
         UIApplication.shared.isIdleTimerDisabled = false
 
-        
         return true
     }
     

@@ -22,7 +22,6 @@ struct SettingsView: View {
     
     var body: some View {
         VStack {
-            PreventCollapseView()
             Form {
                 Section(header: Text("Profilo").font(.body).bold()) {
                     NavigationLink(destination: ProfileDetail(caregiver: CaregiverFactory().caregivers[1])) {
