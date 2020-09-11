@@ -18,6 +18,7 @@ struct AssistedView: View {
     @State private var locations = [MKPointAnnotation]()
     @State var collected = 0
     @State var isExecuting = false
+    @State var isVisible = false
     
     @Binding var routeName: String
     
@@ -67,11 +68,13 @@ struct AssistedView: View {
                 }
             }.navigationBarTitle("Esecuzione", displayMode: .inline)
             .onAppear(perform: {
+                self.isVisible = true
                 self.checkConnection()
                 self.readDataFromDB()
             })
             
         .onDisappear(perform: {
+            self.isVisible = false
             self.routeName = "Percorsi"
             self.locations = []
             self.showMap = false
@@ -125,9 +128,9 @@ struct AssistedView: View {
                     self.route = routeTmp
                     self.locations = []
                     
-                    if self.isExecuting {
+                    if self.isExecuting && self.isVisible{
                         self.routeName = self.route.routeName
-                    } else {
+                    } else if !self.isExecuting {
                         self.routeName = "Esecuzione"
                     }
                     

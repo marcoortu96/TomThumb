@@ -22,7 +22,9 @@ struct RoutesView: View {
     @State var crumbs = [Crumb]()
     @State var routes = [Route]()
     @State var showingActivityIndicator = true
+    @State var showingSendAlert = false
     @State var gridRoutes = [[Route]]()
+    @State var selectedRoute = Route()
     @State var colorIndex = 0
     
     var body: some View {
@@ -35,30 +37,51 @@ struct RoutesView: View {
                         .foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
                 } else {
                     SearchBar(searchText: self.$searchText)
-                    ScrollView {
+                    ScrollView(showsIndicators: false) {
                         ForEach(0..<self.gridRoutes.count, id: \.self) { index in
                             HStack {
                                 ForEach(self.gridRoutes[index].filter {
                                     self.searchText == "" ? true : $0.routeName.localizedCaseInsensitiveContains(self.searchText)
                                 }.indices, id: \.self) { item in
                                     HStack {
-                                    GeometryReader { _ in
-                                        Image(systemName: "map.fill")
-                                            .font(.title)
+                                        GeometryReader { _ in
+                                            Image(systemName: "map.fill")
+                                                .foregroundColor(.white)
+                                                .padding(.top)
+                                                .padding(.leading)
+                                                .font(.title)
+                                            NavigationLink(destination: RouteDetail(route: self.gridRoutes[index][item])) {
+                                                Text(self.gridRoutes[index][item].routeName)
+                                                    .padding(.top, 60)
+                                                    .padding(.horizontal, 8)
+                                                    .font(Font.system(size: 15, weight: .bold))
+                                            }
+                                            .foregroundColor(Color.white)
+                                            Button(action: {
+                                                //Send route to user
+                                                self.showingSendAlert = true
+                                                self.selectedRoute = self.gridRoutes[index][item]
+                                            }) {
+                                                Image(systemName: "arrowshape.turn.up.right.circle.fill").foregroundColor(Color.white.opacity(0.5)).font(.system(size: 19.5))
+                                            }.alert(isPresented: self.$showingSendAlert) {
+                                                Alert(title: Text("Condivisione"),
+                                                      message: Text("Vuoi inviare '\(self.selectedRoute.routeName)'?"), primaryButton: Alert.Button.default(
+                                                        Text("Invia"), action: {
+                                                            print(self.selectedRoute.routeName)
+                                                            self.sendRoute(route: self.selectedRoute)
+                                                      }),
+                                                      secondaryButton: Alert.Button.cancel(Text("Annulla"), action: {
+                                                        
+                                                      }))
+                                            }
                                             .padding(.top)
-                                            .padding(.leading)
-                                        NavigationLink(destination: RouteDetail(route: self.gridRoutes[index][item])) {
-                                            Text(self.gridRoutes[index][item].routeName)
-                                                .padding(.top, 60)
-                                                .padding(.horizontal, 8)
-                                                .font(Font.system(size: 15, weight: .bold))
+                                            .padding(.leading, 115)
                                             
-                                        }.foregroundColor(Color.white)
-                                    }
-                                    .background(Color(UIColor.getColor(i: index, j: item)))
-                                    .frame(width: (UIScreen.main.bounds.size.width/100) * 45, height: 100)
+                                        }
+                                        .background(Color(UIColor.getColor(i: index, j: item)))
+                                        .frame(width: (UIScreen.main.bounds.size.width/100) * 45, height: 100)
                                     }.cornerRadius(12)
-
+                                    
                                 }
                                 
                             }
@@ -108,6 +131,24 @@ struct RoutesView: View {
                 .frame(width: (UIScreen.main.bounds.size.width/100) * 75, height: (UIScreen.main.bounds.size.height/100) * 20)
             }
         }
+    }
+    
+    func sendRoute(route: Route) {
+        let ref = Database.database().reference()
+        
+        ref.child("Assisted").updateChildValues(
+            [
+                "collected" : 0,
+                "isExecuting" : true,
+                "id" : route.id
+        ])
+        
+        ref.child("Routes").child(route.id).updateChildValues(
+            [
+                "lastExecution" : Date().toString(dateFormat: "dd.MM.yyyy HH:mm:ss")
+            ]
+        )
+        
     }
     
     func checkConnection() {

@@ -39,10 +39,11 @@ struct RecentRoutes: View {
                                     HStack {
                                     GeometryReader { _ in
                                         Image(systemName: "map.fill")
+                                            .foregroundColor(Color.white)
                                             .font(.title)
                                             .padding(.top)
                                             .padding(.leading)
-                                        NavigationLink(destination: ARView(route: self.gridRoutes[index][item], debug: false)) {
+                                        NavigationLink(destination: ARView(route: self.gridRoutes[index][item], debug: false).navigationBarTitle("").navigationBarHidden(true)) {
                                             Text(self.gridRoutes[index][item].routeName)
                                                 .padding(.top, 60)
                                                 .padding(.horizontal, 8)
