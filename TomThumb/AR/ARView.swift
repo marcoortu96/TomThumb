@@ -162,6 +162,7 @@ struct ARView: View {
                             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                                 let dbRef = Database.database().reference()
                                 dbRef.child(self.debug ? "Test" : "Assisted").updateChildValues(["isExecuting" : false])
+                                dbRef.child(self.debug ? "Test" : "Assisted").updateChildValues(["collected" : 0])
                             }
                         }),
                               secondaryButton: Alert.Button.cancel(Text("Annulla"), action: {

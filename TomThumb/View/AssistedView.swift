@@ -25,12 +25,12 @@ struct AssistedView: View {
     
     var body: some View {
             ZStack {
-                if !showMap && isExecuting == false {
+                if isExecuting == false && self.collected == 0{
                     Text("Non ci sono percorsi in esecuzione")
                     .font(.headline)
                     .foregroundColor(InterfaceConstants.secondaryInfoForegroundColor)
                 }
-                if isExecuting == true {
+                if isExecuting == true || self.collected == self.route.crumbs{
                     if showMap {
                         LoadingView(isShowing: $showingActivityIndicator, string: "Connessione") {
                             LiveMapView(route: self.route, annotations: self.locations, collected: self.$collected).edgesIgnoringSafeArea(.all)

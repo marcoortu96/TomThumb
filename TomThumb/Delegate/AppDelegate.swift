@@ -8,6 +8,8 @@
 
 import UIKit
 import Firebase
+import FirebaseCore
+import FirebaseDatabase
 
 
 @UIApplicationMain
@@ -21,6 +23,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Flag isExecuting = false se si lancia l'app
         let dbRef = Database.database().reference()
         dbRef.child("Assisted").child("isExecuting").setValue(false)
+        dbRef.child("Assisted").child("collected").setValue(0)
         
         // Download audio dallo storage al lancio dell'app
         fetchAudios()

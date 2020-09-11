@@ -8,6 +8,7 @@
 
 import SwiftUI
 import Firebase
+import FirebaseDatabase
 import FirebaseStorage
 
 struct RecordingsList: View {
