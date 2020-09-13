@@ -17,9 +17,9 @@ struct StartView: View {
                 Image(uiImage: UIImage(named: "tomThumbIconFront")!)
                     .resizable()
                     .scaledToFill()
-                    .frame(width: 220, height: 220, alignment: .top)
+                    .frame(width: (UIScreen.main.bounds.width/100) * 30, height: (UIScreen.main.bounds.height/100) * 30, alignment: .top)
                     .clipped()
-                    .padding(.bottom, 20)
+                    .padding(.bottom, 15)
         
                 NavigationLink(destination: CaregiverHomeView()) {
                     HStack {
@@ -58,7 +58,7 @@ struct StartView: View {
                 }.cornerRadius(12)
 
             }
-            .padding(.bottom, (UIScreen.main.bounds.height/100)*20)
+            .padding(.bottom, (UIScreen.main.bounds.height/100)*10)
             .navigationBarTitle(Text(""), displayMode: .inline)
             .navigationBarColor(UIColor.systemBackground)   
         }

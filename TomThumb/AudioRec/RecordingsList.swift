@@ -353,7 +353,7 @@ func fetchAudios() {
                 AudioRecorder.unforseenURL = check!
             }
             
-            if directoryContents.contains(check!) {
+            if !directoryContents.contains(check!) {
                 let downloadTask = storageRef.child(r.name).write(toFile: fileUrl)
                 downloadTask.observe(.success) { _ in
                     print(audioDefaultName.contains(r.name))

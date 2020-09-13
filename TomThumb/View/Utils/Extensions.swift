@@ -5,8 +5,10 @@
 //  Created by Marco Ortu on 07/09/2020.
 //  Copyright © 2020 Sora. All rights reserved.
 //
+import Foundation
 import SwiftUI
 import UIKit
+import AudioToolbox.AudioServices
 
 private var firstLaunch : Bool = false
 
@@ -102,6 +104,12 @@ struct NavigationBarModifier: ViewModifier {
                 }
             }
         }
+    }
+}
+
+extension UIDevice {
+    static func vibrate() {
+        AudioServicesPlaySystemSound(1352)
     }
 }
 

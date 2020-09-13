@@ -416,9 +416,3 @@ extension ARViewController: ARSCNViewDelegate {
         return sqrt(diffX * diffX + diffY * diffY);
     }
 }
-
-extension UIDevice {
-    static func vibrate() {
-        AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
-    }
-}
