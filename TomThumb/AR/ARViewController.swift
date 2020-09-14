@@ -268,11 +268,12 @@ extension ARViewController: ARSCNViewDelegate {
                         guard let fileUrl = fileUrls.first?.appendingPathComponent(pathString) else {
                             return
                         }
+                        print("far file url guard: \(fileUrl)")
                         
                         let check = URL(string: "file:///private/\(fileUrl.absoluteString.dropFirst(8))")
                         print("check: \(check!)")
                         
-                        let directoryContents = try! FileManager.default.contentsOfDirectory(at: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0], includingPropertiesForKeys: nil)
+                        /*let directoryContents = try! FileManager.default.contentsOfDirectory(at: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0], includingPropertiesForKeys: nil)
                         
                         //print(directoryContents)
                         
@@ -284,7 +285,9 @@ extension ARViewController: ARSCNViewDelegate {
                                 if AudioPlayer.player.isPlaying {
                                     AudioPlayer.player.stopPlayback()
                                 }
-                                AudioPlayer.player.startPlayback(audio: fileUrl)
+                                //AudioRecorder.farFromCrumbURL = fileUrl
+                                AudioPlayer.player.startPlayback(audio: AudioRecorder.farFromCrumbURL)
+                                print("far audio: \(fileUrl.lastPathComponent)")
                             }
                         } else {
                             print("Il file è gia in locale")
@@ -292,8 +295,16 @@ extension ARViewController: ARSCNViewDelegate {
                             if AudioPlayer.player.isPlaying {
                                 AudioPlayer.player.stopPlayback()
                             }
-                            AudioPlayer.player.startPlayback(audio: fileUrl)
+                            //AudioRecorder.farFromCrumbURL = fileUrl
+                            AudioPlayer.player.startPlayback(audio: AudioRecorder.farFromCrumbURL)
+                            print("far audio: \(fileUrl.lastPathComponent)")
+                        }*/
+                        self.isPlaying = true
+                        if AudioPlayer.player.isPlaying {
+                            AudioPlayer.player.stopPlayback()
                         }
+                        AudioPlayer.player.startPlayback(audio: AudioRecorder.farFromCrumbURL)
+                        
                         self.nPlays = self.nPlays + 1
                         self.isPlaying = false
                     }

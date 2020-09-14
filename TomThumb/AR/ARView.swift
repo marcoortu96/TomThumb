@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import UIKit
 import MapKit
 import ARCL
 import Firebase
@@ -181,7 +182,7 @@ struct ARView: View {
                     ZStack {
                         Button(action: {
                             print("Calling caregiver")
-                            let url: NSURL = URL(string: "tel://+393491114782")! as NSURL
+                            let url: NSURL = URL(string: "tel://349555555")! as NSURL
                             UIApplication.shared.open(url as URL)
                             
                         }) {
@@ -320,63 +321,70 @@ struct PopUpHelp: View {
         VStack {
             Text("Cosa succede?")
             HStack {
-                Button(action: {
-                    //MARK: - Aggiungere riproduzione audio in caso di sconosciuti
-                    print("Stranger")
-                    let storage = Storage.storage()
-                    let pathString = "\(AudioRecorder.unforseenURL)"
-                    let storageRef = storage.reference().child("audio/\(AudioRecorder.unforseenURL.lastPathComponent)")
-                    print("ref far from crumb: \(storageRef)")
-                    let fileUrls = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-                    
-                    guard let fileUrl = fileUrls.first?.appendingPathComponent(pathString) else {
-                        return
-                    }
-                    
-                    let check = URL(string: "file:///private/\(fileUrl.absoluteString.dropFirst(8))")
-                    print("check: \(check!)")
-                    
-                    let directoryContents = try! FileManager.default.contentsOfDirectory(at: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0], includingPropertiesForKeys: nil)
-                    
-                    //print(directoryContents)
-                    
-                    if !directoryContents.contains(check!) {
-                        let downloadTask = storageRef.write(toFile: fileUrl)
-                        downloadTask.observe(.success) { _ in
+                VStack {
+                    Button(action: {
+                        print("Stranger")
+                        let storage = Storage.storage()
+                        let pathString = "\(AudioRecorder.unforseenURL)"
+                        let storageRef = storage.reference().child("audio/\(AudioRecorder.unforseenURL.lastPathComponent)")
+                        print("ref far from crumb: \(storageRef)")
+                        let fileUrls = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+                        
+                        guard let fileUrl = fileUrls.first?.appendingPathComponent(pathString) else {
+                            return
+                        }
+                        
+                        let check = URL(string: "file:///private/\(fileUrl.absoluteString.dropFirst(8))")
+                        print("check: \(check!)")
+                        
+                        let directoryContents = try! FileManager.default.contentsOfDirectory(at: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0], includingPropertiesForKeys: nil)
+                        
+                        //print(directoryContents)
+                        
+                        if !directoryContents.contains(check!) {
+                            let downloadTask = storageRef.write(toFile: fileUrl)
+                            downloadTask.observe(.success) { _ in
+                                if AudioPlayer.player.isPlaying {
+                                    AudioPlayer.player.stopPlayback()
+                                }
+                                AudioPlayer.player.startPlayback(audio: fileUrl)
+                            }
+                        } else {
                             if AudioPlayer.player.isPlaying {
                                 AudioPlayer.player.stopPlayback()
                             }
                             AudioPlayer.player.startPlayback(audio: fileUrl)
                         }
-                    } else {
-                        if AudioPlayer.player.isPlaying {
-                            AudioPlayer.player.stopPlayback()
-                        }
-                        AudioPlayer.player.startPlayback(audio: fileUrl)
+                        self.isShowing = false
+                    }) {
+                        Image(systemName: "person.fill")
+                            .foregroundColor(.white)
                     }
-                    self.isShowing = false
-                }) {
-                    Image(systemName: "person.fill")
+                    .padding()
+                    .background(Color.green.opacity(0.85))
+                    .font(.title)
+                    .clipShape(Circle())
+                    Text("Play audio").font(.caption)
                         .foregroundColor(.white)
                 }
-                .padding()
-                .background(Color.green.opacity(0.85))
-                .font(.title)
-                .clipShape(Circle())
                 Spacer().frame(width: (UIScreen.main.bounds.size.width/100) * 25)
-                Button(action: {
-                    print("Obstacle")
-                    self.isShowing = false
-                    let url: NSURL = URL(string: "tel://\(self.caregiver.phoneNumber)")! as NSURL
-                    UIApplication.shared.open(url as URL)
-                }) {
-                    Image(systemName: "triangle.fill")
+                VStack {
+                    Button(action: {
+                        print("Obstacle")
+                        self.isShowing = false
+                        let url: NSURL = URL(string: "tel://\(self.caregiver.phoneNumber)")! as NSURL
+                        UIApplication.shared.open(url as URL)
+                    }) {
+                        Image(systemName: "triangle.fill")
+                            .foregroundColor(.white)
+                    }
+                    .padding()
+                    .background(Color.red.opacity(0.85))
+                    .font(.title)
+                    .clipShape(Circle())
+                    Text("Chiama").font(.caption)
                         .foregroundColor(.white)
                 }
-                .padding()
-                .background(Color.red.opacity(0.85))
-                .font(.title)
-                .clipShape(Circle())
             }
         }
         

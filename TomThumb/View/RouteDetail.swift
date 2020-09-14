@@ -127,6 +127,10 @@ struct RouteDetail: View {
         .listStyle(GroupedListStyle())
         .environment(\.horizontalSizeClass, .regular)
         .navigationBarTitle(Text("Dati percorso"), displayMode: .inline)
+        .onAppear {
+            // Riattiva blocco schermo automatico quando si torna alla view precedente
+            UIApplication.shared.isIdleTimerDisabled = false
+        }
         
     }
     

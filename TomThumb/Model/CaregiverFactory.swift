@@ -32,8 +32,8 @@ struct CaregiverFactory {
     var caregivers: [Caregiver] = []
     
     init() {
-        caregivers.append(Caregiver(img: UIImage(named: "sora1")!, name: "Marco", email: "Ortu", username: "sora", password: "sora", phoneNumber: "3491114782", children: [ChildFactory().children[0], ChildFactory().children[1]]))
-        caregivers.append(Caregiver(img: UIImage(named: "zoro")!, name: "Andrea", email: "andreare@mail.com", username: "Andrew", password: "1234", phoneNumber: "3491114782", children: [ChildFactory().children[2], ChildFactory().children[6]]))
+        caregivers.append(Caregiver(img: UIImage(named: "sora1")!, name: "Marco", email: "Ortu", username: "sora", password: "sora", phoneNumber: "349555555", children: [ChildFactory().children[0], ChildFactory().children[1]]))
+        caregivers.append(Caregiver(img: UIImage(named: "zoro")!, name: "Andrea", email: "andreare@mail.com", username: "Andrew", password: "1234", phoneNumber: "349555555", children: [ChildFactory().children[2], ChildFactory().children[6]]))
 
     }
     
