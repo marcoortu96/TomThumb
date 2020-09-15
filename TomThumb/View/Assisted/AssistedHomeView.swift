@@ -86,11 +86,8 @@ struct AssistedHomeView: View {
             if isExecuting {
                 ref.child("Routes").child("\(id)").observe(.value, with: { (snapshot) in
                     let value = snapshot.value as? [String : Any]
-                    print("value \n \(value ?? ["result" : ["error" : "cannot retrive values from DB"]])")
                     var crumbs = [Crumb]()
-                    //print(value!["crumbs"]!)
                     for crumb in value?["crumbs"] as! [[String : Any]] {
-                        //print(crumb["audio"])
                         crumbs.append(Crumb(location: CLLocation(latitude: crumb["latitude"] as! Double, longitude: crumb["longitude"] as! Double), audio: URL(fileURLWithPath: crumb["audio"] as! String)))
                     }
                     let routeTmp = Route(id: id,

@@ -116,6 +116,10 @@ struct AudioPickerFarFromCrumb: View {
                 .multilineTextAlignment(.center)
                 .padding(.bottom, 15)
         }.navigationBarTitle("Allontanamento", displayMode: .inline)
+            .onDisappear {
+                let ref = Database.database().reference()
+                ref.child("Audios").updateChildValues(["farFromCrumb" : self.selectedAudio.lastPathComponent])
+        }
     }
 }
 
@@ -159,6 +163,10 @@ struct AudioPickerUnforseen: View {
                 .multilineTextAlignment(.center)
                 .padding(.bottom, 15)
         }.navigationBarTitle("Imprevisto", displayMode: .inline)
+        .onDisappear {
+                let ref = Database.database().reference()
+                ref.child("Audios").updateChildValues(["unforseen" : self.selectedAudio.lastPathComponent])
+        }
     }
 }
 

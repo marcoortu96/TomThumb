@@ -327,7 +327,6 @@ struct PopUpHelp: View {
                         let storage = Storage.storage()
                         let pathString = "\(AudioRecorder.unforseenURL)"
                         let storageRef = storage.reference().child("audio/\(AudioRecorder.unforseenURL.lastPathComponent)")
-                        print("ref far from crumb: \(storageRef)")
                         let fileUrls = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
                         
                         guard let fileUrl = fileUrls.first?.appendingPathComponent(pathString) else {
@@ -335,11 +334,8 @@ struct PopUpHelp: View {
                         }
                         
                         let check = URL(string: "file:///private/\(fileUrl.absoluteString.dropFirst(8))")
-                        print("check: \(check!)")
                         
                         let directoryContents = try! FileManager.default.contentsOfDirectory(at: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0], includingPropertiesForKeys: nil)
-                        
-                        //print(directoryContents)
                         
                         if !directoryContents.contains(check!) {
                             let downloadTask = storageRef.write(toFile: fileUrl)

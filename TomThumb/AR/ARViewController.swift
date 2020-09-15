@@ -32,7 +32,7 @@ final class ARViewController: UIViewController, UIViewControllerRepresentable {
     public var annotationHeightAdjustmentFactor = 1.0
     
     public var renderTime: TimeInterval = 0
-    private let distanceThreshold: Double = 10.0
+    private let distanceThreshold: Double = 15.0
     private var isColliding = false
     
     private var isPlaying = false
@@ -224,7 +224,7 @@ extension ARViewController: ARSCNViewDelegate {
             let db = Database.database().reference()
             
             /* Ogni 0.75s pubblica sul db:
-             - id del percorso (possiamo eseguire solo i percorsi della factory)
+             - id del percorso
              - posizione assistito (lat, lon)
              - quante crumb ha raccolto
              */
@@ -257,59 +257,44 @@ extension ARViewController: ARSCNViewDelegate {
                 // Se la distanza punto segmento è superiore ai 60 metri
                 if distUserCrumbs > 60 {
                     // Scarico l'audio, lo riproduco 1 volta, dopo di che, in ARView, mostro il pop-up per chiamare il caregiver
-                    
+                    print("DEBUG - Far from trajectory")
+
                     if !self.isPlaying && self.nPlays < 1 {
                         let storage = Storage.storage()
                         let pathString = "\(self.route.mapRoute.crumbs[actualCrumb].audio!.lastPathComponent)"
                         let storageRef = storage.reference().child("audio/\(AudioRecorder.farFromCrumbURL.lastPathComponent)")
-                        print("ref far from crumb: \(storageRef)")
                         let fileUrls = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
                         
                         guard let fileUrl = fileUrls.first?.appendingPathComponent(pathString) else {
                             return
                         }
-                        print("far file url guard: \(fileUrl)")
-                        
                         let check = URL(string: "file:///private/\(fileUrl.absoluteString.dropFirst(8))")
-                        print("check: \(check!)")
                         
-                        /*let directoryContents = try! FileManager.default.contentsOfDirectory(at: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0], includingPropertiesForKeys: nil)
-                        
-                        //print(directoryContents)
+                        let directoryContents = try! FileManager.default.contentsOfDirectory(at: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0], includingPropertiesForKeys: nil)
                         
                         if !directoryContents.contains(check!) {
-                            print("Scarico il file dallo storage")
+                            print("DATABASE - Downloading file...")
                             let downloadTask = storageRef.write(toFile: fileUrl)
                             downloadTask.observe(.success) { _ in
                                 self.isPlaying = true
                                 if AudioPlayer.player.isPlaying {
                                     AudioPlayer.player.stopPlayback()
                                 }
-                                //AudioRecorder.farFromCrumbURL = fileUrl
                                 AudioPlayer.player.startPlayback(audio: AudioRecorder.farFromCrumbURL)
-                                print("far audio: \(fileUrl.lastPathComponent)")
                             }
                         } else {
-                            print("Il file è gia in locale")
+                            print("DATABASE - File already dowloaded")
                             self.isPlaying = true
                             if AudioPlayer.player.isPlaying {
                                 AudioPlayer.player.stopPlayback()
                             }
-                            //AudioRecorder.farFromCrumbURL = fileUrl
                             AudioPlayer.player.startPlayback(audio: AudioRecorder.farFromCrumbURL)
-                            print("far audio: \(fileUrl.lastPathComponent)")
-                        }*/
-                        self.isPlaying = true
-                        if AudioPlayer.player.isPlaying {
-                            AudioPlayer.player.stopPlayback()
                         }
-                        AudioPlayer.player.startPlayback(audio: AudioRecorder.farFromCrumbURL)
                         
                         self.nPlays = self.nPlays + 1
                         self.isPlaying = false
                     }
                     
-                    print("DEBUG - Far from trajectory")
                 }
             }
             
@@ -335,20 +320,17 @@ extension ARViewController: ARSCNViewDelegate {
                 }
                 
                 let check = URL(string: "file:///private/\(fileUrl.absoluteString.dropFirst(8))")
-                print("check: \(check!)")
                 
                 let directoryContents = try! FileManager.default.contentsOfDirectory(at: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0], includingPropertiesForKeys: nil)
-                print(directoryContents)
-        
                 self.animation = true
                 if !directoryContents.contains(check!) {
-                    // print("Scarico il file dallo storage")
+                    print("DATABASE - Downloading file...")
                     let downloadTask = storageRef.write(toFile: fileUrl)
                     downloadTask.observe(.success) { _ in
                         AudioPlayer.player.startPlayback(audio: fileUrl)
                     }
                 } else {
-                    //print("Il file è gia in locale")
+                    print("DATABASE - File already dowloaded")
                     AudioPlayer.player.startPlayback(audio: fileUrl)
                 }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {

@@ -336,38 +336,49 @@ func fetchAudios() {
     
     let directoryContents = try! FileManager.default.contentsOfDirectory(at: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0], includingPropertiesForKeys: nil)
     
-    storageRef.listAll { (result, error) in
-        for r in result.items {
-            guard let fileUrl = fileUrls.first?.appendingPathComponent(r.name) else {
-                return
-            }
-            let check = URL(string: "file:///private/\(fileUrl.absoluteString.dropFirst(8))")
-            
-            // Assegno audio di default a Allontanamento
-            if r.name == "Allontanamento.m4a" {
-                AudioRecorder.farFromCrumbURL = check!
-            }
-            
-            // Assegno audio di default a Imprevisti
-            if r.name == "Imprevisto.m4a" {
-                AudioRecorder.unforseenURL = check!
-            }
-            
-            if !directoryContents.contains(check!) {
-                let downloadTask = storageRef.child(r.name).write(toFile: fileUrl)
-                downloadTask.observe(.success) { _ in
-                    print(audioDefaultName.contains(r.name))
-                    if audioDefaultName.contains(r.name) {
-                        AudioRecorder.defaultRecordings.append(Recording(fileURL: fileUrl, createDate: getCreationDate(for: fileUrl)))
-                    } else {
-                        AudioRecorder.recordings.append(Recording(fileURL: fileUrl, createDate: getCreationDate(for: fileUrl)))
-                    }
-                    
+    let database = Database.database()
+    let databaseRef = database.reference()
+    
+    databaseRef.child("Audios").observeSingleEvent(of: .value, with: { (snapshot) in
+        let value = snapshot.value as? NSDictionary
+        let farFromCrumbAudioName = value!["farFromCrumb"] as! String
+        let unforseenAudioName = value!["unforseen"] as! String
+        
+        storageRef.listAll { (result, error) in
+            for r in result.items {
+                guard let fileUrl = fileUrls.first?.appendingPathComponent(r.name) else {
+                    return
                 }
+                let check = URL(string: "file:///private/\(fileUrl.absoluteString.dropFirst(8))")
+                
+                // Assegno audio di default a Allontanamento
+                if r.name == farFromCrumbAudioName {
+                    AudioRecorder.farFromCrumbURL = check!
+                }
+                
+                // Assegno audio di default a Imprevisti
+                if r.name == unforseenAudioName {
+                    AudioRecorder.unforseenURL = check!
+                }
+                
+                if !directoryContents.contains(check!) {
+                    let downloadTask = storageRef.child(r.name).write(toFile: fileUrl)
+                    downloadTask.observe(.success) { _ in
+                        print(audioDefaultName.contains(r.name))
+                        if audioDefaultName.contains(r.name) {
+                            AudioRecorder.defaultRecordings.append(Recording(fileURL: fileUrl, createDate: getCreationDate(for: fileUrl)))
+                        } else {
+                            AudioRecorder.recordings.append(Recording(fileURL: fileUrl, createDate: getCreationDate(for: fileUrl)))
+                        }
+                        
+                    }
+                }
+                
             }
-            
         }
-    }
+    })
+    
+    
 }
 
 struct RecordingsList_Previews: PreviewProvider {
