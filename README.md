@@ -9,11 +9,9 @@ Run routes sent by the caregiver using GPS navigation combined with augmented re
 1.Creating the route:
 The caregiver, with the support of the map, creates the path by adding the crumbs in the desired positions, associating an audio for each.
 
-
 2. AR execution and monitoring:
 Tom walks the route in augmented reality and collects all the crumbs. He will be guided during the entire execution by visual and auditory support.
 The caregiver monitors Tom's progress in real time.
-
 
 3.Security:
 Departure from the route: The app comes to Tom's aid if he walks away from the route through auditory and visual aids by suggesting that he call the caregiver
